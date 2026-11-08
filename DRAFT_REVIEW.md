@@ -21,7 +21,7 @@ python tools/check_book_code.py
 | 01 | 从数据与处理理解程序 | 完成 | `ch01_receipt.py` | 通过 |
 | 02 | 当简单代码开始难以改变 | 完成 | `ch02_report_v1.py`、`_before.py`、`_after.py` | 通过 |
 | 03 | Python 组织程序的基本工具 | 完成 | `ch03_tools.py` | 通过 |
-| 04 | 从问题选择模式 | 未开始 | | |
+| 04 | 从问题选择模式 | 完成 | `ch04_parking.py` | 通过 |
 | 05–34 | | 未开始 | | |
 
 ## 留待人工判断的问题
