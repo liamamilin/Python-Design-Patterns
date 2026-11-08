@@ -41,7 +41,7 @@ python -m examples.ch05_factory_method
 - [06 抽象工厂 Abstract Factory](part-02/06-abstract-factory.md)
 - [07 建造者 Builder](part-02/07-builder.md)
 - [08 原型 Prototype](part-02/08-prototype.md)
-- 09 单例 Singleton（写作中）
+- [09 单例 Singleton](part-02/09-singleton.md)
 
 ### 第三部分 · 组合对象（GoF 结构型）
 

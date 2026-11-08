@@ -26,15 +26,21 @@ python tools/check_book_code.py
 | 06 | 抽象工厂 | 完成 | `ch06_reminders_v1.py`、`ch06_abstract_factory.py`、`ch06_pythonic.py` | 通过 |
 | 07 | 建造者 | 完成 | `ch07_search_v1.py`、`ch07_builder.py`、`ch07_pythonic.py` | 通过 |
 | 08 | 原型 | 完成 | `ch08_copy_trap.py`、`ch08_prototype.py`、`ch08_pythonic.py` | 通过 |
-| 09–34 | | 未开始 | | |
+| 09 | 单例 | 完成 | `ch09_ticket_v1.py`、`ch09_singleton.py`、`ch09_shared_counter.py`、`ch09_pythonic.py` | 通过 |
+| 10–34 | | 未开始 | | |
 
 已执行的检查（第一批，第 01–05 章）：
 - 42 个测试在 Python 3.11.13 和 3.12.14 下全部通过；
 - `tools/check_book_code.py`：正文代码与示例文件一致；
 - `book/` 内所有相对链接有效；每个示例模块都能单独运行。
 
+已执行的检查（第二批，第 06–09 章）：
+- 全部 78 个测试在 Python 3.11.13 和 3.12.14 下通过，包括第 09 章用 `spawn` 方式启动子进程的两个测试；
+- 正文代码与示例文件一致；`book/` 内相对链接有效；第 06–09 章每个示例模块都能单独运行。
+
 ## 留待人工判断的问题
 
 1. **第 05 章没有沿用 `samples/factory-method-walkthrough.md` 的邮件／短信例子**，改用“任务清单生成文档”。依据是 AGENT_TASK 说示范稿只示范思考过程、不是让人复制案例。但在线指南的推导示例写着“完整内容见第 05 章”，下次更新指南时需要改成类似“第 05 章用另一个例子完整展开”。
 2. **第 04 章的 GoF 意图表**是对原书意图的中文概括，不是原文引用。第 05 章引用了工厂方法意图的常见中文表述，并注明出处。如需与某个中译本的措辞完全一致，请人工核对。
 3. **第 01–03 章没有对应的 GoF 模式**，但同样配了示例和测试，用来验证正文里声称的输出（例如第 02 章两处错误能被复现）。
+4. **第 09 章的进程测试**会启动子进程，在受限的沙箱或某些 CI 环境里可能无法运行。如果遇到这种情况，可以单独跳过 `test_each_process_has_its_own_instance` 和 `test_unique_across_processes`，其余测试不依赖子进程。
