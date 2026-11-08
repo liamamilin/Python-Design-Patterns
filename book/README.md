@@ -39,7 +39,7 @@ python -m examples.ch05_factory_method
 
 - [05 工厂方法 Factory Method](part-02/05-factory-method.md)
 - [06 抽象工厂 Abstract Factory](part-02/06-abstract-factory.md)
-- 07 建造者 Builder（写作中）
+- [07 建造者 Builder](part-02/07-builder.md)
 - 08 原型 Prototype（写作中）
 - 09 单例 Singleton（写作中）
 

@@ -24,7 +24,8 @@ python tools/check_book_code.py
 | 04 | 从问题选择模式 | 完成 | `ch04_parking.py` | 通过 |
 | 05 | 工厂方法 | 完成 | `ch05_factory_method_v1.py`、`_simple_factory.py`、`ch05_factory_method.py`、`ch05_pythonic.py` | 通过 |
 | 06 | 抽象工厂 | 完成 | `ch06_reminders_v1.py`、`ch06_abstract_factory.py`、`ch06_pythonic.py` | 通过 |
-| 07–34 | | 未开始 | | |
+| 07 | 建造者 | 完成 | `ch07_search_v1.py`、`ch07_builder.py`、`ch07_pythonic.py` | 通过 |
+| 08–34 | | 未开始 | | |
 
 已执行的检查（第一批，第 01–05 章）：
 - 42 个测试在 Python 3.11.13 和 3.12.14 下全部通过；
