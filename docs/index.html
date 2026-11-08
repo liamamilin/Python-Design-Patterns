@@ -733,7 +733,7 @@ tests/
   var CHIPS = ["判断", "接口不一致", "通知", "撤销", "状态", "复制", "全局唯一", "组合爆炸", "层次结构", "缓存", "分步骤", "一组对象", "共享", "顺序", "规则语言", "函数"];
   var FILTERS = [["all", "全部"], ["create", "创建型"], ["struct", "结构型"], ["behav", "行为型"], ["other", "非 GoF"]];
   var state = { q: "", f: "all" };
-  try { var saved = localStorage.getItem("dp-guide-filter"); if (saved) state.f = saved; } catch (e) {}
+  try { localStorage.removeItem("dp-guide-filter"); } catch (e) {}
 
   var qEl = document.getElementById("q"), chipsEl = document.getElementById("chips"),
       filtersEl = document.getElementById("filters"), resEl = document.getElementById("results"), metaEl = document.getElementById("meta");
@@ -753,19 +753,27 @@ tests/
 
   function render() {
     var terms = state.q.trim().split(/\s+/).filter(Boolean);
-    var list = all.filter(function (c) {
-      if (state.f === "other" && GOF[c.kind]) return false;
-      if (state.f !== "all" && state.f !== "other" && c.kind !== state.f) return false;
+    function inCat(c) {
+      if (state.f === "other") return !GOF[c.kind];
+      return state.f === "all" || c.kind === state.f;
+    }
+    function hit(c) {
       if (!terms.length) return true;
       var hay = (c.title + " " + c.en + " " + c.q).toLowerCase();
       return terms.every(function (t) { return hay.indexOf(t.toLowerCase()) !== -1; });
-    });
+    }
+    var list = all.filter(function (c) { return inCat(c) && hit(c); });
+    var hiddenByCat = all.filter(function (c) { return !inCat(c) && hit(c); }).length;
+    var catName = (FILTERS.filter(function (f) { return f[0] === state.f; })[0] || ["", ""])[1];
     resEl.innerHTML = list.length ? list.map(function (c) {
       return '<a class="card k-' + c.kind + '" href="#ch-' + c.num + '"><div class="top"><span>第 ' + c.num + ' 章</span><span>' + KIND_LABEL[c.kind] + '</span></div>' +
         '<h3>' + hl(c.title, terms) + (c.en ? ' <span class="en" style="font-family:var(--font-mono);font-weight:400;font-size:.8rem;color:var(--ink-soft)">' + hl(c.en, terms) + '</span>' : '') + '</h3>' +
         '<p>' + hl(c.q, terms) + '</p></a>';
-    }).join("") : '<div class="empty">没有章节直接讨论“' + esc(state.q) + '”。换一个更具体的说法试试，例如描述代码里重复出现的修改。</div>';
-    metaEl.textContent = terms.length ? ("“" + state.q.trim() + "”相关：" + list.length + " 章") : ("共 " + list.length + " 章，输入关键词或点选常见困难");
+    }).join("") : (hiddenByCat
+      ? '<div class="empty">“' + esc(catName) + '”里没有讨论“' + esc(state.q.trim()) + '”的章节，其他类别中有 ' + hiddenByCat + ' 章。<br><button type="button" class="chip" data-f="all" style="margin-top:10px">在全部类别中查找</button></div>'
+      : '<div class="empty">没有章节直接讨论“' + esc(state.q.trim()) + '”。换一个更具体的说法试试，例如描述代码里重复出现的修改。</div>');
+    var scope = state.f === "all" ? "" : "（仅" + catName + "）";
+    metaEl.textContent = terms.length ? ("“" + state.q.trim() + "”相关" + scope + "：" + list.length + " 章") : ("共 " + list.length + " 章" + scope + "，输入关键词或点选常见困难");
     Array.prototype.forEach.call(chipsEl.children, function (b) { b.setAttribute("aria-pressed", String(state.q.trim() === b.dataset.chip)); });
     Array.prototype.forEach.call(filtersEl.querySelectorAll("[data-f]"), function (b) { b.setAttribute("aria-pressed", String(state.f === b.dataset.f)); });
   }
@@ -775,10 +783,12 @@ tests/
     var b = e.target.closest("[data-chip]"); if (!b) return;
     state.q = state.q.trim() === b.dataset.chip ? "" : b.dataset.chip; qEl.value = state.q; render();
   });
-  filtersEl.addEventListener("click", function (e) {
+  function onFilter(e) {
     var b = e.target.closest("[data-f]"); if (!b) return;
-    state.f = b.dataset.f; try { localStorage.setItem("dp-guide-filter", state.f); } catch (err) {} render();
-  });
+    state.f = b.dataset.f; render();
+  }
+  filtersEl.addEventListener("click", onFilter);
+  resEl.addEventListener("click", onFilter);
   render();
 
   // Self-check list (per-viewer convenience only)
