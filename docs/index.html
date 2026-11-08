@@ -4,7 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Python 设计模式在线指南</title>
-<meta name="description" content="《Python 设计模式：从问题到方案》在线阅读指南：方法、34 章路线图、从问题查找模式、章节标准与事实约定。">
+<meta name="description" content="《Python 设计模式：从问题到方案》在线阅读指南：方法、34 章路线图、按问题查找章节、工厂方法推导示范、写作与审稿规范。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Python 设计模式：从问题到方案 · 在线指南">
+<meta property="og:description" content="不从模式名称开始，而从它要解决的问题开始。34 章路线图、按问题查找章节、推导示范与写作规范。">
+<meta property="og:url" content="https://liamamilin.github.io/Python-Design-Patterns/">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316212e'/%3E%3Cpath d='M9 10h9a4 4 0 0 1 0 8h-5v5' fill='none' stroke='%23e8b323' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -69,10 +75,15 @@ p { margin: 0; }
 .topnav-inner { max-width: 1120px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; gap: 16px; height: 56px; }
 .brand { font-family: var(--font-display); font-weight: 900; color: var(--ink); text-decoration: none; white-space: nowrap; }
 .brand span { color: var(--accent); }
-.navlinks { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
+.navlinks { position: relative; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
 .navlinks::-webkit-scrollbar { display: none; }
 .navlinks a { color: var(--ink-soft); text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: .92rem; white-space: nowrap; }
 .navlinks a:hover { background: var(--accent-soft); color: var(--ink); }
+.navlinks a.active { color: var(--ink); background: var(--accent-soft); font-weight: 500; }
+@media (max-width: 960px) {
+  .navlinks { -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); padding-right: 28px; }
+  .navlinks.at-end { -webkit-mask-image: none; mask-image: none; }
+}
 
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 .prose { max-width: 68ch; }
@@ -94,6 +105,8 @@ section.block { padding: 64px 0; border-top: 1px solid var(--line); }
 .pill .dot { width: 8px; height: 8px; border-radius: 50%; }
 .dot.done { background: var(--c-create); }
 .dot.todo { background: var(--mark); }
+.status-row .grp { font-size: .82rem; color: var(--ink-soft); margin-right: -2px; }
+.status-row .sep { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
 .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; }
 .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
 .btn:hover { opacity: .9; }
@@ -222,6 +235,12 @@ mark { background: var(--mark-soft); color: inherit; padding: 0 2px; border-radi
 .codebox pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-family: var(--font-mono); font-size: .84rem; line-height: 1.6; }
 .codebox .out { border-top: 1px dashed var(--line); padding: 8px 16px; font-family: var(--font-mono); font-size: .8rem; color: var(--ink-soft); background: var(--paper); white-space: pre-wrap; }
 .codebox .out b { color: var(--c-create); font-weight: 600; margin-right: 8px; }
+.tk-kw { color: var(--c-struct); font-weight: 600; }
+.tk-str { color: var(--c-create); }
+.tk-com { color: var(--ink-soft); font-style: italic; }
+.tk-def { color: var(--accent); font-weight: 600; }
+.tk-deco, .tk-bi { color: var(--c-behav); }
+.hint { grid-column: 1 / -1; padding: 18px 20px; border: 1px dashed var(--line); border-radius: 10px; color: var(--ink-soft); font-size: .95rem; }
 .pull { margin-top: 8px; padding: 18px 22px; border-left: 4px solid var(--mark); background: var(--surface); border-radius: 0 8px 8px 0; max-width: 68ch; font-size: 1.05rem; }
 
 /* writing */
@@ -231,6 +250,19 @@ th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--li
 th { font-size: .82rem; color: var(--ink-soft); font-weight: 500; background: var(--paper); }
 tr:last-child td { border-bottom: 0; }
 tr.hl td { background: var(--mark-soft); }
+@media (max-width: 600px) {
+  table, tbody, tr, td { display: block; }
+  table { min-width: 0; }
+  thead { display: none; }
+  tr { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  tr:last-child { border-bottom: 0; }
+  tr.hl { background: var(--mark-soft); }
+  tr.hl td { background: transparent; }
+  td { border: 0; padding: 0; }
+  td:first-child { font-weight: 700; margin-bottom: 2px; }
+  td:nth-child(2)::before { content: "典型："; color: var(--ink-soft); }
+  td:nth-child(3) { color: var(--ink-soft); font-size: .88rem; }
+}
 .compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
 .compare > div { padding: 16px 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
 .compare .bad { border-left: 4px solid var(--c-behav); }
@@ -285,10 +317,13 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <p class="sub">理解设计模式为什么存在、何时使用，以及 Python 还能怎样做。</p>
   <blockquote>这不是一本让人背诵 23 个设计模式的书，而是一本让读者学会判断：面对具体的程序问题，是否需要一个模式，以及为什么。</blockquote>
   <div class="status-row" aria-label="项目状态">
+    <span class="grp">已完成</span>
     <span class="pill"><span class="dot done"></span>全书蓝图</span>
     <span class="pill"><span class="dot done"></span>写作与审稿指南</span>
     <span class="pill"><span class="dot done"></span>工厂方法推导示范</span>
-    <span class="pill"><span class="dot todo"></span>正文初稿尚未开始</span>
+    <span class="sep" aria-hidden="true"></span>
+    <span class="grp">未开始</span>
+    <span class="pill"><span class="dot todo"></span>正文初稿</span>
   </div>
   <div class="cta">
     <a class="btn" href="#lookup">从你的问题开始</a>
@@ -328,6 +363,23 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
       <li><span class="q">Q5</span><span>新方案把变化集中到了哪里？引入了什么额外成本？</span></li>
     </ol>
     <p class="arrow-note prose">「数据与处理」是思考的起点，不是说所有程序问题都能还原成两个标签。阅读时还要留意时间、状态、副作用、外部系统、错误处理、性能、并发，以及团队之间的协作。</p>
+
+    <div class="two" style="margin-top:48px">
+      <div>
+        <h3>读者需要什么</h3>
+        <p class="lead">能读懂变量、条件判断、循环、函数与最基本的类即可，不要求学过软件架构或 UML。每一章尽量能独立阅读；必须用到的新概念，先用普通语言解释，再引入术语。</p>
+      </div>
+      <div>
+        <h3>读完之后，你应该能够</h3>
+        <ul class="ticks">
+          <li>说清一段代码表示了什么数据、谁负责处理、哪些地方会变化</li>
+          <li>用最简单的 Python 实现原始需求</li>
+          <li>通过可观察的新需求定位真实困难（重复修改、多处分支、接口不兼容），而不是凭空宣布“耦合高”</li>
+          <li>对照困难选择模式或更简洁的 Python 替代，并说明代价</li>
+          <li>为选择写小测试，知道何时撤回不必要的抽象</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -351,7 +403,7 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <div class="wrap">
     <span class="eyebrow">03 · 按问题查找</span>
     <h2 id="lookup-h">先说困难，再找章节</h2>
-    <p class="lead prose">输入你在代码里遇到的麻烦，比如“接口不一致”“判断”“撤销”，下面会列出讨论这个困难的章节。结果只是阅读入口，选不选模式要读完那一章的“代价与边界”再决定。</p>
+    <p class="lead prose">输入你在代码里遇到的麻烦，比如“接口不一致”“判断”“撤销”，下面会列出讨论这个困难的章节。结果只是阅读入口，要不要用模式，读完那一章的“代价与边界”再决定。</p>
 
     <div class="lookup">
       <label for="q">我遇到的问题是……</label>
@@ -370,7 +422,8 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <div class="wrap">
     <span class="eyebrow">04 · 推导示范</span>
     <h2 id="walkthrough-h">为什么会需要“工厂”？</h2>
-    <p class="lead prose">仓库里的 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/samples/factory-method-walkthrough.md">工厂方法推导示范</a> 展示了全书的思考过程：同一个发送通知的小工具，需求变了四次，每一次先问“现在的写法还好用吗”。它不是第 05 章的完成稿，也不是要证明工厂方法胜过简单函数。下面每段代码都按顺序实际运行过，输出与注释一致。</p>
+    <p class="lead prose">仓库里的 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/samples/factory-method-walkthrough.md">工厂方法推导示范</a> 展示了全书的思考过程：同一个发送通知的小工具经历四个阶段，需求每变一次，先问“现在的写法还好用吗”。它不是第 05 章的完成稿，也不是要证明工厂方法胜过简单函数。</p>
+    <p class="arrow-note prose">后面的代码沿用前面定义的类。四段代码按顺序拼在一起，已在 Python 3.11 和 3.12 下实际运行，结果与每段下方列出的输出一致。</p>
 
     <ol class="timeline">
       <li class="stage">
@@ -469,7 +522,7 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
   <div class="wrap">
     <span class="eyebrow">05 · 每个模式章的结构</span>
     <h2 id="standard-h">每章八问</h2>
-    <p class="lead prose">每个模式章都按这八个部分回答问题。不同模式可以调整讲述顺序与细节，但不会省略“为什么”和“何时不用”（下方高亮两项）。</p>
+    <p class="lead prose">每个模式章都要完整回答下面八个问题。它们是检查清单，不要求每章出现八个同名标题；不同模式可以调整讲述顺序与细节，但不能省略“为什么”和“何时不用”（高亮的两项）。</p>
     <div class="std">
       <div><span class="i">1</span><b>眼前的任务</b><p>具体人物、情境、输入和输出，一眼能看懂。</p></div>
       <div><span class="i">2</span><b>零模式方案</b><p>尽量少的可运行 Python，先说明它已经能解决当前问题。</p></div>
@@ -480,23 +533,7 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
       <div><span class="i">7</span><b>Python 角度</b><p>函数、数据类、内置协议或库能否更简洁？更简洁就坦然承认。</p></div>
       <div><span class="i">8</span><b>迁移练习</b><p>新的具体情境，让读者自己判断是否用模式；给思路，不给唯一答案。</p></div>
     </div>
-
-    <div class="two">
-      <div>
-        <h3>读者需要什么</h3>
-        <p class="lead">能读懂变量、条件判断、循环、函数与最基本的类即可。不要求学过软件架构或 UML。每一章尽量能独立阅读；必须用到的新概念，先用普通语言解释，再引入术语。</p>
-      </div>
-      <div>
-        <h3>读完之后，你应该能够</h3>
-        <ul class="ticks">
-          <li>说清一段代码表示了什么数据、谁负责处理、哪些地方会变化</li>
-          <li>用最简单的 Python 实现原始需求</li>
-          <li>通过可观察的新需求定位真实困难（重复修改、多处分支、接口不兼容），而不是凭空宣布“耦合高”</li>
-          <li>对照困难选择模式或更简洁的 Python 替代，并说明代价</li>
-          <li>为选择写小测试，知道何时撤回不必要的抽象</li>
-        </ul>
-      </div>
-    </div>
+    <p class="arrow-note prose">每章末还有简短小结，以及一道可以判断“用还是不用”的具体思考练习。</p>
   </div>
 </section>
 
@@ -732,7 +769,7 @@ tests/
   // Lookup
   var CHIPS = ["判断", "接口不一致", "通知", "撤销", "状态", "复制", "全局唯一", "组合爆炸", "层次结构", "缓存", "分步骤", "一组对象", "共享", "顺序", "规则语言", "函数"];
   var FILTERS = [["all", "全部"], ["create", "创建型"], ["struct", "结构型"], ["behav", "行为型"], ["other", "非 GoF"]];
-  var state = { q: "", f: "all" };
+  var state = { q: "判断", f: "all" };
   try { localStorage.removeItem("dp-guide-filter"); } catch (e) {}
 
   var qEl = document.getElementById("q"), chipsEl = document.getElementById("chips"),
@@ -765,6 +802,12 @@ tests/
     var list = all.filter(function (c) { return inCat(c) && hit(c); });
     var hiddenByCat = all.filter(function (c) { return !inCat(c) && hit(c); }).length;
     var catName = (FILTERS.filter(function (f) { return f[0] === state.f; })[0] || ["", ""])[1];
+    if (!terms.length && state.f === "all") {
+      resEl.innerHTML = '<div class="hint">输入关键词，或点选上面的常见困难。想按顺序浏览全部 34 章，请看 <a href="#roadmap">路线图</a>；也可以点选一个类别，列出该类别的全部章节。</div>';
+      metaEl.textContent = "还没有输入问题";
+      syncPressed();
+      return;
+    }
     resEl.innerHTML = list.length ? list.map(function (c) {
       return '<a class="card k-' + c.kind + '" href="#ch-' + c.num + '"><div class="top"><span>第 ' + c.num + ' 章</span><span>' + KIND_LABEL[c.kind] + '</span></div>' +
         '<h3>' + hl(c.title, terms) + (c.en ? ' <span class="en" style="font-family:var(--font-mono);font-weight:400;font-size:.8rem;color:var(--ink-soft)">' + hl(c.en, terms) + '</span>' : '') + '</h3>' +
@@ -773,7 +816,10 @@ tests/
       ? '<div class="empty">“' + esc(catName) + '”里没有讨论“' + esc(state.q.trim()) + '”的章节，其他类别中有 ' + hiddenByCat + ' 章。<br><button type="button" class="chip" data-f="all" style="margin-top:10px">在全部类别中查找</button></div>'
       : '<div class="empty">没有章节直接讨论“' + esc(state.q.trim()) + '”。换一个更具体的说法试试，例如描述代码里重复出现的修改。</div>');
     var scope = state.f === "all" ? "" : "（仅" + catName + "）";
-    metaEl.textContent = terms.length ? ("“" + state.q.trim() + "”相关" + scope + "：" + list.length + " 章") : ("共 " + list.length + " 章" + scope + "，输入关键词或点选常见困难");
+    metaEl.textContent = terms.length ? ("“" + state.q.trim() + "”相关" + scope + "：" + list.length + " 章") : ("共 " + list.length + " 章" + scope + "，输入关键词可进一步缩小范围");
+    syncPressed();
+  }
+  function syncPressed() {
     Array.prototype.forEach.call(chipsEl.children, function (b) { b.setAttribute("aria-pressed", String(state.q.trim() === b.dataset.chip)); });
     Array.prototype.forEach.call(filtersEl.querySelectorAll("[data-f]"), function (b) { b.setAttribute("aria-pressed", String(state.f === b.dataset.f)); });
   }
@@ -789,7 +835,65 @@ tests/
   }
   filtersEl.addEventListener("click", onFilter);
   resEl.addEventListener("click", onFilter);
+  qEl.value = state.q;
   render();
+
+  // Python syntax highlighting for the walkthrough code
+  var PY = /("""[\s\S]*?"""|[fbr]?"(?:[^"\\\n]|\\.)*")|(#[^\n]*)|(@\w+)|\b(def|class)(\s+)(\w+)|\b(from|import|return|if|elif|else|try|except|raise|None|True|False|and|or|not|in|is|for|while|with|as|pass)\b|\b(print|self|str|ValueError|KeyError|ABC|abstractmethod)\b/g;
+  Array.prototype.forEach.call(document.querySelectorAll(".codebox pre"), function (pre) {
+    var src = pre.textContent, out = "", last = 0, m;
+    PY.lastIndex = 0;
+    while ((m = PY.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="tk-str">' + esc(m[1]) + "</span>";
+      else if (m[2]) out += '<span class="tk-com">' + esc(m[2]) + "</span>";
+      else if (m[3]) out += '<span class="tk-deco">' + esc(m[3]) + "</span>";
+      else if (m[4]) out += '<span class="tk-kw">' + m[4] + "</span>" + m[5] + '<span class="tk-def">' + esc(m[6]) + "</span>";
+      else if (m[7]) out += '<span class="tk-kw">' + m[7] + "</span>";
+      else if (m[8]) out += '<span class="tk-bi">' + m[8] + "</span>";
+      last = PY.lastIndex;
+    }
+    pre.innerHTML = out + esc(src.slice(last));
+  });
+
+  // Jump to a deep link such as #ch-17 once the roadmap has been rendered
+  function goHash() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    if (el) el.scrollIntoView({ block: "start" });
+  }
+  if (location.hash) {
+    var html0 = document.documentElement, sb = html0.style.scrollBehavior;
+    html0.style.scrollBehavior = "auto";
+    goHash();
+    var landed = window.scrollY;
+    html0.style.scrollBehavior = sb;
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        if (Math.abs(window.scrollY - landed) < 4) { html0.style.scrollBehavior = "auto"; goHash(); html0.style.scrollBehavior = sb; }
+      });
+    }
+  }
+
+  // Highlight the nav link of the section being read
+  var nav = document.querySelector(".navlinks");
+  var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+  var byId = {};
+  links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
+  function setActive(id) {
+    links.forEach(function (a) { a.classList.toggle("active", a === byId[id]); });
+    var a = byId[id];
+    if (a && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 3, behavior: "smooth" });
+  }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: "-30% 0px -65% 0px" });
+    Object.keys(byId).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+  }
+  function navEdge() { nav.classList.toggle("at-end", nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 4); }
+  nav.addEventListener("scroll", navEdge, { passive: true });
+  navEdge();
 
   // Self-check list (per-viewer convenience only)
   var boxes = document.querySelectorAll("#checklist input[type=checkbox]");
