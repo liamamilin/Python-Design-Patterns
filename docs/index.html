@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python 设计模式在线指南</title>
+<meta name="description" content="《Python 设计模式：从问题到方案》在线阅读指南：方法、34 章路线图、从问题查找模式、章节标准与事实约定。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a field manual. Left margin carries chapter numbers like a printed book's running index;
+   content reads as a single 68ch column, the roadmap and lookup widen to a grid. */
+:root {
+  --ink: #16212e;
+  --ink-soft: #4a5868;
+  --paper: #f4f6f8;
+  --surface: #ffffff;
+  --line: #d6dde5;
+  --accent: #1d5f8a;
+  --accent-soft: #e2edf5;
+  --mark: #e8b323;
+  --mark-soft: #fbf1d3;
+  --c-create: #2f7d5b;
+  --c-struct: #7a4fa8;
+  --c-behav: #b5542f;
+  --c-py: #1d5f8a;
+  --font-display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --font-body: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #e4eaf0; --ink-soft: #9fadbb; --paper: #0f1720; --surface: #16212c; --line: #2a3846;
+    --accent: #6fb3e0; --accent-soft: #1a3346; --mark: #f0c548; --mark-soft: #3a3118;
+    --c-create: #6cc49c; --c-struct: #b994e0; --c-behav: #ec8f69; --c-py: #6fb3e0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #e4eaf0; --ink-soft: #9fadbb; --paper: #0f1720; --surface: #16212c; --line: #2a3846;
+  --accent: #6fb3e0; --accent-soft: #1a3346; --mark: #f0c548; --mark-soft: #3a3118;
+  --c-create: #6cc49c; --c-struct: #b994e0; --c-behav: #ec8f69; --c-py: #6fb3e0;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.75;
+  -webkit-text-size-adjust: 100%;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; border-radius: 4px; }
+code { font-family: var(--font-mono); font-size: .88em; background: var(--accent-soft); padding: .1em .35em; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.3; margin: 0; }
+h2 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); }
+h3 { font-size: 1.15rem; }
+p { margin: 0; }
+
+/* top nav */
+.topnav {
+  position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.topnav-inner { max-width: 1120px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; gap: 16px; height: 56px; }
+.brand { font-family: var(--font-display); font-weight: 900; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand span { color: var(--accent); }
+.navlinks { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
+.navlinks::-webkit-scrollbar { display: none; }
+.navlinks a { color: var(--ink-soft); text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: .92rem; white-space: nowrap; }
+.navlinks a:hover { background: var(--accent-soft); color: var(--ink); }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+.prose { max-width: 68ch; }
+section.block { padding: 64px 0; border-top: 1px solid var(--line); }
+.eyebrow { font-family: var(--font-mono); font-size: .8rem; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: block; }
+.lead { color: var(--ink-soft); margin-top: 12px; }
+.stack { display: grid; gap: 16px; }
+
+/* hero */
+.hero { padding-top: 64px; padding-bottom: 56px; }
+.hero h1 { font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); font-weight: 900; letter-spacing: -.01em; }
+.hero .sub { font-size: 1.1rem; color: var(--ink-soft); margin-top: 14px; max-width: 46ch; }
+.hero blockquote {
+  margin: 28px 0 0; padding: 18px 22px; border-left: 4px solid var(--mark); background: var(--surface);
+  max-width: 62ch; font-size: 1.08rem; border-radius: 0 8px 8px 0;
+}
+.status-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: .85rem; border: 1px solid var(--line); background: var(--surface); }
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot.done { background: var(--c-create); }
+.dot.todo { background: var(--mark); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn:hover { opacity: .9; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: 40px; }
+.stat { background: var(--surface); padding: 16px 18px; }
+.stat b { display: block; font-family: var(--font-mono); font-size: 1.7rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat span { color: var(--ink-soft); font-size: .88rem; }
+@media (max-width: 640px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* steps */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 32px; counter-reset: s; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; position: relative; }
+.step .n { font-family: var(--font-mono); font-size: .8rem; color: var(--accent); }
+.step h3 { margin: 4px 0 8px; }
+.step p { color: var(--ink-soft); font-size: .95rem; }
+.arrow-note { margin-top: 14px; font-size: .9rem; color: var(--ink-soft); }
+@media (max-width: 860px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
+
+.questions { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 10px; max-width: 72ch; }
+.questions li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: baseline; padding: 12px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.questions li .q { font-family: var(--font-mono); color: var(--accent); font-weight: 600; }
+.questions li.key { border-color: var(--mark); background: var(--mark-soft); }
+
+/* roadmap */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; font-size: .88rem; color: var(--ink-soft); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.part { margin-top: 40px; }
+.part-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding-bottom: 10px; border-bottom: 2px solid var(--ink); }
+.part-head .pn { font-family: var(--font-mono); font-size: .85rem; color: var(--ink-soft); }
+.part-head .pc { font-size: .85rem; color: var(--ink-soft); margin-left: auto; }
+.part-note { font-size: .92rem; color: var(--ink-soft); margin-top: 10px; max-width: 72ch; }
+.ch-list { list-style: none; margin: 0; padding: 0; }
+.ch {
+  display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 4px 16px; padding: 14px 0;
+  border-bottom: 1px solid var(--line); scroll-margin-top: 72px;
+}
+.ch:target { background: var(--mark-soft); }
+.ch .num { font-family: var(--font-mono); font-weight: 600; font-size: 1.15rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; padding-top: 1px; }
+.ch .num a { color: inherit; text-decoration: none; }
+.ch .num a:hover { color: var(--accent); }
+.ch .t { font-weight: 700; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.ch .en { font-family: var(--font-mono); font-weight: 400; font-size: .82rem; color: var(--ink-soft); }
+.ch .tag { font-size: .72rem; padding: 1px 8px; border-radius: 999px; font-weight: 500; border: 1px solid currentColor; }
+.ch .d { grid-column: 2; color: var(--ink-soft); font-size: .95rem; }
+.cat-create { color: var(--c-create); } .cat-struct { color: var(--c-struct); } .cat-behav { color: var(--c-behav); } .cat-py { color: var(--c-py); } .cat-base { color: var(--ink-soft); }
+.ch { border-left: 3px solid transparent; padding-left: 10px; }
+.ch.k-create { border-left-color: var(--c-create); }
+.ch.k-struct { border-left-color: var(--c-struct); }
+.ch.k-behav { border-left-color: var(--c-behav); }
+.check { margin-top: 20px; padding: 14px 18px; background: var(--accent-soft); border-radius: 8px; font-size: .93rem; max-width: 80ch; }
+
+/* lookup */
+.lookup { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.lookup label { font-weight: 700; display: block; margin-bottom: 8px; }
+.search { width: 100%; font: inherit; font-size: 1.05rem; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip { font: inherit; font-size: .88rem; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); align-items: center; }
+.filters .lbl { font-size: .85rem; color: var(--ink-soft); margin-right: 4px; }
+.results-meta { margin-top: 16px; font-size: .88rem; color: var(--ink-soft); }
+.results { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 12px; }
+.card { display: block; text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; border-top: 3px solid var(--line); }
+.card:hover { border-color: var(--accent); }
+.card.k-create { border-top-color: var(--c-create); } .card.k-struct { border-top-color: var(--c-struct); } .card.k-behav { border-top-color: var(--c-behav); } .card.k-py { border-top-color: var(--c-py); }
+.card .top { display: flex; justify-content: space-between; gap: 8px; font-family: var(--font-mono); font-size: .8rem; color: var(--ink-soft); }
+.card h3 { font-size: 1.05rem; margin: 6px 0; font-family: var(--font-body); font-weight: 700; }
+.card p { font-size: .9rem; color: var(--ink-soft); line-height: 1.6; }
+mark { background: var(--mark-soft); color: inherit; padding: 0 2px; border-radius: 2px; box-shadow: inset 0 -2px 0 var(--mark); }
+.empty { padding: 20px; text-align: center; color: var(--ink-soft); grid-column: 1 / -1; }
+
+/* standard */
+.std { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin-top: 28px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--line); gap: 1px; }
+.std div { background: var(--surface); padding: 18px 20px; display: grid; grid-template-columns: 36px 1fr; gap: 4px 12px; }
+.std .i { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 600; color: var(--accent); grid-row: span 2; line-height: 1.2; }
+.std b { display: block; }
+.std p { color: var(--ink-soft); font-size: .93rem; }
+.std .must { background: var(--mark-soft); }
+@media (max-width: 720px) { .std { grid-template-columns: 1fr; } }
+
+/* accuracy */
+.rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 28px; }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.rule h3 { font-size: 1rem; font-family: var(--font-body); font-weight: 700; display: flex; gap: 8px; align-items: center; }
+.rule p { color: var(--ink-soft); font-size: .92rem; margin-top: 6px; }
+.neq { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px; }
+.neq span { font-family: var(--font-mono); font-size: .85rem; padding: 8px 12px; background: var(--surface); border: 1px dashed var(--c-behav); border-radius: 8px; }
+
+/* reader / bounds */
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin-top: 28px; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+.ticks { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+.ticks li { padding-left: 22px; position: relative; color: var(--ink-soft); }
+.ticks li::before { content: ""; position: absolute; left: 2px; top: .7em; width: 10px; height: 2px; background: var(--accent); }
+
+/* case study */
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 20px; font-family: var(--font-mono); font-size: .9rem; }
+.flow span { padding: 8px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.flow i { font-style: normal; color: var(--ink-soft); }
+
+/* repo */
+.repo-files { margin-top: 24px; display: grid; gap: 10px; max-width: 760px; }
+.file { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; align-items: center; }
+.file a { font-family: var(--font-mono); font-weight: 600; }
+.file p { grid-column: 1 / -1; color: var(--ink-soft); font-size: .92rem; }
+.file .st { font-size: .78rem; color: var(--ink-soft); }
+
+/* walkthrough */
+.timeline { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 0; }
+.stage { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 0 18px; position: relative; padding-bottom: 32px; }
+.stage::before { content: ""; position: absolute; left: 21px; top: 44px; bottom: 0; width: 2px; background: var(--line); }
+.stage:last-child::before { display: none; }
+.stage .dotn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--accent); display: grid; place-items: center; font-family: var(--font-mono); font-weight: 600; color: var(--accent); background: var(--surface); }
+.stage.gof .dotn { border-color: var(--c-create); color: var(--c-create); }
+.stage-body { min-width: 0; display: grid; gap: 10px; }
+.stage-body h3 { padding-top: 8px; }
+.stage-body .why { color: var(--ink-soft); max-width: 68ch; }
+.verdict { display: inline-flex; align-self: start; justify-self: start; font-size: .82rem; padding: 3px 10px; border-radius: 6px; font-weight: 500; }
+.verdict.ok { background: var(--accent-soft); color: var(--accent); }
+.verdict.gof { background: color-mix(in srgb, var(--c-create) 15%, transparent); color: var(--c-create); }
+.codebox { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); max-width: 760px; }
+.codebox pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-family: var(--font-mono); font-size: .84rem; line-height: 1.6; }
+.codebox .out { border-top: 1px dashed var(--line); padding: 8px 16px; font-family: var(--font-mono); font-size: .8rem; color: var(--ink-soft); background: var(--paper); white-space: pre-wrap; }
+.codebox .out b { color: var(--c-create); font-weight: 600; margin-right: 8px; }
+.pull { margin-top: 8px; padding: 18px 22px; border-left: 4px solid var(--mark); background: var(--surface); border-radius: 0 8px 8px 0; max-width: 68ch; font-size: 1.05rem; }
+
+/* writing */
+.table-wrap { overflow-x: auto; margin-top: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: .93rem; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .82rem; color: var(--ink-soft); font-weight: 500; background: var(--paper); }
+tr:last-child td { border-bottom: 0; }
+tr.hl td { background: var(--mark-soft); }
+.compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.compare > div { padding: 16px 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+.compare .bad { border-left: 4px solid var(--c-behav); }
+.compare .good { border-left: 4px solid var(--c-create); }
+.compare .lbl2 { font-size: .8rem; font-weight: 700; display: block; margin-bottom: 6px; }
+.compare .bad .lbl2 { color: var(--c-behav); } .compare .good .lbl2 { color: var(--c-create); }
+.compare p { color: var(--ink-soft); font-size: .95rem; }
+@media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
+.tree { margin: 0; padding: 14px 16px; font-family: var(--font-mono); font-size: .84rem; line-height: 1.6; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+.cmd { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+.cmd code { font-size: .85rem; padding: 8px 12px; }
+.copy { font: inherit; font-size: .82rem; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.copy:hover { border-color: var(--accent); }
+.checklist { margin-top: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 6px; max-width: 820px; }
+.checklist label { display: grid; grid-template-columns: 22px 1fr; gap: 12px; padding: 10px 14px; border-radius: 8px; cursor: pointer; align-items: start; }
+.checklist label:hover { background: var(--paper); }
+.checklist input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--accent); }
+.checklist input:checked + span { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--line); }
+.cl-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px 6px; border-top: 1px solid var(--line); margin-top: 6px; font-size: .88rem; color: var(--ink-soft); }
+.rounds { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.rounds li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.rounds b { display: block; margin-bottom: 4px; }
+.rounds .rn { font-family: var(--font-mono); font-size: .8rem; color: var(--accent); }
+.rounds p { color: var(--ink-soft); font-size: .92rem; }
+@media (max-width: 760px) { .rounds { grid-template-columns: 1fr; } }
+.sub-h { margin-top: 48px; }
+
+footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .88rem; }
+</style>
+</head>
+<body>
+
+<nav class="topnav" aria-label="页面导航">
+  <div class="topnav-inner">
+    <a class="brand" href="#top">设计模式<span>·</span>指南</a>
+    <div class="navlinks">
+      <a href="#method">方法</a>
+      <a href="#roadmap">路线图</a>
+      <a href="#lookup">按问题查找</a>
+      <a href="#walkthrough">推导示范</a>
+      <a href="#standard">每章八问</a>
+      <a href="#writing">写作与审稿</a>
+      <a href="#accuracy">事实约定</a>
+      <a href="#repo">仓库</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap" id="top">
+  <span class="eyebrow">在线阅读指南 · Python 3.11+</span>
+  <h1>Python 设计模式：<br>从问题到方案</h1>
+  <p class="sub">理解设计模式为什么存在、何时使用，以及 Python 还能怎样做。</p>
+  <blockquote>这不是一本让人背诵 23 个设计模式的书，而是一本让读者学会判断：面对具体的程序问题，是否需要一个模式，以及为什么。</blockquote>
+  <div class="status-row" aria-label="项目状态">
+    <span class="pill"><span class="dot done"></span>全书蓝图</span>
+    <span class="pill"><span class="dot done"></span>写作与审稿指南</span>
+    <span class="pill"><span class="dot done"></span>工厂方法推导示范</span>
+    <span class="pill"><span class="dot todo"></span>正文初稿尚未开始</span>
+  </div>
+  <div class="cta">
+    <a class="btn" href="#lookup">从你的问题开始</a>
+    <a class="btn ghost" href="#roadmap">浏览 34 章路线图</a>
+  </div>
+  <div class="stats" id="stats" aria-label="全书规模">
+    <div class="stat"><b id="st-parts">6</b><span>部分</span></div>
+    <div class="stat"><b id="st-ch">34</b><span>章</span></div>
+    <div class="stat"><b id="st-gof">23</b><span>种 GoF 模式</span></div>
+    <div class="stat"><b>5 · 7 · 11</b><span>创建 · 结构 · 行为</span></div>
+  </div>
+</header>
+
+<main>
+
+<section class="block" id="method" aria-labelledby="method-h">
+  <div class="wrap">
+    <span class="eyebrow">01 · 怎么读这本书</span>
+    <h2 id="method-h">从“能工作”到“能改变”</h2>
+    <p class="lead prose">以「数据与数据的处理」作为思考锚点：程序要表示数据、处理数据。需求变化时，困难往往不在某个运算本身，而在创建方式、变化位置、调用关系、对象协作、状态和处理步骤如何组织。设计模式是针对其中某些反复出现的困难总结出的可选方案。</p>
+
+    <div class="steps">
+      <div class="step"><span class="n">第一步</span><h3>写朴素 Python</h3><p>数据是什么？计算发生在哪里？先用最简单的写法解决当前问题。</p></div>
+      <div class="step"><span class="n">第二步</span><h3>加一个真实新要求</h3><p>哪些部分不得不跟着修改？指出具体代码，而不是空说“扩展性差”。</p></div>
+      <div class="step"><span class="n">第三步</span><h3>判断是否值得</h3><p>修改成本真的值得改变组织方式吗？设计模式是一个选项，不是奖章。</p></div>
+      <div class="step"><span class="n">第四步</span><h3>三方比较</h3><p>直接写法、经典模式、Python 简化写法，用可运行行为和适用边界做出选择。</p></div>
+    </div>
+    <p class="arrow-note">如果第二步没有出现真正的困难，就停在第一步。不强行使用模式。</p>
+
+    <h3 style="margin-top:48px">贯穿全书的五个诊断问题</h3>
+    <p class="lead prose">读任何一章、看任何一段代码时都可以拿出来问一遍。第 3 题是全书的重心。</p>
+    <ol class="questions">
+      <li><span class="q">Q1</span><span>被表示的现实对象、事件或规则是什么？代码用什么数据表示它们？</span></li>
+      <li><span class="q">Q2</span><span>哪些操作对这些数据产生结果？操作会修改什么、输出什么？</span></li>
+      <li class="key"><span class="q">Q3</span><span><strong>什么可能变化？什么不应随之改变？</strong></span></li>
+      <li><span class="q">Q4</span><span>当前最简单的方案在哪里遇到困难？有证据，还是假设？</span></li>
+      <li><span class="q">Q5</span><span>新方案把变化集中到了哪里？引入了什么额外成本？</span></li>
+    </ol>
+    <p class="arrow-note prose">「数据与处理」是思考的起点，不是说所有程序问题都能还原成两个标签。阅读时还要留意时间、状态、副作用、外部系统、错误处理、性能、并发，以及团队之间的协作。</p>
+  </div>
+</section>
+
+<section class="block" id="roadmap" aria-labelledby="roadmap-h">
+  <div class="wrap">
+    <span class="eyebrow">02 · 全书路线图</span>
+    <h2 id="roadmap-h">6 部分，34 章</h2>
+    <p class="lead prose">章号是永久导航锚点，可以直接链接到某一章（例如 <a href="#ch-17"><code>#ch-17</code></a>）。每一行写的是这一章必须回答的问题，或者这个模式是从哪个困难引出的。</p>
+    <div class="legend" aria-label="图例">
+      <span><i class="sw" style="background:var(--c-create)"></i>GoF 创建型</span>
+      <span><i class="sw" style="background:var(--c-struct)"></i>GoF 结构型</span>
+      <span><i class="sw" style="background:var(--c-behav)"></i>GoF 行为型</span>
+      <span><i class="sw" style="background:var(--line)"></i>基础、Python 与综合案例（非 GoF）</span>
+    </div>
+    <div id="parts"></div>
+    <p class="check"><strong>核对：</strong>5 创建型 + 7 结构型 + 11 行为型 = 23 种 GoF 模式。工厂方法 ≠ 简单工厂；抽象工厂 ≠ 工厂方法；Python 的 <code>@</code> 装饰器语法 ≠ 必然采用 GoF 装饰器模式。</p>
+  </div>
+</section>
+
+<section class="block" id="lookup" aria-labelledby="lookup-h">
+  <div class="wrap">
+    <span class="eyebrow">03 · 按问题查找</span>
+    <h2 id="lookup-h">先说困难，再找章节</h2>
+    <p class="lead prose">输入你在代码里遇到的麻烦，比如“接口不一致”“判断”“撤销”，下面会列出讨论这个困难的章节。结果只是阅读入口，选不选模式要读完那一章的“代价与边界”再决定。</p>
+
+    <div class="lookup">
+      <label for="q">我遇到的问题是……</label>
+      <input id="q" class="search" type="search" placeholder="例如：通知、状态、复制、全局唯一、组合爆炸" autocomplete="off">
+      <div class="chips" id="chips" aria-label="常见困难"></div>
+      <div class="filters" id="filters" aria-label="按类别筛选">
+        <span class="lbl">类别</span>
+      </div>
+      <p class="results-meta" id="meta" aria-live="polite"></p>
+      <div class="results" id="results"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="walkthrough" aria-labelledby="walkthrough-h">
+  <div class="wrap">
+    <span class="eyebrow">04 · 推导示范</span>
+    <h2 id="walkthrough-h">为什么会需要“工厂”？</h2>
+    <p class="lead prose">仓库里的 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/samples/factory-method-walkthrough.md">工厂方法推导示范</a> 展示了全书的思考过程：同一个发送通知的小工具，需求变了四次，每一次先问“现在的写法还好用吗”。它不是第 05 章的完成稿，也不是要证明工厂方法胜过简单函数。下面每段代码都按顺序实际运行过，输出与注释一致。</p>
+
+    <ol class="timeline">
+      <li class="stage">
+        <span class="dotn">1</span>
+        <div class="stage-body">
+          <h3>只有邮件一种方式</h3>
+          <p class="why">数据是消息正文和发送方式，处理是选择发送者并生成消息。示例只返回文字，不发送真实邮件。</p>
+          <span class="verdict ok">好代码，没有升级的理由</span>
+          <div class="codebox"><pre>class EmailSender:
+    def send(self, message: str) -&gt; str:
+        return f"Email: {message}"
+
+
+sender = EmailSender()
+print(sender.send("订单已发货"))</pre><div class="out"><b>输出</b>Email: 订单已发货</div></div>
+        </div>
+      </li>
+      <li class="stage">
+        <span class="dotn">2</span>
+        <div class="stage-body">
+          <h3>新增短信：直接判断</h3>
+          <p class="why">只有一个入口、两种方式时，几行 <code>if</code> 判断清楚直接。不要因为出现了两行判断就引入设计模式。</p>
+          <span class="verdict ok">依然是好代码</span>
+          <div class="codebox"><pre>class SmsSender:
+    def send(self, message: str) -&gt; str:
+        return f"SMS: {message}"
+
+
+def notify(channel: str, message: str) -&gt; str:
+    if channel == "email":
+        sender = EmailSender()
+    elif channel == "sms":
+        sender = SmsSender()
+    else:
+        raise ValueError(f"未知渠道: {channel}")
+    return sender.send(message)</pre><div class="out"><b>输出</b>notify("sms", "订单已发货")  →  SMS: 订单已发货</div></div>
+        </div>
+      </li>
+      <li class="stage">
+        <span class="dotn">3</span>
+        <div class="stage-body">
+          <h3>同样的判断出现在多处</h3>
+          <p class="why">“发送每日报告”也写了一套相同的判断。加第三种渠道时要改好几处，还可能漏改。真正的问题是<strong>创建哪种发送者的决定分散在多处</strong>，而不是 <code>if</code> 本身。最朴素的解法是把创建逻辑集中起来。</p>
+          <span class="verdict ok">简单工厂函数，不是 GoF 工厂方法</span>
+          <div class="codebox"><pre>def make_sender(channel: str):
+    senders = {"email": EmailSender, "sms": SmsSender}
+    try:
+        sender_type = senders[channel]
+    except KeyError:
+        raise ValueError(f"未知渠道: {channel}") from None
+    return sender_type()
+
+
+def notify(channel: str, message: str) -&gt; str:
+    return make_sender(channel).send(message)</pre><div class="out"><b>输出</b>make_sender("fax")  →  ValueError: 未知渠道: fax</div></div>
+        </div>
+      </li>
+      <li class="stage gof">
+        <span class="dotn">4</span>
+        <div class="stage-body">
+          <h3>创建决定随任务类型而变</h3>
+          <p class="why">“交易通知”默认用邮件，“紧急通知”默认用短信；这些任务共享同一工作流程。父类固定流程并留出创建入口，由子类决定实例化哪种发送者，这才是 GoF 工厂方法的核心。</p>
+          <span class="verdict gof">GoF 工厂方法 · 第 05 章</span>
+          <div class="codebox"><pre>from abc import ABC, abstractmethod
+
+
+class NotificationJob(ABC):
+    def run(self, message: str) -&gt; str:
+        sender = self.create_sender()
+        return sender.send(message)
+
+    @abstractmethod
+    def create_sender(self):
+        """由不同类型的任务决定使用哪种发送者。"""
+
+
+class TransactionJob(NotificationJob):
+    def create_sender(self):
+        return EmailSender()
+
+
+class UrgentJob(NotificationJob):
+    def create_sender(self):
+        return SmsSender()</pre><div class="out"><b>输出</b>TransactionJob().run("订单已发货")  →  Email: 订单已发货
+UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
+          <p class="why">角色：<strong>产品</strong>是具备 <code>send</code> 能力的发送者；<strong>创建者</strong> <code>NotificationJob</code> 定义流程与 <code>create_sender</code> 入口；<strong>具体创建者</strong> <code>TransactionJob</code>、<code>UrgentJob</code> 决定实例化哪一种。</p>
+        </div>
+      </li>
+    </ol>
+    <p class="why prose" style="color:var(--ink-soft)">如果只有两个场景，任务之间的步骤也没有真正的差异，抽象基类加两个子类反而比两行判断更费解。不需要父类固定流程、不需要子类定制创建行为时，保留简单工厂函数更合适。</p>
+    <p class="pull">模式存在，不代表当前必须采用。先看问题有没有发生，再看模式能否用合理的成本解决问题。</p>
+  </div>
+</section>
+
+<section class="block" id="standard" aria-labelledby="standard-h">
+  <div class="wrap">
+    <span class="eyebrow">05 · 每个模式章的结构</span>
+    <h2 id="standard-h">每章八问</h2>
+    <p class="lead prose">每个模式章都按这八个部分回答问题。不同模式可以调整讲述顺序与细节，但不会省略“为什么”和“何时不用”（下方高亮两项）。</p>
+    <div class="std">
+      <div><span class="i">1</span><b>眼前的任务</b><p>具体人物、情境、输入和输出，一眼能看懂。</p></div>
+      <div><span class="i">2</span><b>零模式方案</b><p>尽量少的可运行 Python，先说明它已经能解决当前问题。</p></div>
+      <div class="must"><span class="i">3</span><b>变化的证据</b><p>增加一条真实要求，指出原方案需要修改的具体代码。</p></div>
+      <div><span class="i">4</span><b>新方案</b><p>参与者与责任如何调整；必要时画出数据流或关系图。</p></div>
+      <div><span class="i">5</span><b>代码与验证</b><p>完整可运行的例子，至少一个成功情况和一个变化情况。</p></div>
+      <div class="must"><span class="i">6</span><b>代价与边界</b><p>额外的类、间接层、状态和测试成本；给出不该用模式的小问题。</p></div>
+      <div><span class="i">7</span><b>Python 角度</b><p>函数、数据类、内置协议或库能否更简洁？更简洁就坦然承认。</p></div>
+      <div><span class="i">8</span><b>迁移练习</b><p>新的具体情境，让读者自己判断是否用模式；给思路，不给唯一答案。</p></div>
+    </div>
+
+    <div class="two">
+      <div>
+        <h3>读者需要什么</h3>
+        <p class="lead">能读懂变量、条件判断、循环、函数与最基本的类即可。不要求学过软件架构或 UML。每一章尽量能独立阅读；必须用到的新概念，先用普通语言解释，再引入术语。</p>
+      </div>
+      <div>
+        <h3>读完之后，你应该能够</h3>
+        <ul class="ticks">
+          <li>说清一段代码表示了什么数据、谁负责处理、哪些地方会变化</li>
+          <li>用最简单的 Python 实现原始需求</li>
+          <li>通过可观察的新需求定位真实困难（重复修改、多处分支、接口不兼容），而不是凭空宣布“耦合高”</li>
+          <li>对照困难选择模式或更简洁的 Python 替代，并说明代价</li>
+          <li>为选择写小测试，知道何时撤回不必要的抽象</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="writing" aria-labelledby="writing-h">
+  <div class="wrap">
+    <span class="eyebrow">06 · 写作与审稿</span>
+    <h2 id="writing-h">给作者的工作手册</h2>
+    <p class="lead prose">摘自 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/WRITING_GUIDE.md">WRITING_GUIDE.md</a>：写给一个聪明、会基本 Python、却不想被术语吓住的读者。先用可观察的事实说话，再引入概念；原则比模板重要，说明白比形式整齐重要。</p>
+
+    <h3 class="sub-h">开头怎么写</h3>
+    <div class="compare">
+      <div class="bad"><span class="lbl2">不合格</span><p>策略模式是一种行为型设计模式，它遵循开闭原则，可以降低耦合，提高可扩展性。</p><p style="margin-top:8px;font-size:.88rem">没有告诉读者问题到底是什么。</p></div>
+      <div class="good"><span class="lbl2">更好</span><p>我们要为订单计算运费。今天只有普通快递，一行函数就能算。明天新增同城急送，加一个判断也完全合理。可如果结算页面、订单管理和批量报价各自维护一套规则，改费率时会漏改哪里？</p></div>
+    </div>
+    <p class="arrow-note prose">然后才引出“把可变化的计算方法放到可替换的位置”，再说明 Strategy 的经典意图，并比较直接传函数是否足够。每章要有不同的变化来源，不要换个名词重复同一个例子。</p>
+
+    <h3 class="sub-h">不要混淆的五个层次</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>层次</th><th>典型项目</th><th>是什么</th></tr></thead>
+        <tbody>
+          <tr><td>基本表达</td><td>数字、变量、判断、循环、函数、类</td><td>编程语言允许我们写什么</td></tr>
+          <tr><td>编程范式</td><td>命令式、过程式、面向对象、函数式</td><td>程序采用什么组织与表达方式</td></tr>
+          <tr class="hl"><td><strong>设计模式</strong></td><td>GoF 工厂方法、策略、代理等</td><td>针对反复出现的设计困难的方案</td></tr>
+          <tr><td>Python 惯用法</td><td>直接传函数、迭代协议、装饰器语法</td><td>Python 语言特性支持的简洁写法</td></tr>
+          <tr><td>更大范围的设计</td><td>分层、消息队列、分布式部署等</td><td>系统级组织问题，本书只在必要处提及</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="arrow-note prose">Python 的 <code>@decorator</code> 是语言机制，GoF Decorator 是角色与职责的组织方式；两者可以相关，但不是同义词。“工厂”在 Python 社区常泛指工厂函数，书中要明确简单工厂与 GoF 工厂方法的差异。</p>
+
+    <h3 class="sub-h">代码与目录约定</h3>
+    <div class="two" style="margin-top:16px">
+      <div>
+        <ul class="ticks">
+          <li>Python 3.11+，标准库优先；不为演示模式引入数据库、云 API、消息平台或环境变量密码</li>
+          <li>每个例子有可理解的输入和可观察的结果；不把 <code>...</code>、<code>pass</code> 或伪代码说成可运行</li>
+          <li>核心例子放在 <code>examples/chXX_&lt;pattern&gt;.py</code>，测试放在 <code>tests/test_chXX_&lt;pattern&gt;.py</code>；书中代码与文件一致</li>
+          <li>文件读写用临时目录；副作用放在 <code>if __name__ == "__main__":</code> 内</li>
+          <li>警惕全局可变状态、可变默认参数、浅深拷贝、迭代耗尽、并发语义和资源释放</li>
+          <li>未经实测不报性能提升百分比；不以类的数量衡量稳定性</li>
+        </ul>
+        <p class="lead" style="margin-top:16px">检验胜过宣称。不存在的测试不得声称通过：</p>
+        <div class="cmd"><code id="cmd-text">python -m unittest discover -s tests -v</code><button type="button" class="copy" id="copy-cmd">复制命令</button></div>
+      </div>
+      <pre class="tree" aria-label="建议的书稿目录结构">book/
+  README.md        # 正文目录、阅读顺序与运行方法
+  part-01/  01-*.md … 04-*.md
+  part-02/  05-*.md … 09-*.md
+  part-03/  10-*.md … 16-*.md
+  part-04/  17-*.md … 27-*.md
+  part-05/  28-*.md … 31-*.md
+  part-06/  32-*.md … 34-*.md
+examples/
+  ch05_factory_method.py
+  …
+tests/
+  test_ch05_factory_method.py
+  …</pre>
+    </div>
+
+    <h3 class="sub-h" id="selfcheck">每章自查题</h3>
+    <p class="lead prose">写完一章后逐项勾选。勾选状态只保存在你自己的浏览器里。</p>
+    <div class="checklist" id="checklist">
+      <label for="sc-1"><input type="checkbox" id="sc-1"><span>如果删掉所有模式名称，读者能否理解这个程序的问题与变化？</span></label>
+      <label for="sc-2"><input type="checkbox" id="sc-2"><span>第一段代码是否真能跑，也确实足够解决第一个需求？</span></label>
+      <label for="sc-3"><input type="checkbox" id="sc-3"><span>能否指出“新需求导致修改了哪几处代码”，而不仅仅说“提高可扩展性”？</span></label>
+      <label for="sc-4"><input type="checkbox" id="sc-4"><span>修改前后是否仍解决同一个任务？如果改变了功能，是否解释清楚？</span></label>
+      <label for="sc-5"><input type="checkbox" id="sc-5"><span>经典模式意图是否准确？Python 版本是否清楚标注取舍？</span></label>
+      <label for="sc-6"><input type="checkbox" id="sc-6"><span>读者是否知道一个不应采用该模式的具体场景？</span></label>
+      <label for="sc-7"><input type="checkbox" id="sc-7"><span>书中代码和仓库代码是否一致，测试是否验证关键行为？</span></label>
+      <label for="sc-8"><input type="checkbox" id="sc-8"><span>交叉引用、名称、图示、命令是否可用？</span></label>
+      <label for="sc-9"><input type="checkbox" id="sc-9"><span>章节最后是否帮助读者建立选择能力，而不仅仅记忆术语？</span></label>
+      <div class="cl-foot"><span id="sc-count">已完成 0 / 9</span><button type="button" class="copy" id="sc-reset">全部清空</button></div>
+    </div>
+
+    <h3 class="sub-h">全书三轮审校</h3>
+    <ol class="rounds">
+      <li><span class="rn">第一轮</span><b>概念审校</b><p>覆盖 23 个 GoF 模式；经典定义、分类、相互区别以及 Python 特例正确。</p></li>
+      <li><span class="rn">第二轮</span><b>实践审校</b><p>运行所有示例与自动化测试；示例确实证明其声称的行为和限制。</p></li>
+      <li><span class="rn">第三轮</span><b>读者审校</b><p>术语不漂移；开头不依赖未讲过的概念；删除重复、空话和过度设计。</p></li>
+    </ol>
+    <p class="pull" style="margin-top:28px">最终标准：读者面对陌生的真实代码，会先识别数据、处理和变化，再决定是否要一个模式。</p>
+  </div>
+</section>
+
+<section class="block" id="accuracy" aria-labelledby="accuracy-h">
+  <div class="wrap">
+    <span class="eyebrow">07 · 事实准确性约定</span>
+    <h2 id="accuracy-h">容易讲错的地方</h2>
+    <p class="lead prose">先忠实描述 GoF 的经典意图，再说明 Python 中可以怎样变形，不把个人偏好当成经典定义。下面几条是全书统一遵守的约定。</p>
+    <div class="rules">
+      <div class="rule"><h3><span class="cat-create">●</span>工厂</h3><p>简单工厂函数通常不是 GoF 23 个独立模式之一。工厂方法的经典定义涉及把创建延迟到子类。</p></div>
+      <div class="rule"><h3><span class="cat-create">●</span>单例</h3><p>不对“线程安全”“全局唯一”做超出示例前提的绝对承诺；对象唯一性、配置生命周期、并发进程语境分开讨论。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span>观察者</h3><p>通知顺序、异常传播和生命周期要说明假设；小示例不能自称可靠的事件系统。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span>命令</h3><p>撤销、幂等、重试分别讨论；现实中的副作用不一定可逆。</p></div>
+      <div class="rule"><h3><span class="cat-struct">●</span>享元</h3><p>只在大量可重复数据时才有价值；最好给出可测的内存或对象数量差异，不杜撰性能结论。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span>迭代器</h3><p>Python 已有内建迭代协议；要讲 GoF 迭代器的存在理由，以及它与 <code>iter()</code>、<code>next()</code>、生成器的关系。</p></div>
+      <div class="rule"><h3><span class="cat-struct">●</span>装饰器</h3><p>GoF 装饰器侧重动态包装对象职责；Python 函数装饰器可能体现类似思想，但用了 <code>@</code> 不等于采用了这个模式。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span>解释器</h3><p>只处理受控的极小语法；不能用 <code>eval</code> 执行未受信任的输入。</p></div>
+      <div class="rule"><h3><span class="cat-py">●</span>Python 代码</h3><p>示例声称的结果都必须能实际运行或被测试验证。以 Python 3.11+ 为目标，优先标准库，无 API 密钥、无网络依赖，基础校验优先 <code>unittest</code>。</p></div>
+    </div>
+    <div class="neq" aria-label="不要混为一类">
+      <span>编程范式 ≠ 设计模式</span>
+      <span>架构模式 ≠ GoF 设计模式</span>
+      <span>语言语法 ≠ 设计模式</span>
+      <span>用了模式 ≠ 一定更好</span>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="case" aria-labelledby="case-h">
+  <div class="wrap">
+    <span class="eyebrow">08 · 贯穿案例</span>
+    <h2 id="case-h">一个本地可运行的数据导入小工具</h2>
+    <p class="lead prose">第六部分（第 32–34 章）用同一个小工具把选择放回真实项目：先有不使用模式、带测试的朴素版，再由新格式、新校验规则、新输出接口这类明确需求驱动演进。只从标准库起步，不依赖真实网络或生产数据库，也不为了凑齐 23 种模式而强行使用。朴素版应是一个合适的小程序，不会被故意写成灾难来衬托重构。</p>
+    <div class="flow" aria-label="数据导入流程">
+      <span>CSV / JSON</span><i>→</i><span>校验</span><i>→</i><span>处理</span><i>→</i><span>输出结果</span>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="repo" aria-labelledby="repo-h">
+  <div class="wrap">
+    <span class="eyebrow">09 · 仓库与参与</span>
+    <h2 id="repo-h">项目文件</h2>
+    <p class="lead prose">仓库把“书的写作规格”和“正式书稿”分开：规划文件约束方向，正文可以在具体问题和实例上持续改进。当前已完成定位、全书规划、写作依据和一篇推导示范，正文初稿尚未开始。</p>
+    <div class="repo-files">
+      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/README.md">README.md</a><span class="st">项目入口</span><p>本书定位、基本方法、内容范围和当前状态。</p></div>
+      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/BOOK_PLAN.md">BOOK_PLAN.md</a><span class="st">全书基准</span><p>本书目标、写作边界、34 章目录与逐章问题清单、章节标准和事实准确性约定。</p></div>
+      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/WRITING_GUIDE.md">WRITING_GUIDE.md</a><span class="st">写作规范</span><p>写作声音、讲解路径、概念分层、代码规范、例子设计原则、目录命名、每章自查题和三轮审校。</p></div>
+      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/samples/factory-method-walkthrough.md">samples/factory-method-walkthrough.md</a><span class="st">写作示范</span><p>从“不需要模式”推导到“什么时候值得考虑工厂方法”的思考过程示范，不是第 05 章完成稿。</p></div>
+      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/AGENT_TASK.md">AGENT_TASK.md</a><span class="st">写作任务书</span><p>交给 Codex / Claude Code 撰写全书中文初稿的任务书：必须提交的书稿、示例与测试，推荐工作顺序和重点复核的易错点。</p></div>
+    </div>
+    <div class="cta">
+      <a class="btn" href="https://github.com/liamamilin/Python-Design-Patterns">在 GitHub 上查看仓库</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">《Python 设计模式：从问题到方案》（暂定书名）在线指南 · 内容依据仓库中的 README、BOOK_PLAN、WRITING_GUIDE、AGENT_TASK 与工厂方法示范整理 · 目录可能随写作调整，以仓库为准。</div>
+</footer>
+
+<script>
+(function () {
+  // Source: BOOK_PLAN.md §2. kind: base | create | struct | behav | py | case
+  var PARTS = [
+    { n: "第一部分", title: "为什么需要设计", kind: "base", chapters: [
+      ["01", "从数据与处理理解程序", "", "真实需求如何成为可表达的数据与操作？“输入→处理→结果”何时不足以描述状态和副作用？"],
+      ["02", "当简单代码开始难以改变", "", "重复的判断、共享变化、意外影响和复制粘贴，是怎样逐步出现的？"],
+      ["03", "Python 组织程序的基本工具", "", "函数、类、组合、继承、抽象基类、协议分别解决什么问题？何时函数已足够？"],
+      ["04", "从问题选择模式", "", "范式、设计模式、架构、惯用写法有何不同？怎样用变化和代价而非名称选择？"]
+    ]},
+    { n: "第二部分", title: "创建对象", sub: "GoF 创建型，5 种", kind: "create", chapters: [
+      ["05", "工厂方法", "Factory Method", "创建哪种对象的决定随具体实现而变；先区别简单工厂函数与 GoF 工厂方法。"],
+      ["06", "抽象工厂", "Abstract Factory", "需要创建彼此匹配的一组对象，如何保证同一“家族”内部一致？"],
+      ["07", "建造者", "Builder", "一项复杂结果需要分步骤构建；普通命名参数或 dataclass 何时更简单？"],
+      ["08", "原型", "Prototype", "从一个可配置对象复制出新对象；浅拷贝与深拷贝怎样影响行为？"],
+      ["09", "单例", "Singleton", "真的需要“全局唯一实例”吗？共享实例、模块级对象、依赖传入的权衡是什么？"]
+    ]},
+    { n: "第三部分", title: "组合对象", sub: "GoF 结构型，7 种", kind: "struct", chapters: [
+      ["10", "适配器", "Adapter", "两个已有接口不一致，如何让它们合作而不大规模修改原代码？"],
+      ["11", "桥接", "Bridge", "两个独立变化的维度如何避免类的排列组合爆炸？"],
+      ["12", "组合", "Composite", "如何统一处理单个项目和项目组成的层次结构？"],
+      ["13", "装饰器", "Decorator", "怎样在不修改既有对象接口的情况下逐层叠加职责？与 Python @ 装饰器有何联系与区别？"],
+      ["14", "外观", "Facade", "如何给复杂子系统提供易理解的入口，而不替它承担所有逻辑？"],
+      ["15", "享元", "Flyweight", "当大量对象重复保存同类数据时，哪些部分可以共享？什么情况下根本不值得？"],
+      ["16", "代理", "Proxy", "如何在不改变调用方式的情况下添加访问控制、延迟创建、缓存等中介行为？"]
+    ]},
+    { n: "第四部分", title: "协调处理", sub: "GoF 行为型，11 种", kind: "behav", chapters: [
+      ["17", "策略", "Strategy", "同一任务有多种可替换算法，如何避免一层层判断？直接传函数是否更好？"],
+      ["18", "观察者", "Observer", "一次状态变化需要通知多个使用者，如何降低直接依赖？事件顺序与失败怎么处理？"],
+      ["19", "命令", "Command", "如何把一次操作当作可排队、记录、撤销或重试的对象？并非所有命令都可简单撤销。"],
+      ["20", "状态", "State", "同一对象在不同状态下操作规则不同，如何避免分散的状态判断？"],
+      ["21", "模板方法", "Template Method", "一组处理步骤固定，但个别步骤允许子类调整；与函数组合如何取舍？"],
+      ["22", "责任链", "Chain of Responsibility", "多个处理者按顺序尝试，谁处理、何时停止、错误如何传递？"],
+      ["23", "迭代器", "Iterator", "如何逐项访问数据而不暴露存储细节？Python 迭代协议已经解决了什么？"],
+      ["24", "中介者", "Mediator", "多个对象彼此依赖导致难修改，何时值得将协作集中？"],
+      ["25", "备忘录", "Memento", "如何保存和恢复对象状态，又避免泄露内部细节？"],
+      ["26", "访问者", "Visitor", "数据结构稳定、操作不断增加时，如何管理操作和对象种类的取舍？"],
+      ["27", "解释器", "Interpreter", "面对很小的规则语言，怎样表达并求值语法规则？何时应直接使用成熟解析器？"]
+    ]},
+    { n: "第五部分", title: "回到 Python", sub: "不是另外几种 GoF 模式", kind: "py", chapters: [
+      ["28", "函数就是一种设计工具", "", "可调用对象、高阶函数、闭包、字典分派如何替代小型策略/工厂类？"],
+      ["29", "类型与接口的轻量表达", "", "Protocol、ABC、dataclass、类型标注的作用和局限；不为类型而类型。"],
+      ["30", "Python 装饰器、上下文管理器和生成器", "", "这些语言机制怎样改变经典模式的实现形态？区分模式与语法。"],
+      ["31", "简单代码与模式代码的取舍", "", "从可读性、变化位置、状态、副作用、测试和团队维护比较方案。"]
+    ]},
+    { n: "第六部分", title: "把选择放回真实项目", sub: "贯穿案例：数据导入小工具", kind: "case", chapters: [
+      ["32", "第一次实现：不使用模式", "", "如何先让单一格式导入正确运行并有测试？"],
+      ["33", "需求改变：有选择地重构", "", "新格式、新校验规则、新输出接口出现后，哪里真的痛？选择策略/适配器/工厂或更简单写法，不强行凑齐 23 种。"],
+      ["34", "回顾：能解释自己为什么这样写", "", "展示两种可行设计，如何判断其复杂度与收益？未来需求不同，结论是否变化？"]
+    ]}
+  ];
+  var KIND_LABEL = { create: "创建型", struct: "结构型", behav: "行为型", py: "Python 写法", base: "基础", case: "综合案例" };
+  var GOF = { create: 1, struct: 1, behav: 1 };
+
+  var all = [];
+  PARTS.forEach(function (p) {
+    p.chapters.forEach(function (c) {
+      all.push({ num: c[0], title: c[1], en: c[2], q: c[3], kind: p.kind, part: p.n + " · " + p.title });
+    });
+  });
+
+  function esc(s) { return s.replace(/[&<>"]/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]; }); }
+
+  // Roadmap
+  var partsEl = document.getElementById("parts");
+  var html = "";
+  PARTS.forEach(function (p) {
+    var isGof = GOF[p.kind];
+    html += '<div class="part"><div class="part-head"><span class="pn">' + p.n + '</span><h3>' + esc(p.title) + '</h3>' +
+      (p.sub ? '<span class="pc">' + esc(p.sub) + '</span>' : '<span class="pc">' + p.chapters.length + ' 章</span>') + '</div>';
+    if (p.kind === "case") html += '<p class="part-note">见下方“贯穿案例”：接收 CSV/JSON → 校验 → 处理 → 输出结果。</p>';
+    html += '<ol class="ch-list">';
+    p.chapters.forEach(function (c) {
+      html += '<li class="ch' + (isGof ? ' k-' + p.kind + ' gof' : '') + '" id="ch-' + c[0] + '">' +
+        '<span class="num"><a href="#ch-' + c[0] + '" aria-label="第 ' + c[0] + ' 章链接">' + c[0] + '</a></span>' +
+        '<span class="t">' + esc(c[1]) + (c[2] ? '<span class="en">' + esc(c[2]) + '</span>' : '') +
+        (isGof ? '<span class="tag cat-' + p.kind + '">' + KIND_LABEL[p.kind] + '</span>' : '') + '</span>' +
+        '<span class="d">' + esc(c[3]) + '</span></li>';
+    });
+    html += '</ol></div>';
+  });
+  partsEl.innerHTML = html;
+  document.getElementById("st-ch").textContent = all.length;
+  document.getElementById("st-parts").textContent = PARTS.length;
+  document.getElementById("st-gof").textContent = all.filter(function (c) { return GOF[c.kind]; }).length;
+
+  // Lookup
+  var CHIPS = ["判断", "接口不一致", "通知", "撤销", "状态", "复制", "全局唯一", "组合爆炸", "层次结构", "缓存", "分步骤", "一组对象", "共享", "顺序", "规则语言", "函数"];
+  var FILTERS = [["all", "全部"], ["create", "创建型"], ["struct", "结构型"], ["behav", "行为型"], ["other", "非 GoF"]];
+  var state = { q: "", f: "all" };
+  try { var saved = localStorage.getItem("dp-guide-filter"); if (saved) state.f = saved; } catch (e) {}
+
+  var qEl = document.getElementById("q"), chipsEl = document.getElementById("chips"),
+      filtersEl = document.getElementById("filters"), resEl = document.getElementById("results"), metaEl = document.getElementById("meta");
+
+  chipsEl.innerHTML = CHIPS.map(function (c) { return '<button type="button" class="chip" data-chip="' + c + '" aria-pressed="false">' + c + '</button>'; }).join("");
+  filtersEl.innerHTML += FILTERS.map(function (f) { return '<button type="button" class="chip" data-f="' + f[0] + '" aria-pressed="false">' + f[1] + '</button>'; }).join("");
+
+  function hl(text, terms) {
+    var out = esc(text);
+    terms.forEach(function (t) {
+      if (!t) return;
+      var safe = esc(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      out = out.replace(new RegExp(safe, "gi"), function (m) { return "<mark>" + m + "</mark>"; });
+    });
+    return out;
+  }
+
+  function render() {
+    var terms = state.q.trim().split(/\s+/).filter(Boolean);
+    var list = all.filter(function (c) {
+      if (state.f === "other" && GOF[c.kind]) return false;
+      if (state.f !== "all" && state.f !== "other" && c.kind !== state.f) return false;
+      if (!terms.length) return true;
+      var hay = (c.title + " " + c.en + " " + c.q).toLowerCase();
+      return terms.every(function (t) { return hay.indexOf(t.toLowerCase()) !== -1; });
+    });
+    resEl.innerHTML = list.length ? list.map(function (c) {
+      return '<a class="card k-' + c.kind + '" href="#ch-' + c.num + '"><div class="top"><span>第 ' + c.num + ' 章</span><span>' + KIND_LABEL[c.kind] + '</span></div>' +
+        '<h3>' + hl(c.title, terms) + (c.en ? ' <span class="en" style="font-family:var(--font-mono);font-weight:400;font-size:.8rem;color:var(--ink-soft)">' + hl(c.en, terms) + '</span>' : '') + '</h3>' +
+        '<p>' + hl(c.q, terms) + '</p></a>';
+    }).join("") : '<div class="empty">没有章节直接讨论“' + esc(state.q) + '”。换一个更具体的说法试试，例如描述代码里重复出现的修改。</div>';
+    metaEl.textContent = terms.length ? ("“" + state.q.trim() + "”相关：" + list.length + " 章") : ("共 " + list.length + " 章，输入关键词或点选常见困难");
+    Array.prototype.forEach.call(chipsEl.children, function (b) { b.setAttribute("aria-pressed", String(state.q.trim() === b.dataset.chip)); });
+    Array.prototype.forEach.call(filtersEl.querySelectorAll("[data-f]"), function (b) { b.setAttribute("aria-pressed", String(state.f === b.dataset.f)); });
+  }
+
+  qEl.addEventListener("input", function () { state.q = qEl.value; render(); });
+  chipsEl.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-chip]"); if (!b) return;
+    state.q = state.q.trim() === b.dataset.chip ? "" : b.dataset.chip; qEl.value = state.q; render();
+  });
+  filtersEl.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-f]"); if (!b) return;
+    state.f = b.dataset.f; try { localStorage.setItem("dp-guide-filter", state.f); } catch (err) {} render();
+  });
+  render();
+
+  // Self-check list (per-viewer convenience only)
+  var boxes = document.querySelectorAll("#checklist input[type=checkbox]");
+  var countEl = document.getElementById("sc-count");
+  var KEY = "dp-guide-selfcheck";
+  function saveChecks() {
+    var on = [];
+    Array.prototype.forEach.call(boxes, function (b) { if (b.checked) on.push(b.id); });
+    countEl.textContent = "已完成 " + on.length + " / " + boxes.length;
+    try { localStorage.setItem(KEY, JSON.stringify(on)); } catch (e) {}
+  }
+  try {
+    var prev = JSON.parse(localStorage.getItem(KEY) || "[]");
+    Array.prototype.forEach.call(boxes, function (b) { b.checked = prev.indexOf(b.id) !== -1; });
+  } catch (e) {}
+  Array.prototype.forEach.call(boxes, function (b) { b.addEventListener("change", saveChecks); });
+  document.getElementById("sc-reset").addEventListener("click", function () {
+    Array.prototype.forEach.call(boxes, function (b) { b.checked = false; }); saveChecks();
+  });
+  saveChecks();
+
+  // Copy test command
+  var copyBtn = document.getElementById("copy-cmd");
+  copyBtn.addEventListener("click", function () {
+    var text = document.getElementById("cmd-text").textContent;
+    var done = function () { copyBtn.textContent = "已复制"; setTimeout(function () { copyBtn.textContent = "复制命令"; }, 1600); };
+    try {
+      navigator.clipboard.writeText(text).then(done, function () { copyBtn.textContent = "请手动选择复制"; });
+    } catch (e) { copyBtn.textContent = "请手动选择复制"; }
+  });
+})();
+</script>
+</body>
+</html>

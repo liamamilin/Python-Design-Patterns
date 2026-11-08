@@ -8,6 +8,7 @@
 
 ## 阅读本仓库
 
+- [在线指南](https://liamamilin.github.io/Python-Design-Patterns/)：方法、34 章路线图、按问题查找章节、推导示范与写作规范的网页版（源文件 [docs/index.html](docs/index.html)）。
 - [BOOK_PLAN.md](BOOK_PLAN.md)：本书目标、边界、内容结构及逐章问题清单；**全书内容的基准**。
 - [WRITING_GUIDE.md](WRITING_GUIDE.md)：章节叙述方法、Python 代码质量和审稿标准。
 - [AGENT_TASK.md](AGENT_TASK.md)：直接交给 Codex / Claude Code 的写作任务书。
