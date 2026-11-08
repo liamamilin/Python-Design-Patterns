@@ -29,7 +29,8 @@ python tools/check_links.py
 | 07 | 建造者 | 租房搜索（SQL 与筛选说明） | 完成 | `ch07_search_v1.py`、`ch07_builder.py`、`ch07_pythonic.py` | 通过 |
 | 08 | 原型 | 健身训练计划模板 | 完成 | `ch08_copy_trap.py`、`ch08_prototype.py`、`ch08_pythonic.py` | 通过 |
 | 09 | 单例 | 银行排队取号 | 完成 | `ch09_ticket_v1.py`、`ch09_singleton.py`、`ch09_shared_counter.py`、`ch09_pythonic.py` | 通过 |
-| 10–34 | | | 未开始 | | |
+| 10 | 适配器 | 考勤报表接入云考勤机 | 完成 | `ch10_attendance.py`、`ch10_cloud_sdk.py`、`ch10_report_v1.py`、`ch10_adapter.py`、`ch10_pythonic.py` | 通过 |
+| 11–34 | | | 未开始 | | |
 
 已预留的例子：第 17 章策略用运费计算（AGENT_TASK 的示例）；第六部分（32–34）用数据导入工具。其余章节选用新的领域，不与上表重复。
 

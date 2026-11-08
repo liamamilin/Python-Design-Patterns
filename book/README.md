@@ -45,7 +45,7 @@ python -m examples.ch05_factory_method
 
 ### 第三部分 · 组合对象（GoF 结构型）
 
-- 10 适配器 Adapter（写作中）
+- [10 适配器 Adapter](part-03/10-adapter.md)
 - 11 桥接 Bridge（写作中）
 - 12 组合 Composite（写作中）
 - 13 装饰器 Decorator（写作中）
