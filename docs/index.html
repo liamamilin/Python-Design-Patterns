@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Python 设计模式在线指南</title>
-<meta name="description" content="《Python 设计模式：从问题到方案》在线阅读指南：方法、34 章路线图、按问题查找章节、工厂方法推导示范、写作与审稿规范。">
+<meta name="description" content="《Python 设计模式：从问题到方案》在线阅读指南：读法、34 章路线图、按问题查找章节、一个模式的推导示例和常见易混点。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Python 设计模式：从问题到方案 · 在线指南">
-<meta property="og:description" content="不从模式名称开始，而从它要解决的问题开始。34 章路线图、按问题查找章节、推导示范与写作规范。">
+<meta property="og:description" content="不从模式名称开始，而从它要解决的问题开始。34 章路线图、按问题查找章节、一个模式的推导示例。">
 <meta property="og:url" content="https://liamamilin.github.io/Python-Design-Patterns/">
 <meta name="theme-color" content="#16212e">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316212e'/%3E%3Cpath d='M9 10h9a4 4 0 0 1 0 8h-5v5' fill='none' stroke='%23e8b323' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -90,7 +90,6 @@ p { margin: 0; }
 section.block { padding: 64px 0; border-top: 1px solid var(--line); }
 .eyebrow { font-family: var(--font-mono); font-size: .8rem; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: block; }
 .lead { color: var(--ink-soft); margin-top: 12px; }
-.stack { display: grid; gap: 16px; }
 
 /* hero */
 .hero { padding-top: 64px; padding-bottom: 56px; }
@@ -103,10 +102,7 @@ section.block { padding: 64px 0; border-top: 1px solid var(--line); }
 .status-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; align-items: center; }
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: .85rem; border: 1px solid var(--line); background: var(--surface); }
 .pill .dot { width: 8px; height: 8px; border-radius: 50%; }
-.dot.done { background: var(--c-create); }
 .dot.todo { background: var(--mark); }
-.status-row .grp { font-size: .82rem; color: var(--ink-soft); margin-right: -2px; }
-.status-row .sep { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
 .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 500; }
 .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
 .btn:hover { opacity: .9; }
@@ -159,7 +155,6 @@ section.block { padding: 64px 0; border-top: 1px solid var(--line); }
 .ch.k-create { border-left-color: var(--c-create); }
 .ch.k-struct { border-left-color: var(--c-struct); }
 .ch.k-behav { border-left-color: var(--c-behav); }
-.check { margin-top: 20px; padding: 14px 18px; background: var(--accent-soft); border-radius: 8px; font-size: .93rem; max-width: 80ch; }
 
 /* lookup */
 .lookup { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
@@ -212,11 +207,6 @@ mark { background: var(--mark-soft); color: inherit; padding: 0 2px; border-radi
 .flow i { font-style: normal; color: var(--ink-soft); }
 
 /* repo */
-.repo-files { margin-top: 24px; display: grid; gap: 10px; max-width: 760px; }
-.file { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; align-items: center; }
-.file a { font-family: var(--font-mono); font-weight: 600; }
-.file p { grid-column: 1 / -1; color: var(--ink-soft); font-size: .92rem; }
-.file .st { font-size: .78rem; color: var(--ink-soft); }
 
 /* walkthrough */
 .timeline { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 0; }
@@ -263,31 +253,6 @@ tr.hl td { background: var(--mark-soft); }
   td:nth-child(2)::before { content: "典型："; color: var(--ink-soft); }
   td:nth-child(3) { color: var(--ink-soft); font-size: .88rem; }
 }
-.compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
-.compare > div { padding: 16px 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
-.compare .bad { border-left: 4px solid var(--c-behav); }
-.compare .good { border-left: 4px solid var(--c-create); }
-.compare .lbl2 { font-size: .8rem; font-weight: 700; display: block; margin-bottom: 6px; }
-.compare .bad .lbl2 { color: var(--c-behav); } .compare .good .lbl2 { color: var(--c-create); }
-.compare p { color: var(--ink-soft); font-size: .95rem; }
-@media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
-.tree { margin: 0; padding: 14px 16px; font-family: var(--font-mono); font-size: .84rem; line-height: 1.6; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
-.cmd { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
-.cmd code { font-size: .85rem; padding: 8px 12px; }
-.copy { font: inherit; font-size: .82rem; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
-.copy:hover { border-color: var(--accent); }
-.checklist { margin-top: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 6px; max-width: 820px; }
-.checklist label { display: grid; grid-template-columns: 22px 1fr; gap: 12px; padding: 10px 14px; border-radius: 8px; cursor: pointer; align-items: start; }
-.checklist label:hover { background: var(--paper); }
-.checklist input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--accent); }
-.checklist input:checked + span { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--line); }
-.cl-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px 6px; border-top: 1px solid var(--line); margin-top: 6px; font-size: .88rem; color: var(--ink-soft); }
-.rounds { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.rounds li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
-.rounds b { display: block; margin-bottom: 4px; }
-.rounds .rn { font-family: var(--font-mono); font-size: .8rem; color: var(--accent); }
-.rounds p { color: var(--ink-soft); font-size: .92rem; }
-@media (max-width: 760px) { .rounds { grid-template-columns: 1fr; } }
 .sub-h { margin-top: 48px; }
 
 footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .88rem; }
@@ -302,11 +267,10 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
       <a href="#method">方法</a>
       <a href="#roadmap">路线图</a>
       <a href="#lookup">按问题查找</a>
-      <a href="#walkthrough">推导示范</a>
-      <a href="#standard">每章八问</a>
-      <a href="#writing">写作与审稿</a>
-      <a href="#accuracy">事实约定</a>
-      <a href="#repo">仓库</a>
+      <a href="#walkthrough">推导示例</a>
+      <a href="#standard">每章内容</a>
+      <a href="#accuracy">易混点</a>
+      <a href="#case">贯穿案例</a>
     </div>
   </div>
 </nav>
@@ -316,14 +280,8 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <h1>Python 设计模式：<br>从问题到方案</h1>
   <p class="sub">理解设计模式为什么存在、何时使用，以及 Python 还能怎样做。</p>
   <blockquote>这不是一本让人背诵 23 个设计模式的书，而是一本让读者学会判断：面对具体的程序问题，是否需要一个模式，以及为什么。</blockquote>
-  <div class="status-row" aria-label="项目状态">
-    <span class="grp">已完成</span>
-    <span class="pill"><span class="dot done"></span>全书蓝图</span>
-    <span class="pill"><span class="dot done"></span>写作与审稿指南</span>
-    <span class="pill"><span class="dot done"></span>工厂方法推导示范</span>
-    <span class="sep" aria-hidden="true"></span>
-    <span class="grp">未开始</span>
-    <span class="pill"><span class="dot todo"></span>正文初稿</span>
+  <div class="status-row" aria-label="写作进度">
+    <span class="pill"><span class="dot todo"></span>正文写作中，目录与内容可能调整</span>
   </div>
   <div class="cta">
     <a class="btn" href="#lookup">从你的问题开始</a>
@@ -364,6 +322,21 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
     </ol>
     <p class="arrow-note prose">「数据与处理」是思考的起点，不是说所有程序问题都能还原成两个标签。阅读时还要留意时间、状态、副作用、外部系统、错误处理、性能、并发，以及团队之间的协作。</p>
 
+    <h3 class="sub-h">先分清五个层次</h3>
+    <p class="lead prose">“设计模式”常被和别的东西混为一谈。本书只把第三层叫作设计模式，其他几层会在需要时单独讲。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>层次</th><th>典型例子</th><th>是什么</th></tr></thead>
+        <tbody>
+          <tr><td>基本表达</td><td>数字、变量、判断、循环、函数、类</td><td>编程语言允许我们写什么</td></tr>
+          <tr><td>编程范式</td><td>命令式、过程式、面向对象、函数式</td><td>程序采用什么组织与表达方式</td></tr>
+          <tr class="hl"><td><strong>设计模式</strong></td><td>GoF 工厂方法、策略、代理等</td><td>针对反复出现的设计困难的方案</td></tr>
+          <tr><td>Python 惯用法</td><td>直接传函数、迭代协议、装饰器语法</td><td>Python 语言特性支持的简洁写法</td></tr>
+          <tr><td>更大范围的设计</td><td>分层、消息队列、分布式部署等</td><td>系统级组织问题，本书只在必要处提及</td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="two" style="margin-top:48px">
       <div>
         <h3>读者需要什么</h3>
@@ -387,7 +360,7 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <div class="wrap">
     <span class="eyebrow">02 · 全书路线图</span>
     <h2 id="roadmap-h">6 部分，34 章</h2>
-    <p class="lead prose">章号是永久导航锚点，可以直接链接到某一章（例如 <a href="#ch-17"><code>#ch-17</code></a>）。每一行写的是这一章必须回答的问题，或者这个模式是从哪个困难引出的。</p>
+    <p class="lead prose">每一行写的是这一章要回答的问题，或者这个模式是从哪个困难引出的。点章号可以得到这一章的链接（例如 <a href="#ch-17"><code>#ch-17</code></a>），方便分享。</p>
     <div class="legend" aria-label="图例">
       <span><i class="sw" style="background:var(--c-create)"></i>GoF 创建型</span>
       <span><i class="sw" style="background:var(--c-struct)"></i>GoF 结构型</span>
@@ -395,7 +368,6 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
       <span><i class="sw" style="background:var(--line)"></i>基础、Python 与综合案例（非 GoF）</span>
     </div>
     <div id="parts"></div>
-    <p class="check"><strong>核对：</strong>5 创建型 + 7 结构型 + 11 行为型 = 23 种 GoF 模式。工厂方法 ≠ 简单工厂；抽象工厂 ≠ 工厂方法；Python 的 <code>@</code> 装饰器语法 ≠ 必然采用 GoF 装饰器模式。</p>
   </div>
 </section>
 
@@ -420,10 +392,10 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
 
 <section class="block" id="walkthrough" aria-labelledby="walkthrough-h">
   <div class="wrap">
-    <span class="eyebrow">04 · 推导示范</span>
+    <span class="eyebrow">04 · 推导示例</span>
     <h2 id="walkthrough-h">为什么会需要“工厂”？</h2>
-    <p class="lead prose">仓库里的 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/samples/factory-method-walkthrough.md">工厂方法推导示范</a> 展示了全书的思考过程：同一个发送通知的小工具经历四个阶段，需求每变一次，先问“现在的写法还好用吗”。它不是第 05 章的完成稿，也不是要证明工厂方法胜过简单函数。</p>
-    <p class="arrow-note prose">后面的代码沿用前面定义的类。四段代码按顺序拼在一起，已在 Python 3.11 和 3.12 下实际运行，结果与每段下方列出的输出一致。</p>
+    <p class="lead prose">先看一个缩短的例子，感受本书怎样讲一个模式：同一个发送通知的小工具经历四个阶段，需求每变一次，先问“现在的写法还好用吗”。目的不是证明工厂方法胜过简单函数，而是看清什么时候才轮到它。完整内容见第 05 章。</p>
+    <p class="arrow-note prose">后面的代码沿用前面定义的类。把四段代码按顺序放进同一个文件，就能运行出每段下方的结果。</p>
 
     <ol class="timeline">
       <li class="stage">
@@ -520,121 +492,37 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
 
 <section class="block" id="standard" aria-labelledby="standard-h">
   <div class="wrap">
-    <span class="eyebrow">05 · 每个模式章的结构</span>
-    <h2 id="standard-h">每章八问</h2>
-    <p class="lead prose">每个模式章都要完整回答下面八个问题。它们是检查清单，不要求每章出现八个同名标题；不同模式可以调整讲述顺序与细节，但不能省略“为什么”和“何时不用”（高亮的两项）。</p>
+    <span class="eyebrow">05 · 每个模式章</span>
+    <h2 id="standard-h">每一章你会读到什么</h2>
+    <p class="lead prose">每个模式章都会讲清下面八件事。顺序和篇幅因模式而异，但“为什么需要它”和“什么时候不该用它”（高亮的两项）每章都有。</p>
     <div class="std">
-      <div><span class="i">1</span><b>眼前的任务</b><p>具体人物、情境、输入和输出，一眼能看懂。</p></div>
-      <div><span class="i">2</span><b>零模式方案</b><p>尽量少的可运行 Python，先说明它已经能解决当前问题。</p></div>
-      <div class="must"><span class="i">3</span><b>变化的证据</b><p>增加一条真实要求，指出原方案需要修改的具体代码。</p></div>
-      <div><span class="i">4</span><b>新方案</b><p>参与者与责任如何调整；必要时画出数据流或关系图。</p></div>
-      <div><span class="i">5</span><b>代码与验证</b><p>完整可运行的例子，至少一个成功情况和一个变化情况。</p></div>
-      <div class="must"><span class="i">6</span><b>代价与边界</b><p>额外的类、间接层、状态和测试成本；给出不该用模式的小问题。</p></div>
-      <div><span class="i">7</span><b>Python 角度</b><p>函数、数据类、内置协议或库能否更简洁？更简洁就坦然承认。</p></div>
-      <div><span class="i">8</span><b>迁移练习</b><p>新的具体情境，让读者自己判断是否用模式；给思路，不给唯一答案。</p></div>
+      <div><span class="i">1</span><b>眼前的任务</b><p>一个具体的小场景：谁要做什么，输入和输出是什么。</p></div>
+      <div><span class="i">2</span><b>不用模式的写法</b><p>最简单的可运行 Python，它已经能解决当前问题。</p></div>
+      <div class="must"><span class="i">3</span><b>需求变了</b><p>新增一条真实要求，指出原写法具体要改哪几处代码。</p></div>
+      <div><span class="i">4</span><b>新的组织方式</b><p>谁负责什么发生了哪些调整；必要时配一张数据流或关系图。</p></div>
+      <div><span class="i">5</span><b>代码与验证</b><p>完整可运行的例子，带测试，覆盖原需求和变化后的需求。</p></div>
+      <div class="must"><span class="i">6</span><b>代价与边界</b><p>多出来的类、间接层和测试成本，以及一个不该用这个模式的小问题。</p></div>
+      <div><span class="i">7</span><b>Python 还能怎么写</b><p>函数、数据类、内置协议或标准库能否更简洁？更简洁就直接用。</p></div>
+      <div><span class="i">8</span><b>练习</b><p>换一个新情境，由你判断用还是不用；给出思路，不给唯一答案。</p></div>
     </div>
-    <p class="arrow-note prose">每章末还有简短小结，以及一道可以判断“用还是不用”的具体思考练习。</p>
-  </div>
-</section>
-
-<section class="block" id="writing" aria-labelledby="writing-h">
-  <div class="wrap">
-    <span class="eyebrow">06 · 写作与审稿</span>
-    <h2 id="writing-h">给作者的工作手册</h2>
-    <p class="lead prose">摘自 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/WRITING_GUIDE.md">WRITING_GUIDE.md</a>：写给一个聪明、会基本 Python、却不想被术语吓住的读者。先用可观察的事实说话，再引入概念；原则比模板重要，说明白比形式整齐重要。</p>
-
-    <h3 class="sub-h">开头怎么写</h3>
-    <div class="compare">
-      <div class="bad"><span class="lbl2">不合格</span><p>策略模式是一种行为型设计模式，它遵循开闭原则，可以降低耦合，提高可扩展性。</p><p style="margin-top:8px;font-size:.88rem">没有告诉读者问题到底是什么。</p></div>
-      <div class="good"><span class="lbl2">更好</span><p>我们要为订单计算运费。今天只有普通快递，一行函数就能算。明天新增同城急送，加一个判断也完全合理。可如果结算页面、订单管理和批量报价各自维护一套规则，改费率时会漏改哪里？</p></div>
-    </div>
-    <p class="arrow-note prose">然后才引出“把可变化的计算方法放到可替换的位置”，再说明 Strategy 的经典意图，并比较直接传函数是否足够。每章要有不同的变化来源，不要换个名词重复同一个例子。</p>
-
-    <h3 class="sub-h">不要混淆的五个层次</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>层次</th><th>典型项目</th><th>是什么</th></tr></thead>
-        <tbody>
-          <tr><td>基本表达</td><td>数字、变量、判断、循环、函数、类</td><td>编程语言允许我们写什么</td></tr>
-          <tr><td>编程范式</td><td>命令式、过程式、面向对象、函数式</td><td>程序采用什么组织与表达方式</td></tr>
-          <tr class="hl"><td><strong>设计模式</strong></td><td>GoF 工厂方法、策略、代理等</td><td>针对反复出现的设计困难的方案</td></tr>
-          <tr><td>Python 惯用法</td><td>直接传函数、迭代协议、装饰器语法</td><td>Python 语言特性支持的简洁写法</td></tr>
-          <tr><td>更大范围的设计</td><td>分层、消息队列、分布式部署等</td><td>系统级组织问题，本书只在必要处提及</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="arrow-note prose">Python 的 <code>@decorator</code> 是语言机制，GoF Decorator 是角色与职责的组织方式；两者可以相关，但不是同义词。“工厂”在 Python 社区常泛指工厂函数，书中要明确简单工厂与 GoF 工厂方法的差异。</p>
-
-    <h3 class="sub-h">代码与目录约定</h3>
-    <div class="two" style="margin-top:16px">
-      <div>
-        <ul class="ticks">
-          <li>Python 3.11+，标准库优先；不为演示模式引入数据库、云 API、消息平台或环境变量密码</li>
-          <li>每个例子有可理解的输入和可观察的结果；不把 <code>...</code>、<code>pass</code> 或伪代码说成可运行</li>
-          <li>核心例子放在 <code>examples/chXX_&lt;pattern&gt;.py</code>，测试放在 <code>tests/test_chXX_&lt;pattern&gt;.py</code>；书中代码与文件一致</li>
-          <li>文件读写用临时目录；副作用放在 <code>if __name__ == "__main__":</code> 内</li>
-          <li>警惕全局可变状态、可变默认参数、浅深拷贝、迭代耗尽、并发语义和资源释放</li>
-          <li>未经实测不报性能提升百分比；不以类的数量衡量稳定性</li>
-        </ul>
-        <p class="lead" style="margin-top:16px">检验胜过宣称。不存在的测试不得声称通过：</p>
-        <div class="cmd"><code id="cmd-text">python -m unittest discover -s tests -v</code><button type="button" class="copy" id="copy-cmd">复制命令</button></div>
-      </div>
-      <pre class="tree" aria-label="建议的书稿目录结构">book/
-  README.md        # 正文目录、阅读顺序与运行方法
-  part-01/  01-*.md … 04-*.md
-  part-02/  05-*.md … 09-*.md
-  part-03/  10-*.md … 16-*.md
-  part-04/  17-*.md … 27-*.md
-  part-05/  28-*.md … 31-*.md
-  part-06/  32-*.md … 34-*.md
-examples/
-  ch05_factory_method.py
-  …
-tests/
-  test_ch05_factory_method.py
-  …</pre>
-    </div>
-
-    <h3 class="sub-h" id="selfcheck">每章自查题</h3>
-    <p class="lead prose">写完一章后逐项勾选。勾选状态只保存在你自己的浏览器里。</p>
-    <div class="checklist" id="checklist">
-      <label for="sc-1"><input type="checkbox" id="sc-1"><span>如果删掉所有模式名称，读者能否理解这个程序的问题与变化？</span></label>
-      <label for="sc-2"><input type="checkbox" id="sc-2"><span>第一段代码是否真能跑，也确实足够解决第一个需求？</span></label>
-      <label for="sc-3"><input type="checkbox" id="sc-3"><span>能否指出“新需求导致修改了哪几处代码”，而不仅仅说“提高可扩展性”？</span></label>
-      <label for="sc-4"><input type="checkbox" id="sc-4"><span>修改前后是否仍解决同一个任务？如果改变了功能，是否解释清楚？</span></label>
-      <label for="sc-5"><input type="checkbox" id="sc-5"><span>经典模式意图是否准确？Python 版本是否清楚标注取舍？</span></label>
-      <label for="sc-6"><input type="checkbox" id="sc-6"><span>读者是否知道一个不应采用该模式的具体场景？</span></label>
-      <label for="sc-7"><input type="checkbox" id="sc-7"><span>书中代码和仓库代码是否一致，测试是否验证关键行为？</span></label>
-      <label for="sc-8"><input type="checkbox" id="sc-8"><span>交叉引用、名称、图示、命令是否可用？</span></label>
-      <label for="sc-9"><input type="checkbox" id="sc-9"><span>章节最后是否帮助读者建立选择能力，而不仅仅记忆术语？</span></label>
-      <div class="cl-foot"><span id="sc-count">已完成 0 / 9</span><button type="button" class="copy" id="sc-reset">全部清空</button></div>
-    </div>
-
-    <h3 class="sub-h">全书三轮审校</h3>
-    <ol class="rounds">
-      <li><span class="rn">第一轮</span><b>概念审校</b><p>覆盖 23 个 GoF 模式；经典定义、分类、相互区别以及 Python 特例正确。</p></li>
-      <li><span class="rn">第二轮</span><b>实践审校</b><p>运行所有示例与自动化测试；示例确实证明其声称的行为和限制。</p></li>
-      <li><span class="rn">第三轮</span><b>读者审校</b><p>术语不漂移；开头不依赖未讲过的概念；删除重复、空话和过度设计。</p></li>
-    </ol>
-    <p class="pull" style="margin-top:28px">最终标准：读者面对陌生的真实代码，会先识别数据、处理和变化，再决定是否要一个模式。</p>
+    <p class="arrow-note prose">每章末尾还有一段简短小结。</p>
   </div>
 </section>
 
 <section class="block" id="accuracy" aria-labelledby="accuracy-h">
   <div class="wrap">
-    <span class="eyebrow">07 · 事实准确性约定</span>
-    <h2 id="accuracy-h">容易讲错的地方</h2>
-    <p class="lead prose">先忠实描述 GoF 的经典意图，再说明 Python 中可以怎样变形，不把个人偏好当成经典定义。下面几条是全书统一遵守的约定。</p>
+    <span class="eyebrow">06 · 易混点</span>
+    <h2 id="accuracy-h">这些地方本书会特别讲清</h2>
+    <p class="lead prose">每个模式先讲 GoF 的经典意图，再讲 Python 中可以怎样变形。下面是最容易被讲混的几处，读到对应章节时可以留意。</p>
     <div class="rules">
-      <div class="rule"><h3><span class="cat-create">●</span>工厂</h3><p>简单工厂函数通常不是 GoF 23 个独立模式之一。工厂方法的经典定义涉及把创建延迟到子类。</p></div>
-      <div class="rule"><h3><span class="cat-create">●</span>单例</h3><p>不对“线程安全”“全局唯一”做超出示例前提的绝对承诺；对象唯一性、配置生命周期、并发进程语境分开讨论。</p></div>
-      <div class="rule"><h3><span class="cat-behav">●</span>观察者</h3><p>通知顺序、异常传播和生命周期要说明假设；小示例不能自称可靠的事件系统。</p></div>
-      <div class="rule"><h3><span class="cat-behav">●</span>命令</h3><p>撤销、幂等、重试分别讨论；现实中的副作用不一定可逆。</p></div>
-      <div class="rule"><h3><span class="cat-struct">●</span>享元</h3><p>只在大量可重复数据时才有价值；最好给出可测的内存或对象数量差异，不杜撰性能结论。</p></div>
-      <div class="rule"><h3><span class="cat-behav">●</span>迭代器</h3><p>Python 已有内建迭代协议；要讲 GoF 迭代器的存在理由，以及它与 <code>iter()</code>、<code>next()</code>、生成器的关系。</p></div>
-      <div class="rule"><h3><span class="cat-struct">●</span>装饰器</h3><p>GoF 装饰器侧重动态包装对象职责；Python 函数装饰器可能体现类似思想，但用了 <code>@</code> 不等于采用了这个模式。</p></div>
-      <div class="rule"><h3><span class="cat-behav">●</span>解释器</h3><p>只处理受控的极小语法；不能用 <code>eval</code> 执行未受信任的输入。</p></div>
-      <div class="rule"><h3><span class="cat-py">●</span>Python 代码</h3><p>示例声称的结果都必须能实际运行或被测试验证。以 Python 3.11+ 为目标，优先标准库，无 API 密钥、无网络依赖，基础校验优先 <code>unittest</code>。</p></div>
+      <div class="rule"><h3><span class="cat-create">●</span><a href="#ch-05">工厂</a></h3><p>根据参数返回对象的“简单工厂”函数很常用，但它不是 GoF 23 种模式之一。工厂方法的关键是由子类决定创建哪种对象。</p></div>
+      <div class="rule"><h3><span class="cat-create">●</span><a href="#ch-09">单例</a></h3><p>“只有一个实例”在同一进程、多线程、多进程下含义不同。书中会比较共享实例、模块级对象和直接传入依赖这几种做法的取舍。</p></div>
+      <div class="rule"><h3><span class="cat-struct">●</span><a href="#ch-13">装饰器</a></h3><p>GoF 装饰器是层层包装对象来叠加职责；Python 的 <code>@</code> 语法可以体现类似思想，但用了 <code>@</code> 不等于用了这个模式。</p></div>
+      <div class="rule"><h3><span class="cat-struct">●</span><a href="#ch-15">享元</a></h3><p>只有大量对象重复保存同类数据时才值得用；书中会尽量用能实际测量的对象数量或内存差异说明效果，而不是空谈性能。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span><a href="#ch-18">观察者</a></h3><p>通知顺序、某个接收者出错时怎么办、何时取消订阅，都需要事先约定；几十行的示例不是可靠的事件系统。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span><a href="#ch-19">命令</a></h3><p>撤销、重试和“重复执行结果不变”是三件不同的事；已经发出去的邮件、扣过的款，不一定能撤回。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span><a href="#ch-23">迭代器</a></h3><p>Python 已经内建迭代协议，<code>iter()</code>、<code>next()</code> 和生成器能解决大部分需求，通常不必手写一套 GoF 风格的类。</p></div>
+      <div class="rule"><h3><span class="cat-behav">●</span><a href="#ch-27">解释器</a></h3><p>只处理受控的、极小的规则语言；任何时候都不要用 <code>eval</code> 执行不可信的输入。</p></div>
     </div>
     <div class="neq" aria-label="不要混为一类">
       <span>编程范式 ≠ 设计模式</span>
@@ -642,34 +530,21 @@ tests/
       <span>语言语法 ≠ 设计模式</span>
       <span>用了模式 ≠ 一定更好</span>
     </div>
+    <p class="arrow-note prose">书中示例以 Python 3.11+ 为目标，优先使用标准库，不需要网络或 API 密钥；每个模式章至少有一个可运行的示例和配套测试。</p>
   </div>
 </section>
 
 <section class="block" id="case" aria-labelledby="case-h">
   <div class="wrap">
-    <span class="eyebrow">08 · 贯穿案例</span>
+    <span class="eyebrow">07 · 贯穿案例</span>
     <h2 id="case-h">一个本地可运行的数据导入小工具</h2>
-    <p class="lead prose">第六部分（第 32–34 章）用同一个小工具把选择放回真实项目：先有不使用模式、带测试的朴素版，再由新格式、新校验规则、新输出接口这类明确需求驱动演进。只从标准库起步，不依赖真实网络或生产数据库，也不为了凑齐 23 种模式而强行使用。朴素版应是一个合适的小程序，不会被故意写成灾难来衬托重构。</p>
+    <p class="lead prose">第六部分（第 32–34 章）用同一个小工具把前面的选择放回真实项目。先写一个不用模式、带测试的朴素版；再加入新格式、新校验规则、新输出接口，看哪里真的变难，有选择地重构。只用标准库，不依赖网络或数据库，也不为了凑齐 23 种模式而硬塞。</p>
     <div class="flow" aria-label="数据导入流程">
       <span>CSV / JSON</span><i>→</i><span>校验</span><i>→</i><span>处理</span><i>→</i><span>输出结果</span>
     </div>
-  </div>
-</section>
-
-<section class="block" id="repo" aria-labelledby="repo-h">
-  <div class="wrap">
-    <span class="eyebrow">09 · 仓库与参与</span>
-    <h2 id="repo-h">项目文件</h2>
-    <p class="lead prose">仓库把“书的写作规格”和“正式书稿”分开：规划文件约束方向，正文可以在具体问题和实例上持续改进。当前已完成定位、全书规划、写作依据和一篇推导示范，正文初稿尚未开始。</p>
-    <div class="repo-files">
-      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/README.md">README.md</a><span class="st">项目入口</span><p>本书定位、基本方法、内容范围和当前状态。</p></div>
-      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/BOOK_PLAN.md">BOOK_PLAN.md</a><span class="st">全书基准</span><p>本书目标、写作边界、34 章目录与逐章问题清单、章节标准和事实准确性约定。</p></div>
-      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/WRITING_GUIDE.md">WRITING_GUIDE.md</a><span class="st">写作规范</span><p>写作声音、讲解路径、概念分层、代码规范、例子设计原则、目录命名、每章自查题和三轮审校。</p></div>
-      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/samples/factory-method-walkthrough.md">samples/factory-method-walkthrough.md</a><span class="st">写作示范</span><p>从“不需要模式”推导到“什么时候值得考虑工厂方法”的思考过程示范，不是第 05 章完成稿。</p></div>
-      <div class="file"><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/AGENT_TASK.md">AGENT_TASK.md</a><span class="st">写作任务书</span><p>交给 Codex / Claude Code 撰写全书中文初稿的任务书：必须提交的书稿、示例与测试，推荐工作顺序和重点复核的易错点。</p></div>
-    </div>
     <div class="cta">
-      <a class="btn" href="https://github.com/liamamilin/Python-Design-Patterns">在 GitHub 上查看仓库</a>
+      <a class="btn" href="https://github.com/liamamilin/Python-Design-Patterns">在 GitHub 上关注写作进度</a>
+      <a class="btn ghost" href="#top">回到顶部</a>
     </div>
   </div>
 </section>
@@ -677,7 +552,7 @@ tests/
 </main>
 
 <footer>
-  <div class="wrap">《Python 设计模式：从问题到方案》（暂定书名）在线指南 · 内容依据仓库中的 README、BOOK_PLAN、WRITING_GUIDE、AGENT_TASK 与工厂方法示范整理 · 目录可能随写作调整，以仓库为准。</div>
+  <div class="wrap">《Python 设计模式：从问题到方案》（暂定书名）在线指南 · 正文写作中，目录可能调整，以 <a href="https://github.com/liamamilin/Python-Design-Patterns">GitHub 仓库</a> 为准。</div>
 </footer>
 
 <script>
@@ -770,7 +645,7 @@ tests/
   var CHIPS = ["判断", "接口不一致", "通知", "撤销", "状态", "复制", "全局唯一", "组合爆炸", "层次结构", "缓存", "分步骤", "一组对象", "共享", "顺序", "规则语言", "函数"];
   var FILTERS = [["all", "全部"], ["create", "创建型"], ["struct", "结构型"], ["behav", "行为型"], ["other", "非 GoF"]];
   var state = { q: "判断", f: "all" };
-  try { localStorage.removeItem("dp-guide-filter"); } catch (e) {}
+  try { localStorage.removeItem("dp-guide-filter"); localStorage.removeItem("dp-guide-selfcheck"); } catch (e) {}
 
   var qEl = document.getElementById("q"), chipsEl = document.getElementById("chips"),
       filtersEl = document.getElementById("filters"), resEl = document.getElementById("results"), metaEl = document.getElementById("meta");
@@ -895,35 +770,6 @@ tests/
   nav.addEventListener("scroll", navEdge, { passive: true });
   navEdge();
 
-  // Self-check list (per-viewer convenience only)
-  var boxes = document.querySelectorAll("#checklist input[type=checkbox]");
-  var countEl = document.getElementById("sc-count");
-  var KEY = "dp-guide-selfcheck";
-  function saveChecks() {
-    var on = [];
-    Array.prototype.forEach.call(boxes, function (b) { if (b.checked) on.push(b.id); });
-    countEl.textContent = "已完成 " + on.length + " / " + boxes.length;
-    try { localStorage.setItem(KEY, JSON.stringify(on)); } catch (e) {}
-  }
-  try {
-    var prev = JSON.parse(localStorage.getItem(KEY) || "[]");
-    Array.prototype.forEach.call(boxes, function (b) { b.checked = prev.indexOf(b.id) !== -1; });
-  } catch (e) {}
-  Array.prototype.forEach.call(boxes, function (b) { b.addEventListener("change", saveChecks); });
-  document.getElementById("sc-reset").addEventListener("click", function () {
-    Array.prototype.forEach.call(boxes, function (b) { b.checked = false; }); saveChecks();
-  });
-  saveChecks();
-
-  // Copy test command
-  var copyBtn = document.getElementById("copy-cmd");
-  copyBtn.addEventListener("click", function () {
-    var text = document.getElementById("cmd-text").textContent;
-    var done = function () { copyBtn.textContent = "已复制"; setTimeout(function () { copyBtn.textContent = "复制命令"; }, 1600); };
-    try {
-      navigator.clipboard.writeText(text).then(done, function () { copyBtn.textContent = "请手动选择复制"; });
-    } catch (e) { copyBtn.textContent = "请手动选择复制"; }
-  });
 })();
 </script>
 </body>
