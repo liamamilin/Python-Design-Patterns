@@ -38,7 +38,7 @@ python -m examples.ch05_factory_method
 ### 第二部分 · 创建对象（GoF 创建型）
 
 - [05 工厂方法 Factory Method](part-02/05-factory-method.md)
-- 06 抽象工厂 Abstract Factory（写作中）
+- [06 抽象工厂 Abstract Factory](part-02/06-abstract-factory.md)
 - 07 建造者 Builder（写作中）
 - 08 原型 Prototype（写作中）
 - 09 单例 Singleton（写作中）
