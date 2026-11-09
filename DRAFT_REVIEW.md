@@ -38,7 +38,8 @@ python tools/check_links.py
 | 16 | 代理 | 在线课程讲义（延迟加载、付费检查） | 完成 | `ch16_course_v1.py`、`ch16_proxy.py`、`ch16_pythonic.py` | 通过 |
 | 17 | 策略 | 订单运费（AGENT_TASK 指定） | 完成 | `ch17_shipping_v1.py`、`ch17_strategy.py`、`ch17_pythonic.py` | 通过 |
 | 18 | 观察者 | 温室温度传感器（风扇、记录、首次高温提醒） | 完成 | `ch18_greenhouse_v1.py`、`ch18_observer.py`、`ch18_pythonic.py` | 通过 |
-| 19–34 | | | 未开始 | | |
+| 19 | 命令 | 五金仓库库存（撤销、幂等、补货通知） | 完成 | `ch19_stock_v1.py`、`ch19_command.py`、`ch19_pythonic.py` | 通过 |
+| 20–34 | | | 未开始 | | |
 
 已预留的例子：第 17 章策略用运费计算（AGENT_TASK 的示例）；第六部分（32–34）用数据导入工具。其余章节选用新的领域，不与上表重复。
 
