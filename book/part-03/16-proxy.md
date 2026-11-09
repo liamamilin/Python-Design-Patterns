@@ -133,6 +133,16 @@ def open_course(folder: Path, user: str, enrolled: set[str], free: int = 1) -> l
 
 `outline` 函数、`RealLesson` 类，一行都没有改。后台审核讲义的代码继续直接用 `RealLesson`，不受任何影响。
 
+下图是一次 `content()` 调用经过两层代理的过程：
+
+```mermaid
+flowchart LR
+    page["课程页面"] -->|"content()"| paid["PaidLesson：已报名？"]
+    paid -->|"否"| deny["PermissionError"]
+    paid -->|"是"| lazy["LazyLesson：读过文件了吗？"]
+    lazy -->|"第一次才创建"| real["RealLesson：读文件"]
+```
+
 ### 角色对照
 
 | GoF 角色 | 本例 | 职责 |

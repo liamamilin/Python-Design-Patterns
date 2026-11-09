@@ -168,6 +168,27 @@ class BarChart(Chart):
 
 再加一种折线图，写一个 `Chart` 子类；再加一种输出方式，写一个画布类。**类的数量从乘积变成了加法。**
 
+下图是两个层次之间的“桥”：图表一侧和画布一侧各自扩展，中间只靠 `Canvas` 的三个操作相连。
+
+```mermaid
+classDiagram
+    class Chart {
+        canvas
+        +draw(data)
+    }
+    class Canvas {
+        <<protocol>>
+        +text(x, y, s)
+        +fill(x, y, w, h)
+        +render()
+    }
+    Chart <|-- BarChart
+    Chart <|-- ColumnChart
+    Canvas <|.. TextCanvas
+    Canvas <|.. SvgCanvas
+    Chart o-- Canvas : 桥
+```
+
 ### 角色对照
 
 | GoF 角色 | 本例 | 职责 |

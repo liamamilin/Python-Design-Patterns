@@ -86,6 +86,19 @@ class Field:
 
 `Field` 只有四个属性：中介者、值、是否可用、是否可见，不引用任何别的控件（测试 `test_fields_do_not_know_each_other`）。它可以用在任何表单里。
 
+下图是中介者之后的结构：控件之间不再有箭头，所有联系都经过表单。
+
+```mermaid
+flowchart LR
+    origin["出发地"] -->|"我变了"| form["TicketForm"]
+    dest["目的地"] -->|"我变了"| form
+    depart["出发日期"] -->|"我变了"| form
+    trip["往返"] -->|"我变了"| form
+    form -->|"是否显示"| passport["护照栏"]
+    form -->|"是否可用"| ret["返程日期"]
+    form -->|"是否可用"| search["查询按钮"]
+```
+
 ### “全部重算”的取舍
 
 本例的中介者不管哪个控件变了，都把所有规则重算一遍。这是一个有意的选择：

@@ -125,6 +125,19 @@ def run(blocks: list[Block], visitor: Visitor) -> Visitor:
 
 `b.accept(visitor)` 这一步有一个专门的名字：**双重分派**。最终执行哪段代码，取决于**两个**对象的类型：内容块是哪一种（决定调用 `visit_table` 还是 `visit_image`），访问者是哪一种（决定是统计字数还是检查无障碍）。Java、C++ 这类语言的方法调用只根据一个对象的类型来选择，所以需要 `accept` 这个“中转”来实现两次选择。下文会看到，Python 有更直接的办法。
 
+以表格为例，双重分派的两步如下：
+
+```mermaid
+sequenceDiagram
+    participant R as run
+    participant T as Table
+    participant W as WordCounter
+    R->>T: accept(counter)
+    Note over T: 第一次分派：按元素类型选中 Table.accept
+    T->>W: visit_table(self)
+    Note over W: 第二次分派：按访问者类型选中 WordCounter.visit_table
+```
+
 ### 角色对照
 
 | GoF 角色 | 本例 | 职责 |

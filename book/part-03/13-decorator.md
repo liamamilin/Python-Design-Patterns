@@ -152,6 +152,13 @@ def build_writer(dest: Writer, *, mask: bool = True, limit: int | None = None) -
     return writer
 ```
 
+下图是 `Masking(Truncating(ticket, 16))` 处理一行文字的顺序：
+
+```mermaid
+flowchart LR
+    e["export 调用 write"] --> m["Masking：先打码"] --> t["Truncating：再截断"] --> d["ListWriter：保存"]
+```
+
 ### 角色对照
 
 | GoF 角色 | 本例 | 职责 |
