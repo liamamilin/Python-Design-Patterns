@@ -141,7 +141,7 @@ def truck_fee(hours: int) -> int:
 
 分店的代码里写 `RATES["truck"] = truck_fee` 即可。停 61 分钟的货车算 2 小时，收 20 元；停 3 小时收 30 元。
 
-**写法三：每种规则一个类。** 这就是第 17 章要讲的策略模式的经典形式：
+**写法三：每种规则一个类。** 这就是[第 17 章](../part-04/17-strategy.md)要讲的策略模式的经典形式：
 
 ```python
 class FeeRule(ABC):
