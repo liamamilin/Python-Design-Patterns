@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 28 章 函数就是一种设计工具 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：在 Python 里，可调用对象、高阶函数、闭包和字典分派，怎样替代那些只有一个方法的小类？什么时候还是应该写类？ 第五部分回到 Python 语言本身。前面的模式章里，“Python 角度”一节反复出现同一个结论：只有一个方法">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html" aria-current="page"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第五部分 · 回到 Python</p>
+<h1>第 28 章　函数就是一种设计工具</h1>
+<blockquote><p>本章要回答：在 Python 里，可调用对象、高阶函数、闭包和字典分派，怎样替代那些只有一个方法的小类？什么时候还是应该写类？</p></blockquote>
+<p>第五部分回到 Python 语言本身。前面的模式章里，“Python 角度”一节反复出现同一个结论：<strong>只有一个方法的策略，就是一个函数</strong>；<strong>工厂可以就是一次字典查找</strong>；<strong>延后执行的命令，可以是一个包好参数的函数</strong>。这一章把这些零散的结论放在一起，用同一个例子，系统地看一遍 Python 提供的这些工具，以及它们的边界。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个命令行记账小工具。用户输入一行命令，比如 <code>add 瑞幸拿铁 1600</code>（金额以分为单位），程序记下一笔账；输入 <code>total</code> 显示合计。程序还会按规则给每笔账分类：超过 500 元的是“大额支出”，含“咖啡”“拿铁”的是“饮品”，含“地铁”“打车”的是“交通”，都不匹配的是“其他”。</p>
+<h2 id="类的写法">类的写法<a class="anchor" href="#类的写法" aria-label="本节链接">#</a></h2>
+<p>按经典的模式写法，这里有三组小类：</p>
+<ul><li><strong>分类规则</strong>是策略：一个 <code>Rule</code> 抽象基类，<code>KeywordRule</code>、<code>OverRule</code> 两个子类，每个只有一个 <code>match</code> 方法；</li><li><strong>命令</strong>是命令模式：一个 <code>Command</code> 抽象基类，<code>AddCommand</code>、<code>TotalCommand</code> 两个子类，每个只有一个 <code>execute</code> 方法；</li><li><strong>创建命令</strong>用一个工厂：<code>CommandFactory.create(name)</code>。</li></ul>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">KeywordRule</span>(Rule):
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, words: <span class="b">tuple</span>[<span class="b">str</span>, ...], category: <span class="b">str</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.words, <span class="b">self</span>.category = words, category
+
+    <span class="k">def</span> <span class="f">match</span>(<span class="b">self</span>, r: Record) -&gt; <span class="b">str</span> | <span class="k">None</span>:
+        <span class="k">return</span> <span class="b">self</span>.category <span class="k">if</span> <span class="b">any</span>(w <span class="k">in</span> r.desc <span class="k">for</span> w <span class="k">in</span> <span class="b">self</span>.words) <span class="k">else</span> <span class="k">None</span></code></pre></div>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CommandFactory</span>:
+    <span class="k">def</span> <span class="f">create</span>(<span class="b">self</span>, name: <span class="b">str</span>) -&gt; Command:
+        <span class="k">if</span> name == <span class="s">"add"</span>:
+            <span class="k">return</span> AddCommand()
+        <span class="k">if</span> name == <span class="s">"total"</span>:
+            <span class="k">return</span> TotalCommand()
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知命令: {name}"</span>)</code></pre></div>
+<p>它能正常工作。但数一数：两个抽象基类、四个具体类、一个工厂类，每个类的核心都只有一两行。</p>
+<h2 id="函数的写法">函数的写法<a class="anchor" href="#函数的写法" aria-label="本节链接">#</a></h2>
+<p>同样的功能，换一种写法。下面依次介绍用到的每一种工具。</p>
+<h3 id="函数是对象">函数是对象<a class="anchor" href="#函数是对象" aria-label="本节链接">#</a></h3>
+<p>Python 的函数和其他对象一样，可以赋值给变量、放进列表和字典、作为参数传递、作为返回值返回。这一点是本章所有写法的基础。</p>
+<h3 id="闭包-带配置的函数">闭包：带配置的函数<a class="anchor" href="#闭包-带配置的函数" aria-label="本节链接">#</a></h3>
+<p><code>KeywordRule</code> 的作用是“记住几个关键词和一个类别，然后对每笔账做判断”。一个<strong>闭包</strong>可以做到完全一样的事：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">keyword</span>(*words: <span class="b">str</span>, category: <span class="b">str</span>) -&gt; Rule:
+    <span class="k">def</span> <span class="f">rule</span>(r: Record) -&gt; <span class="b">str</span> | <span class="k">None</span>:
+        <span class="k">return</span> category <span class="k">if</span> <span class="b">any</span>(w <span class="k">in</span> r.desc <span class="k">for</span> w <span class="k">in</span> words) <span class="k">else</span> <span class="k">None</span>
+
+    <span class="k">return</span> rule</code></pre></div>
+<p><code>keyword(...)</code> 返回内层函数 <code>rule</code>。<code>rule</code> 用到了外层函数的参数 <code>words</code> 和 <code>category</code>，即使 <code>keyword</code> 已经执行完毕，<code>rule</code> 依然记得它们。这就是闭包：<strong>一个函数，加上它创建时所在环境中的变量。</strong></p>
+<p><code>KeywordRule(("地铁", "打车"), "交通")</code> 的构造参数，在这里变成了 <code>keyword("地铁", "打车", category="交通")</code> 的参数；<code>match</code> 方法的方法体，变成了内层函数的函数体。</p>
+<h3 id="高阶函数-接收函数作为参数">高阶函数：接收函数作为参数<a class="anchor" href="#高阶函数-接收函数作为参数" aria-label="本节链接">#</a></h3>
+<p>分类器接收一个规则函数的列表，依次调用：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">classify</span>(r: Record, rules: <span class="b">list</span>[Rule]) -&gt; <span class="b">str</span>:
+    <span class="k">return</span> <span class="b">next</span>((c <span class="k">for</span> rule <span class="k">in</span> rules <span class="k">if</span> (c := rule(r)) <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>), <span class="s">"其他"</span>)</code></pre></div>
+<p>接收函数、或者返回函数的函数，叫作<strong>高阶函数</strong>。<code>classify</code> 是前一种，<code>keyword</code> 是后一种。<code>Rule</code> 只是一个类型别名 <code>Callable[[Record], str | None]</code>，表示“接收一笔账、返回类别或 <code>None</code> 的可调用对象”，并不是一个需要继承的基类。</p>
+<h3 id="字典分派-替代工厂和-if-链">字典分派：替代工厂和 <code>if</code> 链<a class="anchor" href="#字典分派-替代工厂和-if-链" aria-label="本节链接">#</a></h3>
+<p>命令就是普通函数。“根据名字找到命令”这件事，用一个字典完成：</p>
+<div class="code" data-lang="Python"><pre><code>COMMANDS: <span class="b">dict</span>[<span class="b">str</span>, Callable[..., <span class="b">str</span>]] = {<span class="s">"add"</span>: add, <span class="s">"total"</span>: total}
+
+
+<span class="k">def</span> <span class="f">run</span>(book: <span class="b">list</span>[Record], line: <span class="b">str</span>) -&gt; <span class="b">str</span>:
+    name, *args = line.split()
+    <span class="k">if</span> name <span class="k">not</span> <span class="k">in</span> COMMANDS:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知命令: {name}"</span>)
+    <span class="k">return</span> COMMANDS[name](book, *args)</code></pre></div>
+<p><code>CommandFactory</code> 和两个命令类，变成了一个字典和两个函数。加一个新命令，就是写一个函数、在字典里加一行。</p>
+<p>两种写法对同一组输入，记下的账、分出的类别、算出的合计完全相同（测试 <code>test_both_versions_agree</code>）。</p>
+<h3 id="可调用对象-需要状态时">可调用对象：需要状态时<a class="anchor" href="#可调用对象-需要状态时" aria-label="本节链接">#</a></h3>
+<p>如果某条规则需要<strong>记住一些东西</strong>，比如“统计它一共匹配了几次”，函数就不那么方便了。这时可以写一个类，实现 <code>__call__</code> 方法，它的实例就能像函数一样被调用：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CountingRule</span>:
+    <span class="s">"""需要记住状态时，可调用对象和函数一样能放进规则列表。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, rule: Rule) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.rule = rule
+        <span class="b">self</span>.hits = <span class="n">0</span>
+
+    <span class="k">def</span> <span class="f">__call__</span>(<span class="b">self</span>, r: Record) -&gt; <span class="b">str</span> | <span class="k">None</span>:
+        result = <span class="b">self</span>.rule(r)
+        <span class="k">if</span> result <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>:
+            <span class="b">self</span>.hits += <span class="n">1</span>
+        <span class="k">return</span> result</code></pre></div>
+<p><code>CountingRule</code> 的实例可以和普通的规则函数放在同一个列表里，<code>classify</code> 完全不需要知道它是一个对象（测试 <code>test_object_with_state_fits_the_same_slot</code>）。</p>
+<p>这说明了一件重要的事：<strong><code>Callable</code> 这个类型不关心你是函数还是对象。</strong> 先用函数，等到确实需要状态或多个方法时，换成一个可调用对象，使用它的代码一行都不用改。</p>
+<h3 id="functools-partial-固定部分参数"><code>functools.partial</code>：固定部分参数<a class="anchor" href="#functools-partial-固定部分参数" aria-label="本节链接">#</a></h3>
+<p><a href="../part-04/17-strategy.html">第 17 章</a>用过 <code>partial(express_fee, free_over=5900)</code>，它和闭包的作用相似：把一个通用函数的部分参数固定下来，得到一个更具体的函数。如果需要的只是“固定参数”，<code>partial</code> 比手写闭包更短，而且它会保留原函数和参数的信息，调试时更容易看清楚。</p>
+<h2 id="一个常见的陷阱-循环里的闭包">一个常见的陷阱：循环里的闭包<a class="anchor" href="#一个常见的陷阱-循环里的闭包" aria-label="本节链接">#</a></h2>
+<p>运营同事给了一个“关键词 → 类别”的对照表，想批量生成规则。最自然的写法是这样：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">keyword_rules_wrong</span>(categories: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">str</span>]) -&gt; <span class="b">list</span>[Rule]:
+    <span class="s">"""常见错误：在循环里创建 lambda，它们捕获的是同一个变量。"""</span>
+    <span class="k">return</span> [<span class="k">lambda</span> r: category <span class="k">if</span> word <span class="k">in</span> r.desc <span class="k">else</span> <span class="k">None</span> <span class="k">for</span> word, category <span class="k">in</span> categories.items()]</code></pre></div>
+<p>对照表是 <code>{"地铁": "交通", "拿铁": "饮品"}</code>，可“地铁”被分到了“其他”（测试 <code>test_lambdas_in_a_loop_share_the_last_value</code>）。</p>
+<p>原因是：闭包记住的是<strong>变量</strong>，而不是创建时变量的<strong>值</strong>。列表推导式里的所有 <code>lambda</code> 共享同一个 <code>word</code> 和 <code>category</code> 变量，循环结束时，它们都指向最后一项（“拿铁”和“饮品”）。所以每条规则检查的都是“拿铁”。</p>
+<p>修正的办法是：让每条规则在<strong>一次单独的函数调用</strong>中创建，这样每次调用都有自己的一组变量：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">keyword_rules</span>(categories: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">str</span>]) -&gt; <span class="b">list</span>[Rule]:
+    <span class="k">return</span> [keyword(word, category=category) <span class="k">for</span> word, category <span class="k">in</span> categories.items()]</code></pre></div>
+<p>另一种常见写法是 <code>lambda r, word=word: ...</code>，利用默认参数在创建时求值。它也能工作，但读起来不够直观，还会让函数多出一个可以被意外传入的参数。</p>
+<h2 id="什么时候还是写类">什么时候还是写类<a class="anchor" href="#什么时候还是写类" aria-label="本节链接">#</a></h2>
+<p>函数并不总是更好。以下情况，类更合适：</p>
+<ul><li><strong>有好几个必须一起变化的操作。</strong> <a href="../part-04/17-strategy.html">第 17 章</a>的配送方式要回答“能不能送、多少钱、多久到”三个问题。拆成三个函数、放进三个字典，加一种配送方式时就要改三处。一个类把它们绑在一起。</li><li><strong>有需要修改的状态。</strong> 闭包也能保存可修改的状态（用 <code>nonlocal</code>），但当状态有好几个字段、还要从外面读取时（比如 <code>CountingRule.hits</code>），类更清楚。</li><li><strong>需要被继承扩展，或者需要 <code>isinstance</code> 判断。</strong> 框架的扩展点、需要在运行时区分种类的地方。</li><li><strong>对象需要一个有意义的显示形式，或者需要被比较、被保存。</strong> <code>dataclass</code> 自动提供 <code>__repr__</code> 和 <code>__eq__</code>；闭包打印出来只是 <code>&lt;function keyword.&lt;locals&gt;.rule at 0x...&gt;</code>。</li></ul>
+<p>一个实用的判断方法：<strong>如果一个类除了 <code>__init__</code> 之外只有一个方法，而且这个方法的名字是个动词（<code>match</code>、<code>execute</code>、<code>apply</code>），它多半可以是一个函数。</strong></p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>在 Python 里，函数是对象：可以存进容器、作为参数和返回值。这让很多“只有一个方法的小类”可以直接写成函数。</li><li>闭包是带配置的函数，可以替代“构造参数 + 一个方法”的策略类；字典分派可以替代简单的工厂和 <code>if</code> 链；<code>partial</code> 可以固定参数。</li><li>需要状态时，实现 <code>__call__</code> 的对象可以放在函数的位置，使用方不必改动。</li><li>注意循环中创建闭包的陷阱：闭包记住的是变量，不是值。</li><li>有多个一起变化的操作、有需要从外部读取的状态、需要继承或有意义的显示形式时，写类。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>记账工具要加一个 <code>undo</code> 命令，撤销最近一次 <code>add</code>。</p>
+<ol><li>在字典分派的写法里，<code>undo</code> 需要知道“最近一次添加了什么”。这个信息放在哪里？</li><li>如果 <code>add</code> 和 <code>undo</code> 都需要访问同一份“历史记录”，用闭包实现会是什么样子？用一个类呢？哪种更清楚？</li><li>结合<a href="../part-04/19-command.html">第 19 章</a>，这时命令还适合只是“字典里的函数”吗？</li></ol>
+<p><strong>思路提示</strong>：最简单的做法是把历史放进账本本身，比如 <code>book</code> 改成一个包含记录列表和历史栈的对象，命令函数通过参数拿到它。用闭包实现时，<code>add</code> 和 <code>undo</code> 要定义在同一个外层函数里，共享一个 <code>history</code> 列表，这能工作，但“哪些函数共享哪些状态”藏在了函数嵌套的结构里。用一个类（比如 <code>Ledger</code>，带 <code>add</code>、<code>undo</code> 方法和 <code>history</code> 字段）会更清楚。这正是“有多个操作共享状态时，写类”的情况。至于第 3 问：一旦命令需要撤销，每个命令就要提供“执行”和“撤销”两个操作，<a href="../part-04/19-command.html">第 19 章</a>的命令对象（或“执行时返回反向命令”的写法）比单个函数更合适。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch28_classes.py" target="_blank" rel="noopener"><code>examples/ch28_classes.py</code></a>：规则类、命令类和工厂</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch28_functions.py" target="_blank" rel="noopener"><code>examples/ch28_functions.py</code></a>：闭包、字典分派、可调用对象与循环闭包陷阱</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch28_functions.py" target="_blank" rel="noopener"><code>tests/test_ch28_functions.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-04/27-interpreter.html"><small>上一篇</small>27 解释器 Interpreter</a><a class="next" href="../part-05/29-types-and-interfaces.html"><small>下一篇</small>29 类型与接口的轻量表达</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-05/28-functions-as-design-tools.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#类的写法">类的写法</a></li><li><a href="#函数的写法">函数的写法</a></li><li><a href="#一个常见的陷阱-循环里的闭包">一个常见的陷阱：循环里的闭包</a></li><li><a href="#什么时候还是写类">什么时候还是写类</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

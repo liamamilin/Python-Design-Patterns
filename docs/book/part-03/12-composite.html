@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 12 章 组合 Composite · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：当数据是一层套一层的树，而且每一层的深度都不固定时，怎样用同一种方式处理“一个东西”和“一组东西”？ 很多数据天然是树形的：文件夹里有文件和子文件夹，公司里有部门和员工，菜单里有菜品和子菜单。处理这类数据时，最常见的麻烦是：代码">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html" aria-current="page"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第三部分 · 组合对象（GoF 结构型）</p>
+<h1>第 12 章　组合 Composite</h1>
+<blockquote><p>本章要回答：当数据是一层套一层的树，而且每一层的深度都不固定时，怎样用同一种方式处理“一个东西”和“一组东西”？</p></blockquote>
+<p>很多数据天然是树形的：文件夹里有文件和子文件夹，公司里有部门和员工，菜单里有菜品和子菜单。处理这类数据时，最常见的麻烦是：代码默认了树有几层，而现实中的树不听话。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一对年轻夫妇在装修新房，用一个小脚本记预算。一开始的结构很规整，每个房间下面列几个项目：</p>
+<div class="code" data-lang="Python"><pre><code>budget = {
+    <span class="s">"客厅"</span>: {<span class="s">"地板"</span>: <span class="n">8000</span>, <span class="s">"沙发"</span>: <span class="n">6500</span>},
+    <span class="s">"厨房"</span>: {<span class="s">"橱柜"</span>: <span class="n">12000</span>, <span class="s">"油烟机"</span>: <span class="n">3000</span>, <span class="s">"灶具"</span>: <span class="n">2000</span>},
+}</code></pre></div>
+<p>算总价，两层求和：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">total</span>(budget: <span class="b">dict</span>) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> <span class="b">sum</span>(<span class="b">sum</span>(room.values()) <span class="k">for</span> room <span class="k">in</span> budget.values())</code></pre></div>
+<p>结果是 31500。</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>上面就是。两层字典、两层求和，清楚直接。<strong>结构固定的时候，这就是最好的写法。</strong></p>
+<h2 id="变化-结构不再规整">变化：结构不再规整<a class="anchor" href="#变化-结构不再规整" aria-label="本节链接">#</a></h2>
+<p>预算越记越细，结构开始走样：</p>
+<ul><li>设计费不属于任何房间，直接挂在最外层；</li><li>厨房电器是打包买的，于是“油烟机”和“灶具”被归进了厨房里的一个“电器”小组。</li></ul>
+<div class="code" data-lang="Python"><pre><code>budget_later = {
+    <span class="s">"设计费"</span>: <span class="n">5000</span>,
+    <span class="s">"客厅"</span>: {<span class="s">"地板"</span>: <span class="n">8000</span>, <span class="s">"沙发"</span>: <span class="n">6500</span>},
+    <span class="s">"厨房"</span>: {<span class="s">"橱柜"</span>: <span class="n">12000</span>, <span class="s">"电器"</span>: {<span class="s">"油烟机"</span>: <span class="n">3000</span>, <span class="s">"灶具"</span>: <span class="n">2000</span>}},
+}</code></pre></div>
+<p><code>total(budget_later)</code> 直接崩溃了：最外层的 <code>5000</code> 是个数字，没有 <code>.values()</code>，抛出 <code>AttributeError</code>。即使去掉设计费，厨房里的“电器”是个字典，<code>sum</code> 试图把数字和字典相加，又会抛出 <code>TypeError</code>（测试 <code>test_mixed_depth_breaks</code>）。</p>
+<p>再看其他需求：打印一份带小计的预算清单；找出所有花费超过 6000 元的单个项目；电器打包有九折优惠。每一个功能都要遍历这棵树，而每一个都会遇到同样的问题：<strong>某个位置上的东西，可能是一个项目，也可能是一组项目，组里又可能有组。</strong></p>
+<p>如果用 <code>isinstance</code> 在每个功能里分别判断“这是数字还是字典”，每多一层嵌套就要多一层判断，四个功能就要写四遍。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<p>困难的核心是：调用方必须<strong>区分</strong>单个项目和项目组，而它其实并不关心这个区别。算总价时，它想问的只是“你花多少钱？”。单个项目回答自己的价格，一组项目回答组里所有东西的价格之和。</p>
+<p>如果单个项目和项目组能<strong>用同一种方式回答同一个问题</strong>，调用方就不需要区分它们，也就不需要关心树有多深。</p>
+<h2 id="组合-一个和一组-用同一个接口">组合：一个和一组，用同一个接口<a class="anchor" href="#组合-一个和一组-用同一个接口" aria-label="本节链接">#</a></h2>
+<p>GoF 对组合模式的描述是：<strong>将对象组合成树形结构以表示“部分—整体”的层次结构，使得用户对单个对象和组合对象的使用具有一致性。</strong></p>
+<p>先定义“预算里的任何一个节点”都要能回答的问题：花多少钱，以及怎样把自己列进清单：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">BudgetNode</span>(Protocol):
+    name: <span class="b">str</span>
+
+    <span class="k">def</span> <span class="f">cost</span>(<span class="b">self</span>) -&gt; <span class="b">int</span>: ...
+    <span class="k">def</span> <span class="f">lines</span>(<span class="b">self</span>, depth: <span class="b">int</span> = <span class="n">0</span>) -&gt; <span class="b">list</span>[<span class="b">str</span>]: ...</code></pre></div>
+<p>单个项目是树的<strong>叶子</strong>。它的花费是单价乘以数量：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Item</span>:
+    <span class="s">"""叶子：一个具体的项目。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, name: <span class="b">str</span>, unit_price: <span class="b">int</span>, qty: <span class="b">int</span> = <span class="n">1</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.name, <span class="b">self</span>.unit_price, <span class="b">self</span>.qty = name, unit_price, qty
+
+    <span class="k">def</span> <span class="f">cost</span>(<span class="b">self</span>) -&gt; <span class="b">int</span>:
+        <span class="k">return</span> <span class="b">self</span>.unit_price * <span class="b">self</span>.qty</code></pre></div>
+<p>项目组是树的<strong>组合节点</strong>。它的花费是所有子节点花费之和，再乘以折扣。它不需要知道子节点是项目还是组，只管问 <code>child.cost()</code>：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">cost</span>(<span class="b">self</span>) -&gt; <span class="b">int</span>:
+        <span class="k">return</span> <span class="b">round</span>(<span class="b">sum</span>(child.cost() <span class="k">for</span> child <span class="k">in</span> <span class="b">self</span>.children) * <span class="b">self</span>.percent / <span class="n">100</span>)</code></pre></div>
+<p>列清单也一样：组合节点先写自己这一行，再请每个子节点把自己列出来，缩进加一层：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">lines</span>(<span class="b">self</span>, depth: <span class="b">int</span> = <span class="n">0</span>) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+        note = <span class="s">f"（打包 {self.percent / 10:g} 折）"</span> <span class="k">if</span> <span class="b">self</span>.percent != <span class="n">100</span> <span class="k">else</span> <span class="s">""</span>
+        head = <span class="s">f"{'  ' * depth}{self.name} {self.cost():,}{note}"</span>
+        <span class="k">return</span> [head] + [line <span class="k">for</span> child <span class="k">in</span> <span class="b">self</span>.children <span class="k">for</span> line <span class="k">in</span> child.lines(depth + <span class="n">1</span>)]</code></pre></div>
+<p>搭出整棵预算树：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">new_home</span>() -&gt; Group:
+    <span class="k">return</span> Group(<span class="s">"新房装修"</span>).add(
+        Item(<span class="s">"设计费"</span>, <span class="n">5000</span>),
+        Group(<span class="s">"客厅"</span>).add(Item(<span class="s">"地板"</span>, <span class="n">200</span>, qty=<span class="n">40</span>), Item(<span class="s">"沙发"</span>, <span class="n">6500</span>)),
+        Group(<span class="s">"厨房"</span>).add(
+            Item(<span class="s">"橱柜"</span>, <span class="n">12000</span>),
+            Group(<span class="s">"电器"</span>, percent=<span class="n">90</span>).add(Item(<span class="s">"油烟机"</span>, <span class="n">3000</span>), Item(<span class="s">"灶具"</span>, <span class="n">2000</span>)),
+        ),
+    )</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>新房装修 36,000
+  设计费 5,000
+  客厅 14,500
+    地板 8,000
+    沙发 6,500
+  厨房 16,500
+    橱柜 12,000
+    电器 4,500（打包 9 折）
+      油烟机 3,000
+      灶具 2,000</code></pre></div>
+<p>设计费是一个项目，客厅是一个组，它们并排放在最外层，<code>new_home().children</code> 里每个元素都能回答 <code>cost()</code>，分别是 5000、14500 和 16500（测试 <code>test_leaf_and_group_are_used_the_same_way</code>）。电器组的九折只写在 <code>Group.cost</code> 里一处，它会自动影响厨房的小计和总价。地板按每平方米 200 元、40 平方米记，这个计算细节也只属于 <code>Item</code>，组不需要知道。</p>
+<p>再加一层嵌套、再加一个房间，都不需要修改任何遍历代码。</p>
+<p>整棵预算树的结构如下。每个节点都能回答 <code>cost()</code>，调用方不必知道它是项目还是组：</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+    home["Group 新房装修 36,000"] --&gt; fee["Item 设计费 5,000"]
+    home --&gt; living["Group 客厅 14,500"]
+    home --&gt; kitchen["Group 厨房 16,500"]
+    living --&gt; floor["Item 地板 8,000"]
+    living --&gt; sofa["Item 沙发 6,500"]
+    kitchen --&gt; cab["Item 橱柜 12,000"]
+    kitchen --&gt; app["Group 电器（9 折）4,500"]
+    app --&gt; hood["Item 油烟机 3,000"]
+    app --&gt; stove["Item 灶具 2,000"]</pre></figure>
+<h3 id="防止环">防止环<a class="anchor" href="#防止环" aria-label="本节链接">#</a></h3>
+<p>树有一个隐含的要求：不能有环。如果不小心把“厨房”放进了它自己的子组“电器”里，<code>cost()</code> 会无限递归下去，最终抛出 <code>RecursionError</code>。<code>Group.add</code> 在加入子节点前检查这一点，发现会形成环就立即报错（测试 <code>test_no_cycles</code>）：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">add</span>(<span class="b">self</span>, *nodes: BudgetNode) -&gt; Group:
+        <span class="k">for</span> node <span class="k">in</span> nodes:
+            <span class="k">if</span> node <span class="k">is</span> <span class="b">self</span> <span class="k">or</span> (<span class="b">isinstance</span>(node, Group) <span class="k">and</span> node.contains(<span class="b">self</span>)):
+                <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"不能把“{node.name}”放进它自己里面"</span>)
+            <span class="b">self</span>.children.append(node)
+        <span class="k">return</span> <span class="b">self</span></code></pre></div>
+<p>这个检查要遍历被加入的子树，代价随子树大小增长。对一份家庭装修预算来说无所谓；如果树很大、<code>add</code> 调用很频繁，就要考虑别的办法，比如记录每个节点的父节点。</p>
+<h3 id="透明与安全">透明与安全<a class="anchor" href="#透明与安全" aria-label="本节链接">#</a></h3>
+<p>GoF 讨论过一个设计选择：<code>add</code> 这类管理子节点的方法，要不要放在共同的接口上？</p>
+<ul><li>放在接口上（<strong>透明</strong>）：调用方连“是不是组”都不用判断，但对一个项目调用 <code>add</code> 就没有意义，只能在运行时报错。</li><li>只放在组合节点上（<strong>安全</strong>）：项目上根本没有 <code>add</code>，类型检查能发现误用，但需要往树里加东西的代码，就得知道自己面对的是组。</li></ul>
+<p>本章选了“安全”：<code>BudgetNode</code> 只有 <code>cost</code> 和 <code>lines</code>，<code>add</code> 只在 <code>Group</code> 上。在 Python 里这通常是更好的选择，因为需要添加子节点的地方（比如搭建预算树的 <code>new_home</code>），本来就清楚自己在操作哪个组。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>组件（Component）</td><td><code>BudgetNode</code> 协议</td><td>叶子和组合共同的接口</td></tr><tr><td>叶子（Leaf）</td><td><code>Item</code></td><td>没有子节点，直接给出结果</td></tr><tr><td>组合（Composite）</td><td><code>Group</code></td><td>保存子节点，把请求转发给它们并汇总</td></tr><tr><td>客户（Client）</td><td>打印清单、算总价的代码</td><td>只通过组件接口操作整棵树</td></tr></tbody></table></div>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>“统一”有时是假的。</strong> 不是所有操作都对叶子和组合都有意义。比如“找出所有花费超过 6000 元的单个项目”，这个问题只对单个项目有意义，对组来说只是“往下找”。本章的 <code>expensive</code> 函数仍然用了一次 <code>isinstance</code> 来区分。强行在 <code>BudgetNode</code> 上加一个 <code>expensive</code> 方法，让 <code>Group</code> 返回子节点的结果、<code>Item</code> 返回自己，也可以，但接口会随着每个新需求膨胀。</li><li><strong>调试要跟着递归走。</strong> 总价不对时，要一层一层往下看是哪个节点算错了。带小计的清单在这里很有帮助。</li><li><strong>整棵树都在内存里。</strong> 对家庭预算没有问题；对一个包含几百万文件的目录树，一次性构造所有对象可能就不现实了，需要边遍历边处理。</li><li><strong>约束靠自己维护。</strong> 不能有环、一个节点不能同时属于两个组，这些规则组合模式本身不提供，要像本章的 <code>add</code> 一样自己检查。</li></ul>
+<p><strong>什么时候不该用</strong>：结构的深度是固定的，而且不会变。如果预算永远只有“房间 → 项目”两层，开头那个两层求和的函数比任何树结构都清楚。</p>
+<h2 id="python-角度-数据本来就是树">Python 角度：数据本来就是树<a class="anchor" href="#python-角度-数据本来就是树" aria-label="本节链接">#</a></h2>
+<p>回头看 <code>budget_later</code>：嵌套的字典本身就已经是一棵树了。叶子是数字，组合是字典。如果只是要算总价、列清单，不需要定义任何类，一个递归函数就能处理任意深度：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">total</span>(node: Budget) -&gt; <span class="b">int</span>:
+    <span class="k">if</span> <span class="b">isinstance</span>(node, <span class="b">int</span>):
+        <span class="k">return</span> node
+    <span class="k">return</span> <span class="b">sum</span>(total(child) <span class="k">for</span> child <span class="k">in</span> node.values())</code></pre></div>
+<p>这里的 <code>isinstance</code> 只出现在一个地方，它就是“叶子还是组合”的唯一判断，作用和组合模式中的两个类是一样的。对 <code>budget_later</code>，它算出 36500。数据来自 JSON 文件、结构简单、只需要几种统计时，这就是最省事的写法。</p>
+<p>但注意这个数字和组合版本的 36000 不同：差的 500 元，正是电器的九折。<strong>嵌套字典里没有地方表达“这一组打九折”</strong>。要表达它，就得约定一个特殊的键，比如 <code>"_折扣": 90</code>，然后每个递归函数都要记得跳过它。节点的种类越多、每种节点的行为越不同（按面积计价、打包折扣、可选项目……），用类来表达就越划算，因为每种行为可以写在自己的类里，而不是散布在每个递归函数的 <code>if</code> 分支中。</p>
+<p>一个实用的组合是：用嵌套字典或 JSON <strong>保存</strong>预算，读进来时<strong>转换</strong>成 <code>Item</code> 和 <code>Group</code> 对象，再进行计算。数据格式保持简单，行为放在类里。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当数据是深度不固定的树，而调用方并不关心某个节点是单个东西还是一组东西时，组合模式让两者实现同一个接口，调用方就不必再区分。</li><li>组合节点把请求转发给子节点并汇总结果；每种节点的特殊规则（数量、折扣）只写在自己的类里。</li><li>组合模式本身不阻止环和重复归属，这些约束要自己检查。管理子节点的方法通常只放在组合节点上更安全。</li><li>在 Python 里，嵌套的字典和列表本身就是树，简单的统计用一个递归函数就够了；节点的行为开始分化时，再引入类。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>夫妇俩想给预算加一个“可选项目”的标记，比如“投影仪”，可以先列进预算，但暂时不计入总价。他们还想看“如果全部可选项目都买，总价是多少”。</p>
+<ol><li>在组合模式的写法里，你会怎样表示“可选”？需要修改 <code>Item</code>、<code>Group</code>，还是新增一个类？</li><li>“全部都买时的总价”和“不含可选项目的总价”，应该是两个方法，还是一个方法带一个参数？</li><li>在嵌套字典的写法里，怎样表示“可选”？会给 <code>total</code> 函数带来什么变化？</li></ol>
+<p><strong>思路提示</strong>：一种做法是给 <code>Item</code> 加一个 <code>optional</code> 字段，并给 <code>cost</code> 加一个参数 <code>include_optional: bool = False</code>。<code>Group.cost</code> 把这个参数原样传给子节点，这正是组合模式的好处：新规则只在叶子上实现，组只负责转发。这比写两个方法更好，因为两个方法意味着 <code>Group</code> 也要实现两遍汇总逻辑。另一种做法是新增一个 <code>OptionalItem</code> 类，它在不包含可选项时返回 0。嵌套字典里没有地方放“可选”这个标记，只能改变叶子的形状（比如从数字改成 <code>{"price": 3000, "optional": true}</code>），于是 <code>total</code> 里判断“叶子”的条件也要跟着变。这再次说明：节点的属性一多，类比裸数据更容易扩展。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch12_budget_v1.py" target="_blank" rel="noopener"><code>examples/ch12_budget_v1.py</code></a>：固定两层的写法，以及让它崩溃的数据</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch12_composite.py" target="_blank" rel="noopener"><code>examples/ch12_composite.py</code></a>：<code>Item</code>、<code>Group</code> 与防止环</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch12_pythonic.py" target="_blank" rel="noopener"><code>examples/ch12_pythonic.py</code></a>：嵌套字典上的递归函数</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch12_composite.py" target="_blank" rel="noopener"><code>tests/test_ch12_composite.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-03/11-bridge.html"><small>上一篇</small>11 桥接 Bridge</a><a class="next" href="../part-03/13-decorator.html"><small>下一篇</small>13 装饰器 Decorator</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-03/12-composite.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-结构不再规整">变化：结构不再规整</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#组合-一个和一组-用同一个接口">组合：一个和一组，用同一个接口</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-数据本来就是树">Python 角度：数据本来就是树</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 25 章 备忘录 Memento · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：怎样把一个对象此刻的状态保存下来，以后原样恢复，而又不让外面的代码随意查看和修改它的内部？保存的“快照”为什么常常并不是快照？ 第 01 章说过，有状态的对象，结果取决于“之前发生过什么”。第 19 章的命令通过记录每一步操作来">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html" aria-current="page"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第四部分 · 协调处理（GoF 行为型）</p>
+<h1>第 25 章　备忘录 Memento</h1>
+<blockquote><p>本章要回答：怎样把一个对象此刻的状态保存下来，以后原样恢复，而又不让外面的代码随意查看和修改它的内部？保存的“快照”为什么常常并不是快照？</p></blockquote>
+<p><a href="../part-01/01-data-and-processing.html">第 01 章</a>说过，有状态的对象，结果取决于“之前发生过什么”。<a href="19-command.html">第 19 章</a>的命令通过记录每一步操作来撤销。这一章换一种思路：不记录过程，直接把<strong>某一时刻的整个状态</strong>存下来，需要时整体恢复。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个农场经营小游戏：玩家有金币，可以买种子种菜，过几天收获卖钱。</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">plant</span>(<span class="b">self</span>, crop: <span class="b">str</span>, n: <span class="b">int</span>) -&gt; <span class="k">None</span>:
+        cost = n * <span class="b">self</span>.SEED_PRICE
+        <span class="k">if</span> cost &gt; <span class="b">self</span>.coins:
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">"金币不够"</span>)
+        <span class="b">self</span>.coins -= cost
+        <span class="b">self</span>.crops[crop] = <span class="b">self</span>.crops.get(crop, <span class="n">0</span>) + n</code></pre></div>
+<p>游戏要有<strong>存档</strong>功能：玩家可以在任何时候存档，以后读档回到那时的状态。</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>把三个字段打包返回，读档时再放回去：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">save</span>(<span class="b">self</span>) -&gt; <span class="b">tuple</span>[<span class="b">int</span>, <span class="b">int</span>, <span class="b">dict</span>[<span class="b">str</span>, <span class="b">int</span>]]:
+        <span class="k">return</span> <span class="b">self</span>.day, <span class="b">self</span>.coins, <span class="b">self</span>.crops  <span class="c"># 字典是同一个对象</span>
+
+    <span class="k">def</span> <span class="f">load</span>(<span class="b">self</span>, saved: <span class="b">tuple</span>[<span class="b">int</span>, <span class="b">int</span>, <span class="b">dict</span>[<span class="b">str</span>, <span class="b">int</span>]]) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.day, <span class="b">self</span>.coins, <span class="b">self</span>.crops = saved</code></pre></div>
+<p>看起来很合理，也很短。</p>
+<h2 id="问题-存档会自己变">问题：存档会自己变<a class="anchor" href="#问题-存档会自己变" aria-label="本节链接">#</a></h2>
+<p>玩家种了 3 棵萝卜，存档；又种了 2 棵，过了一天，觉得不划算，读档。读档之后：</p>
+<div class="code" data-lang="输出"><pre><code>第 1 天，金币 70，萝卜×5</code></pre></div>
+<p>天数和金币都回去了，萝卜却是 5 棵（测试 <code>test_saved_game_changes_after_saving</code>）。</p>
+<p>原因在注释里已经写了：<code>save</code> 返回的元组里，<code>self.crops</code> 是农场正在使用的<strong>同一个字典</strong>。存档之后再种萝卜，改的就是这个字典，存档里的“萝卜×3”也就跟着变成了“萝卜×5”。天数和金币是整数，整数不可变，<code>self.day += 1</code> 会让 <code>self.day</code> 指向一个新的整数，存档里的旧值不受影响。</p>
+<p>这和<a href="../part-02/08-prototype.html">第 08 章</a>的浅拷贝是同一个问题：<strong>保存的不是状态的副本，而是对状态的引用。</strong></p>
+<h2 id="还有一个问题-谁能动存档">还有一个问题：谁能动存档<a class="anchor" href="#还有一个问题-谁能动存档" aria-label="本节链接">#</a></h2>
+<p>即使修好了引用的问题，这个写法还有另一个隐患：存档就是一个普通的元组，里面的字典谁都可以改。存档管理的代码、显示存档列表的代码，都可以写出 <code>saved[2]["萝卜"] = 999</code>。而 <code>load</code> 会照单全收。</p>
+<p>我们希望：</p>
+<ol><li>存档是保存那一刻状态的<strong>真正副本</strong>，之后农场怎么变都不影响它；</li><li>存档对外是一个<strong>不透明</strong>的东西：其他代码可以保管它、传递它，但不应该查看或修改它的内容；只有农场自己知道怎样从中恢复。</li></ol>
+<h2 id="备忘录-只有原主人能读的快照">备忘录：只有原主人能读的快照<a class="anchor" href="#备忘录-只有原主人能读的快照" aria-label="本节链接">#</a></h2>
+<p>GoF 对备忘录的描述是：<strong>在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态。这样以后就可将该对象恢复到原先保存的状态。</strong></p>
+<p>快照写成一个冻结的数据类。字段名以下划线开头，表示“这是内部的，只有 <code>Farm</code> 应该读它”：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">FarmMemento</span>:
+    <span class="s">"""只有 Farm 知道怎样读它。其他代码只负责保管。"""</span>
+
+    _day: <span class="b">int</span>
+    _coins: <span class="b">int</span>
+    _crops: <span class="b">tuple</span>[<span class="b">tuple</span>[<span class="b">str</span>, <span class="b">int</span>], ...]</code></pre></div>
+<p>农场负责创建快照和从快照恢复：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">save</span>(<span class="b">self</span>) -&gt; FarmMemento:
+        <span class="k">return</span> FarmMemento(<span class="b">self</span>._day, <span class="b">self</span>._coins, <span class="b">tuple</span>(<span class="b">sorted</span>(<span class="b">self</span>._crops.items())))
+
+    <span class="k">def</span> <span class="f">restore</span>(<span class="b">self</span>, m: FarmMemento) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._day, <span class="b">self</span>._coins, <span class="b">self</span>._crops = m._day, m._coins, <span class="b">dict</span>(m._crops)</code></pre></div>
+<p>这里有两处复制，缺一不可：</p>
+<ul><li><strong>存档时</strong>，把字典转换成元组。元组和其中的字符串、整数都不可变，农场之后怎样修改自己的字典，都影响不到快照。</li><li><strong>读档时</strong>，用 <code>dict(m._crops)</code> 新建一个字典。如果直接把快照里的东西拿来用，而它恰好是可变的，农场之后的修改就会反过来改坏快照。用了元组，这一点也一并保证了：同一个快照可以反复恢复多次，每次都一样（测试 <code>test_one_memento_can_be_restored_many_times</code>）。</li></ul>
+<p>快照本身是冻结的，试图修改它会立即报错（测试 <code>test_memento_is_immutable</code>）。</p>
+<p>保管快照的是另一个对象，它只按名字存取，从不查看内容：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">SaveSlots</span>:
+    <span class="s">"""负责人：按名字保管快照，不读取、不修改其中的内容。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._slots: <span class="b">dict</span>[<span class="b">str</span>, FarmMemento] = {}
+
+    <span class="k">def</span> <span class="f">save</span>(<span class="b">self</span>, name: <span class="b">str</span>, farm: Farm) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._slots[name] = farm.save()
+
+    <span class="k">def</span> <span class="f">load</span>(<span class="b">self</span>, name: <span class="b">str</span>, farm: Farm) -&gt; <span class="k">None</span>:
+        farm.restore(<span class="b">self</span>._slots[name])</code></pre></div>
+<p>现在，存档、继续玩、读档，农场回到的正是存档时的样子：第 1 天，金币 70，萝卜×3（测试 <code>test_restore_brings_back_the_exact_state</code>）。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>原发器（Originator）</td><td><code>Farm</code></td><td>创建快照，从快照恢复自己</td></tr><tr><td>备忘录（Memento）</td><td><code>FarmMemento</code></td><td>保存原发器的内部状态；对其他对象不透明</td></tr><tr><td>负责人（Caretaker）</td><td><code>SaveSlots</code></td><td>保管快照，但从不查看或修改其内容</td></tr></tbody></table></div>
+<h3 id="python-里的-不透明">Python 里的“不透明”<a class="anchor" href="#python-里的-不透明" aria-label="本节链接">#</a></h3>
+<p>GoF 原书用 C++ 的 <code>friend</code> 机制，让备忘录对原发器提供“宽接口”（可以读写全部状态），对其他对象只提供“窄接口”（什么都看不到）。Python 没有这样的访问控制。<code>FarmMemento._coins</code> 前面的下划线只是一个<strong>约定</strong>：它告诉其他程序员“这不是给你用的”，但并不能阻止任何人读取它。</p>
+<p>在 Python 里，备忘录的“封装”主要靠两点：<strong>不可变</strong>（冻结的数据类，没人能改），加上<strong>约定</strong>（下划线前缀，没人应该读）。对一个游戏存档来说，这已经足够。</p>
+<h3 id="和命令的撤销比较">和命令的撤销比较<a class="anchor" href="#和命令的撤销比较" aria-label="本节链接">#</a></h3>
+<p><a href="19-command.html">第 19 章</a>用命令实现撤销：每条命令知道怎样抵消自己。备忘录则是在某个时刻把整个状态存下来。两种方式各有长处：</p>
+<div class="table"><table><thead><tr><th></th><th>命令的撤销</th><th>备忘录</th></tr></thead><tbody><tr><td>保存什么</td><td>每一步的操作，以及撤销它所需的少量信息</td><td>某一时刻的完整状态</td></tr><tr><td>占用空间</td><td>和操作的步数成正比，每步通常很小</td><td>和状态的大小成正比，每个快照都是完整的一份</td></tr><tr><td>实现难度</td><td>每种操作都要写正确的撤销</td><td>只需要一对 <code>save</code>/<code>restore</code></td></tr><tr><td>适合</td><td>逐步撤销、重做；操作日志</td><td>存档点、“回到某个时刻”、出错时整体回滚</td></tr></tbody></table></div>
+<p>两者也可以结合：命令执行前，先用备忘录记下受影响部分的状态，撤销时直接恢复它，就不必为每种命令写反向操作了。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>快照可能很大。</strong> 每个快照都是完整状态的一份副本。农场只有几个字段，无所谓；如果状态里有一张很大的地图，频繁存档就会占用大量内存。这时要考虑只保存变化的部分，或者限制快照的数量。</li><li><strong>复制必须彻底。</strong> 本章开头的错误说明，只要状态里有任何可变的部分被共享，快照就不再可靠。每给原发器加一个可变字段，都要检查 <code>save</code> 和 <code>restore</code> 是否正确地复制了它。</li><li><strong>状态的结构变了，旧快照怎么办。</strong> 游戏更新后，农场多了一个“天气”字段，旧存档里没有它。读旧存档时要给出合理的默认值，或者明确拒绝。下一节会看到，存档写到文件里时，这个问题更加突出。</li><li><strong>不是所有状态都能或都应该保存。</strong> 打开的网络连接、正在播放的音乐，这些是外部资源，不属于“可以存下来再恢复”的状态。</li></ul>
+<p><strong>什么时候不该用</strong>：状态本身就是一个不可变的值。如果 <code>Farm</code> 的每次操作都返回一个新的 <code>Farm</code> 对象，而不是修改自己，那么“存档”就是保留一个旧对象的引用，不需要任何复制。<a href="../part-02/08-prototype.html">第 08 章</a>的不可变数据，在这里同样适用。</p>
+<h2 id="python-角度-存到磁盘上的备忘录">Python 角度：存到磁盘上的备忘录<a class="anchor" href="#python-角度-存到磁盘上的备忘录" aria-label="本节链接">#</a></h2>
+<p>游戏存档最终要写进文件，下次打开游戏时还在。这时备忘录要被<strong>序列化</strong>。</p>
+<p>Python 标准库的 <code>pickle</code> 可以把几乎任何对象存成字节，写起来最省事。但<strong>读取不可信的 pickle 数据可能执行任意代码</strong>，Python 官方文档对此有明确的警告。存档文件放在玩家的电脑上，可以被修改，也可以从网上下载别人的“存档”。所以存档应该用只表示数据的格式，比如 JSON，并且在读取时检查内容：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">from_json</span>(text: <span class="b">str</span>) -&gt; FarmMemento:
+    data = json.loads(text)
+    <span class="k">if</span> data.get(<span class="s">"version"</span>) != <span class="n">1</span>:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">"不认识的存档版本"</span>)
+    day, coins, crops = data[<span class="s">"day"</span>], data[<span class="s">"coins"</span>], data[<span class="s">"crops"</span>]
+    <span class="k">if</span> <span class="k">not</span> (<span class="b">isinstance</span>(day, <span class="b">int</span>) <span class="k">and</span> day &gt;= <span class="n">1</span> <span class="k">and</span> <span class="b">isinstance</span>(coins, <span class="b">int</span>) <span class="k">and</span> coins &gt;= <span class="n">0</span>):
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">"存档内容不合法"</span>)
+    <span class="k">if</span> <span class="k">not</span> <span class="b">all</span>(<span class="b">isinstance</span>(k, <span class="b">str</span>) <span class="k">and</span> <span class="b">isinstance</span>(v, <span class="b">int</span>) <span class="k">and</span> v &gt; <span class="n">0</span> <span class="k">for</span> k, v <span class="k">in</span> crops.items()):
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">"存档里的作物数据不合法"</span>)
+    <span class="k">return</span> FarmMemento(day, coins, <span class="b">tuple</span>(<span class="b">sorted</span>(crops.items())))</code></pre></div>
+<p>几个要点：</p>
+<ul><li><strong>版本号。</strong> 存档里记下格式版本，以后格式变了，读档的代码可以识别旧版本，选择转换或拒绝。</li><li><strong>检查。</strong> 文件里的内容不可信。负数的金币、字符串类型的天数、数量为 0 的作物，都应该被拒绝，而不是悄悄地恢复成一个不合理的农场（测试 <code>test_rejects_tampered_or_unknown_saves</code>）。</li><li><strong>往返测试。</strong> 存下来再读回去，应该得到相等的快照（测试 <code>test_round_trip</code>）。冻结的数据类自动支持相等比较，这个测试写起来很简单。</li></ul>
+<p>至于“防止玩家修改存档作弊”，检查内容只能拦住明显不合理的值，拦不住“把金币从 70 改成 7000”。如果这对游戏很重要，需要对存档内容做签名，那已经超出了本章的范围。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>备忘录把对象某一时刻的内部状态存成一个快照，以后可以原样恢复；快照由别的对象保管，但只有原对象知道怎样读取它。</li><li>快照必须是真正的副本：存的时候复制，恢复的时候也复制，或者干脆用不可变的数据保存。共享任何可变部分，快照都会悄悄改变。</li><li>Python 没有严格的访问控制。备忘录的封装主要依靠不可变（冻结的数据类）和约定（下划线前缀）。</li><li>存档写入磁盘时，使用 JSON 等只表示数据的格式，带上版本号，并检查读入的内容；不要用 <code>pickle</code> 读取不可信的文件。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>游戏更新了：农场新增了“仓库”，保存已收获但还没卖掉的作物（一个字典，作物名到数量）。</p>
+<ol><li><code>FarmMemento</code>、<code>save</code>、<code>restore</code> 各要怎样修改？如果忘了修改 <code>save</code>，会发生什么？</li><li>玩家用旧版本的存档（没有仓库字段）读档，你希望发生什么？<code>from_json</code> 要怎样修改？</li><li>能不能写一个测试，在以后有人给 <code>Farm</code> 加新字段却忘了更新快照时，自动失败？</li></ol>
+<p><strong>思路提示</strong>：快照要加一个 <code>_storage</code> 字段（同样转成元组），<code>save</code> 和 <code>restore</code> 都要处理它。如果忘了改 <code>save</code>，读档后仓库会保留读档前的内容，也就是“存档不完整”，而且不会报错。对旧存档，可以把格式版本升到 2，读到版本 1 时把仓库当作空的，这是一种合理的迁移；也可以直接拒绝，但对玩家不太友好。第 3 问的一种思路是：在测试里比较 <code>vars(farm)</code> 的键和快照的字段，确保农场的每个内部字段都在快照里有对应的一项。这类“结构一致性”的测试，是防止状态和快照悄悄走样的有效办法。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch25_farm_v1.py" target="_blank" rel="noopener"><code>examples/ch25_farm_v1.py</code></a>：存档共享了内部字典（含错误）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch25_memento.py" target="_blank" rel="noopener"><code>examples/ch25_memento.py</code></a>：不可变快照与存档栏</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch25_pythonic.py" target="_blank" rel="noopener"><code>examples/ch25_pythonic.py</code></a>：JSON 存档、版本号与读档检查</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch25_memento.py" target="_blank" rel="noopener"><code>tests/test_ch25_memento.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-04/24-mediator.html"><small>上一篇</small>24 中介者 Mediator</a><a class="next" href="../part-04/26-visitor.html"><small>下一篇</small>26 访问者 Visitor</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-04/25-memento.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#问题-存档会自己变">问题：存档会自己变</a></li><li><a href="#还有一个问题-谁能动存档">还有一个问题：谁能动存档</a></li><li><a href="#备忘录-只有原主人能读的快照">备忘录：只有原主人能读的快照</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-存到磁盘上的备忘录">Python 角度：存到磁盘上的备忘录</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

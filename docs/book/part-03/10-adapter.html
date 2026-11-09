@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 10 章 适配器 Adapter · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：两段已经写好、都不方便修改的代码，接口对不上时怎么办？适配器除了“改个名字”，还要承担哪些翻译工作？ 从这一章开始进入第三部分：对象怎样组合起来。第一个问题最常见：手上有两块现成的东西，各自都没毛病，就是接不上。">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html" aria-current="page"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第三部分 · 组合对象（GoF 结构型）</p>
+<h1>第 10 章　适配器 Adapter</h1>
+<blockquote><p>本章要回答：两段已经写好、都不方便修改的代码，接口对不上时怎么办？适配器除了“改个名字”，还要承担哪些翻译工作？</p></blockquote>
+<p>从这一章开始进入第三部分：对象怎样<strong>组合</strong>起来。第一个问题最常见：手上有两块现成的东西，各自都没毛病，就是接不上。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一家公司的总部有一套考勤报表模块，已经用了好几年。工资计算、排班、月度出勤统计都在用它。它的核心是打卡记录：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Punch</span>:
+    employee: <span class="b">str</span>
+    at: datetime  <span class="c"># 带时区的本地时间</span>
+    kind: <span class="b">str</span>  <span class="c"># "上班" 或 "下班"</span></code></pre></div>
+<p>报表从“考勤来源”取数据。任何对象，只要有一个返回打卡记录列表的 <code>punches()</code> 方法，就是一个考勤来源：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">PunchSource</span>(Protocol):
+    <span class="k">def</span> <span class="f">punches</span>(<span class="b">self</span>) -&gt; <span class="b">list</span>[Punch]: ...</code></pre></div>
+<p>总部考勤机的驱动 <code>LocalClock</code> 就是这样一个来源。迟到报表把所有来源的记录合在一起，找出每人每天第一次上班打卡晚于 9 点的情况：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">late_report</span>(sources: Iterable[PunchSource]) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    <span class="k">return</span> late_arrivals(p <span class="k">for</span> source <span class="k">in</span> sources <span class="k">for</span> p <span class="k">in</span> source.punches())</code></pre></div>
+<p>总部今天的结果是 <code>['03-09 李雷']</code>，李雷 9:05 到的。</p>
+<h2 id="变化-分店装了另一家的考勤机">变化：分店装了另一家的考勤机<a class="anchor" href="#变化-分店装了另一家的考勤机" aria-label="本节链接">#</a></h2>
+<p>公司开了一家分店，分店装的是一套云考勤，厂商提供了 Python SDK：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CloudAttendanceClient</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, events: <span class="b">list</span>[<span class="b">dict</span>]) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._events = events  <span class="c"># 真实的 SDK 会通过网络取数据，这里用列表代替</span>
+
+    <span class="k">def</span> <span class="f">fetch_events</span>(<span class="b">self</span>, since_ms: <span class="b">int</span> = <span class="n">0</span>) -&gt; <span class="b">list</span>[<span class="b">dict</span>]:
+        <span class="k">return</span> [e <span class="k">for</span> e <span class="k">in</span> <span class="b">self</span>._events <span class="k">if</span> e[<span class="s">"ts"</span>] &gt;= since_ms]</code></pre></div>
+<p>它返回的数据长这样：</p>
+<div class="code" data-lang="输出"><pre><code>{"uid": "E-2002", "ts": 1773019020000, "type": "IN"}
+{"uid": "E-2002", "ts": 1773028800000, "type": "BREAK"}</code></pre></div>
+<p>老板想在同一张迟到报表里看到总部和分店的情况。</p>
+<p>两边的东西都不能随便改：</p>
+<ul><li><strong>报表模块</strong>是共用的。工资、排班都依赖它，改动它要通知好几个团队、重新测试一大片。</li><li><strong>SDK</strong> 是厂商的代码，改了下次升级就会被覆盖。</li></ul>
+<p>而它们之间的差别，比方法名不同要多得多：</p>
+<div class="table"><table><thead><tr><th>报表需要的</th><th>SDK 给的</th></tr></thead><tbody><tr><td>方法 <code>punches()</code></td><td>方法 <code>fetch_events()</code></td></tr><tr><td>员工姓名</td><td>工号 <code>uid</code>，姓名要查花名册</td></tr><tr><td>带时区的 <code>datetime</code></td><td>从 1970 年开始的<strong>毫秒数</strong></td></tr><tr><td><code>"上班"</code> / <code>"下班"</code></td><td><code>"IN"</code> / <code>"OUT"</code>，还有一种 <code>"BREAK"</code>（午休打卡）</td></tr></tbody></table></div>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>最快的办法是在报表模块里加一个分支，认出 SDK 对象就地转换：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">late_report</span>(sources: Iterable[<span class="b">object</span>]) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    punches: <span class="b">list</span>[Punch] = []
+    <span class="k">for</span> source <span class="k">in</span> sources:
+        <span class="k">if</span> <span class="b">isinstance</span>(source, LocalClock):
+            punches += source.punches()
+        <span class="k">elif</span> <span class="b">isinstance</span>(source, CloudAttendanceClient):
+            <span class="k">for</span> e <span class="k">in</span> source.fetch_events():
+                <span class="k">if</span> e[<span class="s">"type"</span>] <span class="k">not</span> <span class="k">in</span> (<span class="s">"IN"</span>, <span class="s">"OUT"</span>):
+                    <span class="k">continue</span>
+                at = datetime.fromtimestamp(e[<span class="s">"ts"</span>] / <span class="n">1000</span>, tz=BEIJING)
+                kind = <span class="s">"上班"</span> <span class="k">if</span> e[<span class="s">"type"</span>] == <span class="s">"IN"</span> <span class="k">else</span> <span class="s">"下班"</span>
+                punches.append(Punch(BRANCH_STAFF[e[<span class="s">"uid"</span>]], at, kind))
+        <span class="k">else</span>:
+            <span class="k">raise</span> <span class="b">TypeError</span>(<span class="s">f"不认识的考勤来源: {source!r}"</span>)
+    <span class="k">return</span> late_arrivals(punches)</code></pre></div>
+<p>它能用，结果是 <code>['03-09 孙浩', '03-09 李雷']</code>。但看看它带来了什么：</p>
+<ul><li><strong>共用模块知道了一家具体厂商的细节</strong>：毫秒时间戳、<code>"BREAK"</code>、分店的花名册。下次再开一家用第三种考勤机的分店，又要改这个函数，又要通知所有依赖它的团队。</li><li><strong>而且只改了这一个函数。</strong> 工资计算和排班也从考勤来源取数据，它们各自也要加一样的 <code>isinstance</code> 分支，否则把云考勤对象传给它们，会因为没有 <code>punches()</code> 方法而出错。</li><li>报表的签名从 <code>Iterable[PunchSource]</code> 退化成了 <code>Iterable[object]</code>，类型检查帮不上忙了。</li></ul>
+<h2 id="适配器-在两者之间加一层翻译">适配器：在两者之间加一层翻译<a class="anchor" href="#适配器-在两者之间加一层翻译" aria-label="本节链接">#</a></h2>
+<p>GoF 对适配器的描述是：<strong>将一个类的接口转换成客户希望的另一个接口，使原本由于接口不兼容而不能一起工作的类可以一起工作。</strong></p>
+<p>我们不改报表，也不改 SDK，而是写一个新的类：它<strong>对外</strong>长得像报表认识的考勤来源，<strong>对内</strong>持有一个 SDK 对象，把所有的翻译工作都包在里面：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CloudClockAdapter</span>:
+    <span class="s">"""对象适配器：持有一个 SDK 对象，对外提供 punches()。"""</span>
+
+    KINDS = {<span class="s">"IN"</span>: <span class="s">"上班"</span>, <span class="s">"OUT"</span>: <span class="s">"下班"</span>}
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, client: CloudAttendanceClient, staff: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">str</span>], tz: tzinfo) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.client = client
+        <span class="b">self</span>.staff = staff
+        <span class="b">self</span>.tz = tz
+
+    <span class="k">def</span> <span class="f">punches</span>(<span class="b">self</span>) -&gt; <span class="b">list</span>[Punch]:
+        result = []
+        <span class="k">for</span> e <span class="k">in</span> <span class="b">self</span>.client.fetch_events():
+            kind = <span class="b">self</span>.KINDS.get(e[<span class="s">"type"</span>])
+            <span class="k">if</span> kind <span class="k">is</span> <span class="k">None</span>:
+                <span class="k">continue</span>  <span class="c"># 午休打卡（BREAK）在报表里没有对应的概念，丢弃</span>
+            name = <span class="b">self</span>.staff.get(e[<span class="s">"uid"</span>])
+            <span class="k">if</span> name <span class="k">is</span> <span class="k">None</span>:
+                <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"花名册里没有工号 {e['uid']}"</span>)
+            at = datetime.fromtimestamp(e[<span class="s">"ts"</span>] / <span class="n">1000</span>, tz=<span class="b">self</span>.tz)
+            result.append(Punch(name, at, kind))
+        <span class="k">return</span> result</code></pre></div>
+<p>使用时，把 SDK 对象包一层，和总部的考勤机放在一起交给报表：</p>
+<div class="code" data-lang="Python"><pre><code>    branch = CloudClockAdapter(CloudAttendanceClient(BRANCH_EVENTS), BRANCH_STAFF, BEIJING)
+    <span class="b">print</span>(late_report([LocalClock(HQ_RECORDS), branch]))</code></pre></div>
+<p>报表模块一个字都没有改，结果同样是 <code>['03-09 孙浩', '03-09 李雷']</code>。工资和排班模块拿到这个适配器，也能直接用。下次再接入第三种考勤机，就再写一个适配器。</p>
+<h3 id="适配不只是改名字">适配不只是改名字<a class="anchor" href="#适配不只是改名字" aria-label="本节链接">#</a></h3>
+<p>这个适配器里真正有分量的，不是把 <code>fetch_events</code> 换成 <code>punches</code>，而是几个<strong>翻译决定</strong>：</p>
+<ol><li><strong>时区。</strong> 毫秒时间戳是一个绝对时刻，本身不带“几点”的概念，要变成“9 点 17 分”，必须指定时区。同样的时间戳按北京时间解释是 9:17，按 UTC 解释是凌晨 1:17。测试 <code>test_time_zone_is_a_real_decision</code> 显示：如果适配器用错时区，报表里<strong>一个迟到的人都没有</strong>，而且不会报任何错。所以时区作为参数显式传入，而不是悄悄依赖服务器的系统设置。</li><li><strong>报表里没有的概念。</strong> 云考勤有午休打卡，报表的世界里只有上班和下班。适配器选择丢弃它，并在注释里写明。如果将来报表需要统计午休，这个决定就要改。</li><li><strong>对不上的数据。</strong> 花名册里查不到的工号，适配器选择立即报错，而不是填一个“未知员工”继续。对考勤来说，宁可让人发现花名册漏了人，也不要让一条打卡记录悄悄算到一个不存在的人头上。</li></ol>
+<p>这些决定都是业务判断，而适配器把它们集中在了<strong>一个</strong>地方。在不用模式的写法里，它们散在报表函数中间，和迟到的判断逻辑混在一起。</p>
+<h3 id="对象适配器和类适配器">对象适配器和类适配器<a class="anchor" href="#对象适配器和类适配器" aria-label="本节链接">#</a></h3>
+<p>GoF 描述了两种适配器。上面的是<strong>对象适配器</strong>：适配器<strong>持有</strong>被适配的对象。另一种是<strong>类适配器</strong>：适配器<strong>继承</strong>被适配的类，再补上目标接口的方法：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CloudClockClassAdapter</span>(CloudAttendanceClient):
+    <span class="s">"""类适配器：继承 SDK 的类，再补上 punches()。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, events: <span class="b">list</span>[<span class="b">dict</span>], staff: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">str</span>], tz: tzinfo) -&gt; <span class="k">None</span>:
+        <span class="b">super</span>().__init__(events)
+        <span class="b">self</span>._adapter = CloudClockAdapter(<span class="b">self</span>, staff, tz)
+
+    <span class="k">def</span> <span class="f">punches</span>(<span class="b">self</span>) -&gt; <span class="b">list</span>[Punch]:
+        <span class="k">return</span> <span class="b">self</span>._adapter.punches()</code></pre></div>
+<p>它也能工作，但有两个问题。第一，它的构造函数要照着 SDK 的构造函数写，SDK 升级改了构造参数，适配器也要跟着改。第二，SDK 的所有方法都一起暴露了出来：<code>fetch_events()</code> 照样可以调用（测试 <code>test_class_adapter_also_exposes_the_sdk</code>），使用者可能绕过翻译直接拿原始数据。在 Python 里，<strong>优先使用对象适配器</strong>。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>目标（Target）</td><td><code>PunchSource</code> 协议</td><td>客户期望的接口</td></tr><tr><td>客户（Client）</td><td><code>late_report</code> 及其他报表</td><td>只通过目标接口使用对象</td></tr><tr><td>被适配者（Adaptee）</td><td><code>CloudAttendanceClient</code></td><td>已有的、接口不兼容的类</td></tr><tr><td>适配器（Adapter）</td><td><code>CloudClockAdapter</code></td><td>实现目标接口，内部调用被适配者</td></tr></tbody></table></div>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>多了一层，也多了一个可能出错的地方。</strong> 翻译本身可能出错，比如上面的时区。所以适配器需要自己的测试，而且要测那些“翻译决定”，不只是测它能运行。</li><li><strong>翻译可能丢信息。</strong> 午休打卡被丢弃了。如果适配器丢掉的信息后来又需要了，要回头修改适配器，甚至扩展目标接口。</li><li><strong>接口差别太大时，适配器会变成一个小系统。</strong> 如果被适配的东西在概念上和目标差得很远，比如一边按“事件”推送，一边按“记录”拉取，适配器里会出现缓存、状态、重试等等。这时要想一想，是不是目标接口本身需要重新设计。</li><li><strong>适配器容易越积越多。</strong> 每接入一种来源就加一个适配器，这本身没问题；但如果几个适配器里出现了大段相同的转换代码，就该把共同的部分提取出来。</li></ul>
+<p><strong>什么时候不该用</strong>：两边代码中至少有一边是你能<strong>方便修改</strong>的。如果报表模块是你自己刚写的、没有别人依赖，直接让它支持新的数据形状，或者调整接口，通常比加一层适配器更简单。适配器适用于两边都不该动的情况。</p>
+<h2 id="python-角度-让核心只接收数据">Python 角度：让核心只接收数据<a class="anchor" href="#python-角度-让核心只接收数据" aria-label="本节链接">#</a></h2>
+<p>回头看报表模块：它其实分成两层。<code>late_report</code> 从<strong>来源对象</strong>取记录；真正的判断逻辑 <code>late_arrivals</code> 只接收<strong>打卡记录本身</strong>。如果其他报表也都像 <code>late_arrivals</code> 这样只接收数据，那么“接入新考勤机”就只需要一个转换函数：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">punches_from_cloud</span>(events: <span class="b">list</span>[<span class="b">dict</span>], staff: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">str</span>], tz: tzinfo) -&gt; <span class="b">list</span>[Punch]:
+    <span class="k">return</span> [
+        Punch(staff[e[<span class="s">"uid"</span>]], datetime.fromtimestamp(e[<span class="s">"ts"</span>] / <span class="n">1000</span>, tz=tz), KINDS[e[<span class="s">"type"</span>]])
+        <span class="k">for</span> e <span class="k">in</span> events
+        <span class="k">if</span> e[<span class="s">"type"</span>] <span class="k">in</span> KINDS
+    ]</code></pre></div>
+<div class="code" data-lang="Python"><pre><code>    client = CloudAttendanceClient(BRANCH_EVENTS)
+    branch = punches_from_cloud(client.fetch_events(), BRANCH_STAFF, BEIJING)
+    <span class="b">print</span>(late_arrivals(HQ_RECORDS + branch))</code></pre></div>
+<p>这就是<a href="../part-01/01-data-and-processing.html">第 01 章</a>里“数据与处理分开”的回报：核心逻辑只认数据，外部世界的各种格式在<strong>边界</strong>上一次转换完毕。转换函数也是适配器，只是它适配的是数据，不是对象。（这个简短版本对查不到的工号会直接抛出 <code>KeyError</code>，而不是像对象适配器那样给出中文提示。写在边界上的转换函数同样需要想清楚这些决定。）</p>
+<p>什么时候仍然需要一个适配器<strong>对象</strong>？</p>
+<ul><li>客户代码要的是一个<strong>对象</strong>，并且会在不同时间多次调用它，比如报表每天调用一次 <code>punches()</code>，每次都应该拿到最新数据。转换函数只能转换已经取回的数据，而适配器对象可以在每次调用时去取。</li><li>目标接口有不止一个方法，或者需要保存状态（比如记住上次取到哪个时间点，下次只取新的）。</li><li>你不能改变客户代码的调用方式，它就是要调用 <code>source.punches()</code>。</li></ul>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当两段都不方便修改的代码接口不一致时，适配器在中间加一层翻译，让两边都不用改。</li><li>适配器的价值主要在于把翻译决定（时区、单位、缺失的概念、对不上的数据）集中到一个地方，并让它们可以被单独测试。只改方法名的适配器很少见，也很少是难点。</li><li>在 Python 里优先使用对象适配器（持有被适配者），而不是类适配器（继承被适配者）。</li><li>如果核心逻辑只接收普通数据，适配器往往可以简化为边界上的一个转换函数。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>一年后，云考勤厂商发布了 SDK 2.0：<code>fetch_events</code> 改名为 <code>list_records</code>，时间戳从毫秒改成了带时区的 ISO 8601 字符串（如 <code>"2026-03-09T09:17:00+08:00"</code>），而且新增了 <code>"OVERTIME_IN"</code> 类型，表示加班签到。</p>
+<ol><li>在适配器的写法下，需要修改哪些代码？报表模块需要改吗？</li><li>在不用模式的写法下，需要修改哪些代码？</li><li><code>"OVERTIME_IN"</code> 应该翻译成“上班”，还是丢弃？谁来做这个决定？</li></ol>
+<p><strong>思路提示</strong>：适配器的写法只需要改 <code>CloudClockAdapter</code> 一个类（或者为 2.0 新写一个适配器，让两种版本并存一段时间）。时间戳变成 ISO 字符串后，可以用 <code>datetime.fromisoformat</code> 解析，它自带时区，适配器的 <code>tz</code> 参数可能就不需要了。不用模式的写法要改共用的报表函数，以及所有加了同样分支的工资、排班代码。第 3 问没有技术上的标准答案：加班签到算不算“上班打卡”，会直接影响迟到统计，这需要问人事部门。适配器的作用是让这个决定<strong>有一个明确的地方可以写下来</strong>，而不是让它散落在各处。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch10_attendance.py" target="_blank" rel="noopener"><code>examples/ch10_attendance.py</code></a>：已有的考勤报表模块</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch10_cloud_sdk.py" target="_blank" rel="noopener"><code>examples/ch10_cloud_sdk.py</code></a>：云考勤 SDK（模拟）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch10_report_v1.py" target="_blank" rel="noopener"><code>examples/ch10_report_v1.py</code></a>：在报表里加 <code>isinstance</code> 分支</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch10_adapter.py" target="_blank" rel="noopener"><code>examples/ch10_adapter.py</code></a>：对象适配器与类适配器</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch10_pythonic.py" target="_blank" rel="noopener"><code>examples/ch10_pythonic.py</code></a>：边界上的转换函数</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch10_adapter.py" target="_blank" rel="noopener"><code>tests/test_ch10_adapter.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-02/09-singleton.html"><small>上一篇</small>09 单例 Singleton</a><a class="next" href="../part-03/11-bridge.html"><small>下一篇</small>11 桥接 Bridge</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-03/10-adapter.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#变化-分店装了另一家的考勤机">变化：分店装了另一家的考勤机</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#适配器-在两者之间加一层翻译">适配器：在两者之间加一层翻译</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-让核心只接收数据">Python 角度：让核心只接收数据</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 06 章 抽象工厂 Abstract Factory · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：当程序需要好几个部件，而这些部件必须“成套”使用时，怎样保证不会有人拿错一件？抽象工厂和上一章的工厂方法有什么不同？ 上一章的工厂只负责创建一种东西：一个渲染器。这一章的问题多了一个维度：程序要用到几种东西，它们之间有搭配关系，">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html" aria-current="page"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第二部分 · 创建对象（GoF 创建型）</p>
+<h1>第 06 章　抽象工厂 Abstract Factory</h1>
+<blockquote><p>本章要回答：当程序需要好几个部件，而这些部件必须“成套”使用时，怎样保证不会有人拿错一件？抽象工厂和上一章的工厂方法有什么不同？</p></blockquote>
+<p>上一章的工厂只负责创建<strong>一种</strong>东西：一个渲染器。这一章的问题多了一个维度：程序要用到<strong>几种</strong>东西，它们之间有搭配关系，配错了不会报错，却会悄悄地做错事。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个社区图书馆每天早上给快到期的读者发还书提醒。借阅记录长这样：</p>
+<div class="code" data-lang="Python"><pre><code>loans = [
+    Loan(<span class="s">"王芳"</span>, <span class="s">"城南旧事"</span>, date(<span class="n">2026</span>, <span class="n">3</span>, <span class="n">10</span>)),
+    Loan(<span class="s">"李雷"</span>, <span class="s">"活着"</span>, date(<span class="n">2026</span>, <span class="n">3</span>, <span class="n">11</span>)),
+    Loan(<span class="s">"赵敏"</span>, <span class="s">"围城"</span>, date(<span class="n">2026</span>, <span class="n">3</span>, <span class="n">20</span>)),
+]</code></pre></div>
+<p><code>Loan</code> 是一个冻结的数据类，有读者、书名、到期日三个字段，还有一个 <code>key</code> 属性，把三者拼成一个字符串，用来识别“这一条借阅”。</p>
+<p>程序做三件事：找出两天内到期的借阅；给每位读者写一条提醒；记下发过哪些，避免明天重复发送。提醒先写进一个发件箱文件 <code>outbox.txt</code>，由图书馆已有的短信程序负责真正投递；发送记录存在 <code>sent.json</code> 里。</p>
+<p>3 月 9 日运行，发件箱里会多出两行：</p>
+<div class="code" data-lang="输出"><pre><code>王芳，您借的《城南旧事》将于3月10日到期
+李雷，您借的《活着》将于3月11日到期</code></pre></div>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>第一版很直接。后来管理员提出：改了提醒的措辞之后，想先<strong>演练</strong>一遍，看看会发给谁、发什么，但不要真的发出去。于是函数多了一个 <code>dry_run</code> 参数：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">send_reminders</span>(
+    items: <span class="b">list</span>[Loan], today: date, outbox: Path, log: Path, dry_run: <span class="b">bool</span> = <span class="k">False</span>
+) -&gt; <span class="b">int</span>:
+    sent = <span class="b">set</span>(json.loads(log.read_text(<span class="s">"utf-8"</span>))) <span class="k">if</span> log.exists() <span class="k">else</span> <span class="b">set</span>()
+    count = <span class="n">0</span>
+    <span class="k">for</span> loan <span class="k">in</span> due_soon(items, today):
+        <span class="k">if</span> loan.key <span class="k">in</span> sent:
+            <span class="k">continue</span>
+        <span class="k">if</span> dry_run:
+            <span class="b">print</span>(<span class="s">"[演练]"</span>, reminder_text(loan))
+        <span class="k">else</span>:
+            <span class="k">with</span> outbox.<span class="b">open</span>(<span class="s">"a"</span>, encoding=<span class="s">"utf-8"</span>) <span class="k">as</span> f:
+                f.write(reminder_text(loan) + <span class="s">"\n"</span>)
+        sent.add(loan.key)
+        count += <span class="n">1</span>
+    log.write_text(json.dumps(<span class="b">sorted</span>(sent), ensure_ascii=<span class="k">False</span>), <span class="s">"utf-8"</span>)
+    <span class="k">return</span> count</code></pre></div>
+<p>演练时屏幕上打印出两条 <code>[演练] ……</code>，看起来一切正常。</p>
+<p><strong>问题出在第二天早上。</strong> 管理员先演练，再正式运行，正式运行返回 <code>0</code>，发件箱是空的。两位读者都没收到提醒。</p>
+<p>原因在最后一行：演练只换掉了“怎么发送”，却没换掉“怎么记录”。<code>log.write_text</code> 照样执行，把两条借阅写进了正式的 <code>sent.json</code>。正式运行读到这份记录，以为已经发过了。测试 <code>test_dry_run_swallows_the_real_reminders</code> 稳定地复现了这个错误。</p>
+<p>修起来只要一行：<code>if not dry_run: log.write_text(...)</code>。但这个错误的根源不在某一行，而在结构上。</p>
+<h2 id="变化带来的困难">变化带来的困难<a class="anchor" href="#变化带来的困难" aria-label="本节链接">#</a></h2>
+<p>“演练”不是一个开关，而是<strong>一整套不同的部件</strong>：</p>
+<div class="table"><table><thead><tr><th>部件</th><th>正式运行</th><th>演练</th></tr></thead><tbody><tr><td>发送</td><td>写进发件箱文件</td><td>打印到屏幕</td></tr><tr><td>发送记录</td><td>读正式记录，运行后写回</td><td>读正式记录，<strong>不写回</strong></td></tr></tbody></table></div>
+<p>两个部件必须一起切换。只换发送不换记录，就是上面的错误；只换记录不换发送，演练会真的把短信发出去，更糟。</p>
+<p>在第一版里，这两个决定分散在函数的不同位置，各自用 <code>if dry_run</code> 判断。没有任何东西把它们绑在一起，漏掉一个也不会报错。</p>
+<p>接着又来了第三个需求：写单元测试时，希望发送和记录都放在内存里，既不打印，也不碰文件。这又是一套部件。如果继续加开关，函数里就会出现 <code>dry_run</code> 和 <code>testing</code> 两个参数，四种组合里只有三种有意义，剩下一种是什么行为，没人说得清。</p>
+<p>问题可以说得更准确一些：<strong>程序需要好几种部件；部件有几个“家族”；同一次运行必须从同一个家族里取全部部件。</strong></p>
+<h2 id="抽象工厂-一个对象负责一整套">抽象工厂：一个对象负责一整套<a class="anchor" href="#抽象工厂-一个对象负责一整套" aria-label="本节链接">#</a></h2>
+<p>GoF 对抽象工厂的描述是：<strong>提供一个接口，用于创建一系列相关或相互依赖的对象，而无需指定它们的具体类。</strong></p>
+<p>第一步，先说清楚部件长什么样。和<a href="05-factory-method.html">第 05 章</a>一样，用 <code>Protocol</code> 描述，不要求继承：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Sender</span>(Protocol):
+    <span class="k">def</span> <span class="f">send</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="k">None</span>: ...
+
+
+<span class="k">class</span> <span class="f">SentLog</span>(Protocol):
+    <span class="k">def</span> <span class="f">__contains__</span>(<span class="b">self</span>, key: <span class="b">str</span>) -&gt; <span class="b">bool</span>: ...
+    <span class="k">def</span> <span class="f">add</span>(<span class="b">self</span>, key: <span class="b">str</span>) -&gt; <span class="k">None</span>: ...
+    <span class="k">def</span> <span class="f">save</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>: ...</code></pre></div>
+<p>每个家族各写一组部件。演练家族的发送记录很能说明“家族”的意思：它要<strong>读</strong>正式记录，这样才知道哪些已经发过，演练结果才和正式运行一致；但它<strong>从不写回</strong>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">PrintSender</span>:
+    <span class="k">def</span> <span class="f">send</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="k">None</span>:
+        <span class="b">print</span>(<span class="s">"[演练]"</span>, text)
+
+
+<span class="k">class</span> <span class="f">ReadOnlySentLog</span>(FileSentLog):
+    <span class="k">def</span> <span class="f">save</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="k">pass</span>  <span class="c"># 演练不改变任何正式状态</span></code></pre></div>
+<p>第二步，定义“工厂”的接口：它有几种部件，就有几个创建方法。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">ReminderServices</span>(ABC):
+<span class="d">    @abstractmethod</span>
+    <span class="k">def</span> <span class="f">create_sender</span>(<span class="b">self</span>) -&gt; Sender: ...
+
+<span class="d">    @abstractmethod</span>
+    <span class="k">def</span> <span class="f">create_sent_log</span>(<span class="b">self</span>) -&gt; SentLog: ...</code></pre></div>
+<p>每个家族一个具体工厂。一个工厂里的所有创建方法，返回的都是同一家族的部件：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">LiveServices</span>(ReminderServices):
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, folder: Path) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.folder = folder
+
+    <span class="k">def</span> <span class="f">create_sender</span>(<span class="b">self</span>) -&gt; Sender:
+        <span class="k">return</span> FileSender(<span class="b">self</span>.folder / <span class="s">"outbox.txt"</span>)
+
+    <span class="k">def</span> <span class="f">create_sent_log</span>(<span class="b">self</span>) -&gt; SentLog:
+        <span class="k">return</span> FileSentLog(<span class="b">self</span>.folder / <span class="s">"sent.json"</span>)
+
+
+<span class="k">class</span> <span class="f">DryRunServices</span>(ReminderServices):
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, folder: Path) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.folder = folder
+
+    <span class="k">def</span> <span class="f">create_sender</span>(<span class="b">self</span>) -&gt; Sender:
+        <span class="k">return</span> PrintSender()
+
+    <span class="k">def</span> <span class="f">create_sent_log</span>(<span class="b">self</span>) -&gt; SentLog:
+        <span class="k">return</span> ReadOnlySentLog(<span class="b">self</span>.folder / <span class="s">"sent.json"</span>)</code></pre></div>
+<p>第三步，发送函数只认工厂，不再知道“演练”这回事：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">send_reminders</span>(items: <span class="b">list</span>[Loan], today: date, services: ReminderServices) -&gt; <span class="b">int</span>:
+    sender = services.create_sender()
+    sent = services.create_sent_log()
+    count = <span class="n">0</span>
+    <span class="k">for</span> loan <span class="k">in</span> due_soon(items, today):
+        <span class="k">if</span> loan.key <span class="k">in</span> sent:
+            <span class="k">continue</span>
+        sender.send(reminder_text(loan))
+        sent.add(loan.key)
+        count += <span class="n">1</span>
+    sent.save()
+    <span class="k">return</span> count</code></pre></div>
+<p>现在先演练、再正式运行，两次都返回 <code>2</code>，发件箱里是那两行提醒，演练结束后 <code>sent.json</code> 根本不存在。函数里没有一个 <code>if dry_run</code>，所以也没有“漏掉一个”的机会：<strong>切换家族就是换一个工厂对象，部件不可能只换一半。</strong></p>
+<p>测试用的第三个家族 <code>MemoryServices</code> 也照此写出，<code>send_reminders</code> 一行都不用改。</p>
+<h3 id="选工厂的那一步">选工厂的那一步<a class="anchor" href="#选工厂的那一步" aria-label="本节链接">#</a></h3>
+<p>命令行里的 <code>--mode live</code> 或 <code>--mode dry-run</code> 最终要变成一个工厂对象。这一步用的正是上一章的简单工厂函数：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">services_for</span>(mode: <span class="b">str</span>, folder: Path) -&gt; ReminderServices:
+    factories = {<span class="s">"live"</span>: LiveServices, <span class="s">"dry-run"</span>: DryRunServices}
+    <span class="k">try</span>:
+        <span class="k">return</span> factories[mode](folder)
+    <span class="k">except</span> <span class="b">KeyError</span>:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知模式: {mode}"</span>) <span class="k">from</span> <span class="k">None</span></code></pre></div>
+<p>两者并不冲突：简单工厂决定<strong>用哪个家族</strong>，抽象工厂负责<strong>把这个家族的部件一件件交出来</strong>。</p>
+<p>下图概括了三个家族：发送函数只认工厂，换一个工厂就换了一整套部件。</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+    client["send_reminders：只认工厂"]
+    subgraph live["LiveServices 正式家族"]
+        a1["FileSender"]
+        a2["FileSentLog"]
+    end
+    subgraph dry["DryRunServices 演练家族"]
+        b1["PrintSender"]
+        b2["ReadOnlySentLog"]
+    end
+    subgraph mem["MemoryServices 测试家族"]
+        c1["MemorySender"]
+        c2["MemorySentLog"]
+    end
+    client --&gt; live
+    client -.-&gt; dry
+    client -.-&gt; mem</pre></figure>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>抽象工厂（AbstractFactory）</td><td><code>ReminderServices</code></td><td>声明每种部件的创建方法</td></tr><tr><td>具体工厂（ConcreteFactory）</td><td><code>LiveServices</code>、<code>DryRunServices</code>、<code>MemoryServices</code></td><td>创建同一家族的全部部件</td></tr><tr><td>抽象产品（AbstractProduct）</td><td><code>Sender</code>、<code>SentLog</code> 协议</td><td>规定每种部件的接口</td></tr><tr><td>具体产品（ConcreteProduct）</td><td><code>FileSender</code>、<code>PrintSender</code>、<code>ReadOnlySentLog</code> 等</td><td>各家族的具体部件</td></tr><tr><td>客户（Client）</td><td><code>send_reminders</code></td><td>只通过抽象接口使用部件</td></tr></tbody></table></div>
+<h3 id="和工厂方法的区别">和工厂方法的区别<a class="anchor" href="#和工厂方法的区别" aria-label="本节链接">#</a></h3>
+<p>两个名字都有“工厂”，关注点不同：</p>
+<ul><li><strong>工厂方法</strong>（<a href="05-factory-method.html">第 05 章</a>）：一个流程里有<strong>一个</strong>创建步骤，由子类决定创建什么。重点是“流程固定，创建的种类可变”。</li><li><strong>抽象工厂</strong>：一个对象提供<strong>一组</strong>创建方法，保证这组部件属于同一家族。重点是“部件要配套”。</li></ul>
+<p>两者经常一起出现：抽象工厂里的每个创建方法，本身就可以看作一个工厂方法。GoF 原书的典型实现正是这样。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>增加家族容易，增加部件种类难。</strong> 加一个“预发布环境”家族，写一个新的具体工厂就行。但如果发送提醒还需要第三种部件，比如一个可替换的时钟，就得在 <code>ReminderServices</code> 上加 <code>create_clock</code>，然后<strong>修改每一个</strong>具体工厂。GoF 原书也把这一点列为这个模式的主要缺点。</li><li><strong>类的数量明显增加。</strong> 本例为两个部件、三个家族写了一个抽象工厂、三个具体工厂，加上六个具体部件。如果只有一个家族，这些全是负担。</li><li><strong>它只管“一起创建”，不管“一起使用”。</strong> 工厂交出一套配好的部件，但如果调用方绕过工厂，自己创建一个 <code>FileSentLog</code> 混进来，模式拦不住。</li><li><strong>抽象基类能防止“半个家族”。</strong> 这是一个小好处：<code>ReminderServices</code> 的子类如果漏写了 <code>create_sent_log</code>，实例化时就会抛出 <code>TypeError</code>（见测试 <code>test_incomplete_family_cannot_be_created</code>），不会等到运行到一半才发现。</li></ul>
+<p><strong>什么时候不该用</strong>：部件之间没有搭配约束，换掉其中一个不会让另一个出错。这时把各个部件分别作为参数传进去，就是最清楚的写法；没有“家族”，就不需要“家族工厂”。</p>
+<h2 id="python-角度-一组部件-一个函数">Python 角度：一组部件，一个函数<a class="anchor" href="#python-角度-一组部件-一个函数" aria-label="本节链接">#</a></h2>
+<p>GoF 的抽象工厂每次调用 <code>create_xxx()</code> 都可以创建新对象。但在本例里，每次运行只在开头创建一次部件。这种情况下，Python 有更轻的写法：用一个冻结的数据类装下一套部件，每个家族一个普通函数。</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Kit</span>:
+    sender: Sender
+    sent_log: SentLog
+
+
+<span class="k">def</span> <span class="f">live_kit</span>(folder: Path) -&gt; Kit:
+    <span class="k">return</span> Kit(FileSender(folder / <span class="s">"outbox.txt"</span>), FileSentLog(folder / <span class="s">"sent.json"</span>))
+
+
+<span class="k">def</span> <span class="f">dry_run_kit</span>(folder: Path) -&gt; Kit:
+    <span class="k">return</span> Kit(PrintSender(), ReadOnlySentLog(folder / <span class="s">"sent.json"</span>))</code></pre></div>
+<p><code>send_with_kit(loans, today, dry_run_kit(folder))</code> 的行为和抽象工厂版本完全一样。家族的搭配仍然集中在一处（<code>dry_run_kit</code> 函数里），<code>Kit</code> 的两个字段都是必填的，也不会出现“半套”。</p>
+<p>那为什么不更进一步，把发送器和记录直接作为两个参数传给 <code>send_reminders</code>？因为那样一来，每个调用处都要自己挑选两个部件，搭配的知识散落在各处，回到了本章开头的处境。把部件打包，并为每个家族提供一个现成的函数，就让<strong>正常的调用路径</strong>只剩“选一个家族”这一个决定。</p>
+<p>需要诚实地说：打包只是<strong>表达</strong>了“它们必须一起选”，并不能<strong>强制</strong>。有人执意写 <code>Kit(PrintSender(), FileSentLog(...))</code>，就像有人绕过 <code>DryRunServices</code> 自己拼部件一样，两种写法都拦不住。它们保护的是正常路径，而不是每一种可能的写法。</p>
+<p>以下情况，经典的抽象工厂仍然值得：</p>
+<ul><li>部件需要<strong>在运行过程中多次创建</strong>，比如每处理一批数据就要一个新的连接或新的写入器。这时你需要的是“能造部件的对象”，而不是“已经造好的部件”。</li><li>家族由<strong>别人</strong>来扩展，你希望用抽象基类明确列出“一个家族必须提供哪些部件”。</li><li>家族本身有配置和状态，比如本例中正式家族要知道文件夹在哪里。用一个对象保存这些配置，比让每个函数都接收一遍更整齐。不过，像 <code>live_kit(folder)</code> 这样的函数也能做到。</li></ul>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当程序需要几种部件，部件分成几个家族，同一次运行必须用同一家族时，就出现了抽象工厂要解决的问题。</li><li>抽象工厂把“同一家族的全部创建方法”放在一个对象上。切换家族就是换一个工厂，部件不会只换一半。</li><li>它让增加家族变得容易，却让增加部件种类变得困难：每加一种部件，所有具体工厂都要改。</li><li>在 Python 里，如果部件只在开始时创建一次，用一个数据类装下一套部件，再为每个家族写一个函数，通常就够了。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>图书馆想再加一个功能：每周日晚上，把下周到期的借阅汇总成一份清单，打印出来贴在服务台。这份清单只读借阅记录，不发提醒，也不需要发送记录。</p>
+<ol><li>汇总清单要不要用 <code>ReminderServices</code>？如果用，它需要哪些部件？</li><li>如果硬把汇总也放进 <code>ReminderServices</code>，加一个 <code>create_printer</code> 方法，会对现有的三个具体工厂产生什么影响？</li><li>什么情况下，汇总清单也需要“正式／演练”两个家族？</li></ol>
+<p><strong>思路提示</strong>：抽象工厂的边界是“一起切换的那组部件”。汇总清单和提醒不共享部件，也不需要一起切换，应该是一个独立的普通函数，参数里接收借阅记录和一个输出位置就够了。硬塞进 <code>ReminderServices</code> 会让三个具体工厂都多出一个和自己无关的方法，这正是“增加部件种类难”的代价在起作用。只有当汇总清单也会写入某种正式状态（比如标记“已通知服务台”），演练时需要和正式运行用不同的部件时，它才需要自己的家族。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch06_reminders_v1.py" target="_blank" rel="noopener"><code>examples/ch06_reminders_v1.py</code></a>：带 <code>dry_run</code> 开关的第一版（含错误）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch06_abstract_factory.py" target="_blank" rel="noopener"><code>examples/ch06_abstract_factory.py</code></a>：GoF 抽象工厂，三个家族</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch06_pythonic.py" target="_blank" rel="noopener"><code>examples/ch06_pythonic.py</code></a>：用数据类装下一套部件</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch06_abstract_factory.py" target="_blank" rel="noopener"><code>tests/test_ch06_abstract_factory.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-02/05-factory-method.html"><small>上一篇</small>05 工厂方法 Factory Method</a><a class="next" href="../part-02/07-builder.html"><small>下一篇</small>07 建造者 Builder</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-02/06-abstract-factory.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化带来的困难">变化带来的困难</a></li><li><a href="#抽象工厂-一个对象负责一整套">抽象工厂：一个对象负责一整套</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-一组部件-一个函数">Python 角度：一组部件，一个函数</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

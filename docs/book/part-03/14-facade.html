@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 14 章 外观 Facade · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：一件事要用到好几个模块，每个模块都有自己的细节和陷阱时，怎样给使用者一个简单的入口？这个入口应该做多少事，又不该做哪些事？ 外观可能是最“不像模式”的模式：它说的无非是“写一个函数或类，把复杂的步骤包起来”。但它有一个容易被忽视">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html" aria-current="page"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第三部分 · 组合对象（GoF 结构型）</p>
+<h1>第 14 章　外观 Facade</h1>
+<blockquote><p>本章要回答：一件事要用到好几个模块，每个模块都有自己的细节和陷阱时，怎样给使用者一个简单的入口？这个入口应该做多少事，又不该做哪些事？</p></blockquote>
+<p>外观可能是最“不像模式”的模式：它说的无非是“写一个函数或类，把复杂的步骤包起来”。但它有一个容易被忽视的另一半：<strong>入口要简单，但不要把背后的东西锁起来。</strong></p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个小设计工作室把所有文档放在一个共享文件夹里。老板想每天夜里自动备份一次：</p>
+<ul><li>把整个文件夹打成一个 zip 包，文件名带上日期时间；</li><li>在包里附一份清单，记下每个文件的 SHA-256 校验值，以后可以检查备份有没有损坏；</li><li>只保留最近 3 份备份，免得硬盘被占满。</li></ul>
+<p>这件事要用到标准库的好几个模块：<code>pathlib</code> 遍历文件，<code>hashlib</code> 算校验值，<code>zipfile</code> 打包，<code>json</code> 写清单。</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>一位同事写了夜间备份脚本，直接调用这些模块：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">nightly_backup</span>(source: Path, dest: Path, now: datetime) -&gt; Path:
+    archive = dest / <span class="s">f"backup-{now:%Y%m%d-%H%M%S}.zip"</span>
+    manifest = {}
+    <span class="k">with</span> zipfile.ZipFile(archive, <span class="s">"w"</span>, zipfile.ZIP_DEFLATED) <span class="k">as</span> zf:
+        <span class="k">for</span> path <span class="k">in</span> <span class="b">sorted</span>(source.rglob(<span class="s">"*"</span>)):
+            <span class="k">if</span> path.is_file():
+                manifest[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+                zf.write(path)  <span class="c"># 忘了 arcname：压缩包里存的是完整路径</span>
+        zf.writestr(<span class="s">"manifest.json"</span>, json.dumps(manifest, ensure_ascii=<span class="k">False</span>))
+    <span class="k">return</span> archive</code></pre></div>
+<p>看起来没问题，打开生成的压缩包却发现：</p>
+<div class="code" data-lang="输出"><pre><code>['var/folders/hr/…/文档/合同/租房.txt', 'manifest.json']</code></pre></div>
+<p>这里有好几个只有熟悉这些模块才知道的细节：</p>
+<ol><li><strong><code>zf.write(path)</code> 不指定 <code>arcname</code> 时，压缩包里存的是文件的完整路径</strong>（去掉开头的 <code>/</code>），而不是相对于备份文件夹的路径。恢复时，文件会被解压到一串很深的目录里。</li><li><strong>清单用 <code>path.name</code> 作键</strong>，“合同/说明.txt”和“照片/说明.txt”只会留下一条，另一个文件的校验值丢了。</li><li>macOS 在每个文件夹里留下的 <code>.DS_Store</code> 也被打包了进去。</li><li><code>path.read_bytes()</code> 把整个文件一次读进内存，遇到几个 GB 的视频文件就麻烦了。</li><li>还没写“只保留 3 份”。</li></ol>
+<p>测试 <code>test_full_paths_and_name_collisions</code> 复现了前三个问题。</p>
+<h2 id="变化带来的困难">变化带来的困难<a class="anchor" href="#变化带来的困难" aria-label="本节链接">#</a></h2>
+<p>不久，又有两个地方要用备份功能：</p>
+<ul><li>工作室的内部网页上要加一个“立即备份”按钮；</li><li>每周一早上要<strong>校验</strong>最近一份备份，确认它能用。</li></ul>
+<p>如果每个地方都直接调用 <code>zipfile</code>、<code>hashlib</code>、<code>json</code>，那么上面五个细节，每个调用方都要知道，都要处理对。漏掉任何一个，就会出现一个“有时候不太对”的备份。而且，打包和校验必须遵守<strong>同一套约定</strong>：清单叫什么名字、键是什么格式、用什么哈希算法。这些约定散落在三处代码里，改一处就要找齐另外两处。</p>
+<p>使用者真正想说的只有一句话：“备份这个文件夹。”或者：“检查一下这份备份。”</p>
+<h2 id="外观-给子系统一个简单的入口">外观：给子系统一个简单的入口<a class="anchor" href="#外观-给子系统一个简单的入口" aria-label="本节链接">#</a></h2>
+<p>GoF 对外观的描述是：<strong>为子系统中的一组接口提供一个一致的界面，外观模式定义了一个高层接口，这个接口使得这一子系统更加容易使用。</strong></p>
+<p>这里的“子系统”就是 <code>zipfile</code>、<code>hashlib</code>、<code>json</code>、<code>pathlib</code> 这几个模块，以及它们之间的约定。外观是一个类，把这些细节和约定集中到一处：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">run</span>(<span class="b">self</span>, now: datetime) -&gt; Path:
+        <span class="s">"""备份一次：打包、写清单、只保留最近 keep 份。"""</span>
+        <span class="b">self</span>.dest.mkdir(parents=<span class="k">True</span>, exist_ok=<span class="k">True</span>)
+        archive = <span class="b">self</span>.dest / <span class="s">f"backup-{now:%Y%m%d-%H%M%S}.zip"</span>
+        manifest = {}
+        <span class="k">with</span> zipfile.ZipFile(archive, <span class="s">"w"</span>, zipfile.ZIP_DEFLATED) <span class="k">as</span> zf:
+            <span class="k">for</span> path <span class="k">in</span> <span class="b">self</span>._files():
+                name = path.relative_to(<span class="b">self</span>.source).as_posix()
+                manifest[name] = _sha256(path)
+                zf.write(path, arcname=name)
+            zf.writestr(<span class="s">"manifest.json"</span>, json.dumps(manifest, ensure_ascii=<span class="k">False</span>, indent=<span class="n">2</span>))
+        <span class="b">self</span>._rotate()
+        <span class="k">return</span> archive</code></pre></div>
+<p>前面的五个细节，在这里各有着落：</p>
+<ul><li><code>arcname=name</code> 用相对路径存放文件，<code>as_posix()</code> 保证在 Windows 上也用 <code>/</code> 分隔，这是 zip 格式的约定；</li><li>清单的键是相对路径，同名文件不会互相覆盖；</li><li><code>_files()</code> 跳过 <code>.DS_Store</code> 等系统文件；</li><li><code>_sha256</code> 分块读取文件，不会一次把大文件读进内存：</li></ul>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">_sha256</span>(path: Path) -&gt; <span class="b">str</span>:
+    digest = hashlib.sha256()
+    <span class="k">with</span> path.<span class="b">open</span>(<span class="s">"rb"</span>) <span class="k">as</span> f:
+        <span class="k">for</span> chunk <span class="k">in</span> <span class="b">iter</span>(<span class="k">lambda</span>: f.read(<span class="n">64</span> * <span class="n">1024</span>), <span class="s">b""</span>):
+            digest.update(chunk)
+    <span class="k">return</span> digest.hexdigest()</code></pre></div>
+<ul><li><code>_rotate()</code> 只保留最近的几份。</li></ul>
+<p>校验用的是同一个类、同一套约定：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">verify</span>(<span class="b">self</span>, archive: Path) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+        <span class="s">"""检查压缩包里的每个文件是否和清单一致，返回问题列表。"""</span>
+        problems = []
+        <span class="k">with</span> zipfile.ZipFile(archive) <span class="k">as</span> zf:
+            manifest = json.loads(zf.read(<span class="s">"manifest.json"</span>))
+            <span class="k">for</span> name, digest <span class="k">in</span> manifest.items():
+                <span class="k">if</span> hashlib.sha256(zf.read(name)).hexdigest() != digest:
+                    problems.append(<span class="s">f"内容不一致：{name}"</span>)
+        <span class="k">return</span> problems</code></pre></div>
+<p>现在，夜间任务、网页按钮、周一的校验，每个调用方都只需要一两行：</p>
+<div class="code" data-lang="Python"><pre><code>        backup = Backup(src, Path(tmp, <span class="s">"备份"</span>))
+        archive = backup.run(datetime(<span class="n">2026</span>, <span class="n">3</span>, <span class="n">9</span>, <span class="n">2</span>, <span class="n">0</span>))</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>['合同/租房.txt', 'manifest.json']
+校验： 全部一致</code></pre></div>
+<p>连续备份五天，只剩最近三份（测试 <code>test_keeps_only_the_latest</code>）；把包里的一个文件改掉，<code>verify</code> 能准确指出是哪一个（测试 <code>test_verify_finds_a_tampered_file</code>）。</p>
+<h3 id="外观不是围墙">外观不是围墙<a class="anchor" href="#外观不是围墙" aria-label="本节链接">#</a></h3>
+<p>外观的另一半同样重要：<strong>它提供简单的入口，但不阻止使用者绕过它，直接使用子系统。</strong></p>
+<p>比如，客户找来说上周的一份合同被误删了，要从备份里恢复<strong>一个</strong>文件。<code>Backup</code> 没有提供“恢复单个文件”的方法，而且不必提供。外观生成的就是一个标准的 zip 文件，任何人都可以直接用 <code>zipfile</code> 打开它，取出需要的那一个（测试 <code>test_subsystem_is_still_available</code>）：</p>
+<div class="code" data-lang="输出"><pre><code>with zipfile.ZipFile(archive) as zf:
+    zf.read("合同/租房.txt")</code></pre></div>
+<p>这正是外观和“封装”的区别。外观的目标是<strong>让常见的事情变简单</strong>，而不是<strong>让所有事情都必须经过它</strong>。它背后的模块依然是公开的，有特殊需求的人可以直接用。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>外观（Facade）</td><td><code>Backup</code></td><td>知道该调用哪些子系统、按什么顺序，把请求转化为对子系统的调用</td></tr><tr><td>子系统类（Subsystem classes）</td><td><code>zipfile</code>、<code>hashlib</code>、<code>json</code>、<code>pathlib</code></td><td>完成实际的工作；它们不知道外观的存在</td></tr></tbody></table></div>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>外观容易越长越大。</strong> 今天加“恢复单个文件”，明天加“上传到网盘”，后天加“发邮件通知”……每一个都“和备份有关”，最后 <code>Backup</code> 变成一个什么都管的大类。判断标准是：这个功能是不是大多数使用者都需要、并且必须遵守外观所维护的约定？“恢复单个文件”只是读一个标准 zip，不需要外观；“上传到网盘”和打包无关，应该是另一个模块，由调用方把 <code>run()</code> 返回的路径交给它。</li><li><strong>简单的入口意味着做了选择。</strong> <code>Backup</code> 决定了用 SHA-256、跳过哪些文件、清单叫什么名字。需要不同选择的人，要么给外观加参数，要么绕过它。参数加得太多，外观就不再简单了。</li><li><strong>外观不能替你理解子系统。</strong> 写外观的人仍然需要知道 <code>arcname</code> 的陷阱、zip 路径的分隔符约定。外观只是让<strong>使用者</strong>不必知道这些。</li></ul>
+<p><strong>什么时候不该用</strong>：只有一个地方用到这些模块，而且步骤很短。一个十行的函数直接调用 <code>zipfile</code> 就很好，不需要再包一层。外观的价值，在第二个、第三个调用方出现时才显现出来。</p>
+<h2 id="python-角度-模块就是外观">Python 角度：模块就是外观<a class="anchor" href="#python-角度-模块就是外观" aria-label="本节链接">#</a></h2>
+<p>在 Python 里，一个<strong>模块</strong>常常就是最自然的外观。模块里放一个顶层函数给大多数人用，辅助函数也放在同一个模块里，有需要的人照样可以导入。</p>
+<p>标准库本身就有很多外观。比如 <code>shutil.make_archive</code>，一行就能把一个文件夹打包成 zip 或 tar：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">quick_archive</span>(source: Path, dest: Path) -&gt; Path:
+    <span class="s">"""标准库里的外观：shutil.make_archive 一行完成打包，但没有清单和轮换。"""</span>
+    <span class="k">return</span> Path(shutil.make_archive(<span class="b">str</span>(dest / source.name), <span class="s">"zip"</span>, root_dir=source))</code></pre></div>
+<p>它在内部替你处理了 <code>zipfile</code> 的细节，包括相对路径。但它没有清单、没有轮换，也不会跳过 <code>.DS_Store</code>（测试 <code>test_shortcuts</code>）。如果需求只是“打个包”，用它就够了，根本不需要自己写外观。本章的 <code>Backup</code> 之所以存在，是因为工作室有自己的约定（清单、轮换、校验），而这些约定需要一个地方来维护。</p>
+<p>外观可以是类，也可以是函数。本章用类，是因为“源文件夹、目标文件夹、保留几份”这组配置在 <code>run</code>、<code>verify</code>、<code>archives</code> 之间共用。如果只有 <code>run</code> 一个操作，一个带参数的函数就够了。对只想“现在备份一下”的调用方，甚至可以在外观之上再给一个更简单的入口：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">backup_folder</span>(source: Path, dest: Path, keep: <span class="b">int</span> = <span class="n">3</span>) -&gt; Path:
+    <span class="s">"""给只想“备份一下”的调用方：用当前时间，其他全用默认值。"""</span>
+    <span class="k">return</span> Backup(source, dest, keep).run(datetime.now())</code></pre></div>
+<p>注意，“当前时间”只在这个最外层的便捷函数里获取。<code>Backup.run</code> 本身接收 <code>now</code> 参数，这样测试可以传入固定的时间，得到确定的文件名。这是<a href="../part-01/01-data-and-processing.html">第 01 章</a>讲过的做法：把“时间”这种外部输入推到最外层。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当一件事需要协调好几个模块，每个模块都有自己的细节和陷阱，而且有多个调用方时，外观提供一个简单的入口，把细节和约定集中到一处。</li><li>外观让常见的事情变简单，但不阻止使用者直接使用子系统。它不是围墙。</li><li>外观容易膨胀。只把需要遵守同一套约定的操作放进去，其他功能做成独立的模块。</li><li>在 Python 里，模块本身就是天然的外观；标准库里也有现成的外观，比如 <code>shutil.make_archive</code>，需求简单时直接用它。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>工作室决定把备份同时上传到一个网盘。网盘的 SDK 提供 <code>upload(local_path, remote_name)</code>。</p>
+<ol><li>上传应该放进 <code>Backup.run</code> 里，还是放在外面？各有什么后果？</li><li>如果网盘上传失败了，本地备份算成功还是失败？“只保留 3 份”的轮换应该在上传之前还是之后执行？</li><li>如果放在外面，夜间任务的代码会是什么样子？</li></ol>
+<p><strong>思路提示</strong>：放进 <code>run</code> 里，<code>Backup</code> 就要依赖网盘 SDK，测试时也要处理网络；没有网盘的另一个办公室就用不了这个类。放在外面，<code>run</code> 只负责本地备份并返回压缩包路径，夜间任务再调用上传：<code>archive = backup.run(now)</code>，然后 <code>cloud.upload(archive, archive.name)</code>。这样两件事可以分别测试、分别失败。第 2 问是一个真正的业务问题：如果先轮换再上传，而上传又失败了，可能删掉了网盘上唯一还没有的那一份。把两个步骤分开之后，这些顺序问题就变得清楚，可以在夜间任务里显式地写出来。外观负责一组<strong>紧密相关、共享约定</strong>的操作，不负责所有“顺便要做”的事。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch14_backup_v1.py" target="_blank" rel="noopener"><code>examples/ch14_backup_v1.py</code></a>：直接调用各模块的夜间备份（含错误）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch14_facade.py" target="_blank" rel="noopener"><code>examples/ch14_facade.py</code></a>：<code>Backup</code> 外观</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch14_pythonic.py" target="_blank" rel="noopener"><code>examples/ch14_pythonic.py</code></a>：便捷函数与 <code>shutil.make_archive</code></li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch14_facade.py" target="_blank" rel="noopener"><code>tests/test_ch14_facade.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-03/13-decorator.html"><small>上一篇</small>13 装饰器 Decorator</a><a class="next" href="../part-03/15-flyweight.html"><small>下一篇</small>15 享元 Flyweight</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-03/14-facade.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化带来的困难">变化带来的困难</a></li><li><a href="#外观-给子系统一个简单的入口">外观：给子系统一个简单的入口</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-模块就是外观">Python 角度：模块就是外观</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

@@ -9,7 +9,8 @@
 ## 阅读本仓库
 
 - [正文 book/](book/README.md)：全书 34 章初稿，从这里开始阅读。每章的示例代码在 [examples/](examples/)，测试在 [tests/](tests/)。
-- [在线指南](https://liamamilin.github.io/Python-Design-Patterns/)：面向读者的网页版，包括读法、34 章路线图、按问题查找章节和一个模式的推导示例（源文件 [docs/index.html](docs/index.html)）。
+- [在线阅读全书](https://liamamilin.github.io/Python-Design-Patterns/book/)：34 章正文、前言和术语表的网页版，带目录、全书搜索、代码高亮和示意图。网页由 `python tools/build_site.py` 从 `book/` 生成到 `docs/book/`，不要手工修改；改了正文后重新运行这条命令，测试会检查网页是否和正文一致。
+- [在线指南](https://liamamilin.github.io/Python-Design-Patterns/)：网站首页，包括读法、34 章路线图、按问题查找章节和一个模式的推导示例（源文件 [docs/index.html](docs/index.html)），路线图和查找结果直接链接到各章网页。
 - [BOOK_PLAN.md](BOOK_PLAN.md)：本书目标、边界、内容结构及逐章问题清单；**全书内容的基准**。
 - [WRITING_GUIDE.md](WRITING_GUIDE.md)：章节叙述方法、Python 代码质量和审稿标准。
 - [AGENT_TASK.md](AGENT_TASK.md)：直接交给 Codex / Claude Code 的写作任务书。

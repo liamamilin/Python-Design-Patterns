@@ -147,6 +147,8 @@ section.block { padding: 64px 0; border-top: 1px solid var(--line); }
 .ch .num a { color: inherit; text-decoration: none; }
 .ch .num a:hover { color: var(--accent); }
 .ch .t { font-weight: 700; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.ch .t a.read { color: inherit; text-decoration: none; }
+.ch .t a.read:hover { color: var(--accent); text-decoration: underline; }
 .ch .en { font-family: var(--font-mono); font-weight: 400; font-size: .82rem; color: var(--ink-soft); }
 .ch .tag { font-size: .72rem; padding: 1px 8px; border-radius: 999px; font-weight: 500; border: 1px solid currentColor; }
 .ch .d { grid-column: 2; color: var(--ink-soft); font-size: .95rem; }
@@ -264,6 +266,7 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <div class="topnav-inner">
     <a class="brand" href="#top">设计模式<span>·</span>指南</a>
     <div class="navlinks">
+      <a href="book/index.html">阅读全书</a>
       <a href="#method">方法</a>
       <a href="#roadmap">路线图</a>
       <a href="#lookup">按问题查找</a>
@@ -281,12 +284,12 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <p class="sub">理解设计模式为什么存在、何时使用，以及 Python 还能怎样做。</p>
   <blockquote>这不是一本让人背诵 23 个设计模式的书，而是一本让读者学会判断：面对具体的程序问题，是否需要一个模式，以及为什么。</blockquote>
   <div class="status-row" aria-label="写作进度">
-    <span class="pill"><span class="dot todo"></span>34 章正文初稿已完成，审阅中，内容可能调整</span>
+    <span class="pill"><span class="dot todo"></span>34 章全文可在线阅读，仍在审阅，内容可能微调</span>
   </div>
   <div class="cta">
-    <a class="btn" href="#lookup">从你的问题开始</a>
+    <a class="btn" href="book/preface.html">开始阅读全书</a>
+    <a class="btn ghost" href="#lookup">从你的问题开始</a>
     <a class="btn ghost" href="#roadmap">浏览 34 章路线图</a>
-    <a class="btn ghost" href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/README.md">阅读正文初稿</a>
   </div>
   <div class="stats" id="stats" aria-label="全书规模">
     <div class="stat"><b id="st-parts">6</b><span>部分</span></div>
@@ -395,7 +398,7 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
   <div class="wrap">
     <span class="eyebrow">04 · 推导示例</span>
     <h2 id="walkthrough-h">为什么会需要“工厂”？</h2>
-    <p class="lead prose">先看一个缩短的例子，感受本书怎样讲一个模式：同一个发送通知的小工具经历四个阶段，需求每变一次，先问“现在的写法还好用吗”。目的不是证明工厂方法胜过简单函数，而是看清什么时候才轮到它。<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-02/05-factory-method.md">第 05 章</a>用另一个例子把这个过程完整展开。</p>
+    <p class="lead prose">先看一个缩短的例子，感受本书怎样讲一个模式：同一个发送通知的小工具经历四个阶段，需求每变一次，先问“现在的写法还好用吗”。目的不是证明工厂方法胜过简单函数，而是看清什么时候才轮到它。<a href="book/part-02/05-factory-method.html">第 05 章</a>用另一个例子把这个过程完整展开。</p>
     <p class="arrow-note prose">后面的代码沿用前面定义的类。把四段代码按顺序放进同一个文件，就能运行出每段下方的结果。</p>
 
     <ol class="timeline">
@@ -544,7 +547,8 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
       <span>CSV / JSON</span><i>→</i><span>校验</span><i>→</i><span>处理</span><i>→</i><span>输出结果</span>
     </div>
     <div class="cta">
-      <a class="btn" href="https://github.com/liamamilin/Python-Design-Patterns">在 GitHub 上关注写作进度</a>
+      <a class="btn" href="book/part-06/32-first-version.html">阅读第 32 章</a>
+      <a class="btn ghost" href="https://github.com/liamamilin/Python-Design-Patterns">在 GitHub 上查看代码</a>
       <a class="btn ghost" href="#top">回到顶部</a>
     </div>
   </div>
@@ -553,7 +557,7 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
 </main>
 
 <footer>
-  <div class="wrap">《Python 设计模式：从问题到方案》在线指南 · 正文初稿已完成、正在审阅，内容可能调整，以 <a href="https://github.com/liamamilin/Python-Design-Patterns">GitHub 仓库</a> 为准。</div>
+  <div class="wrap">《Python 设计模式：从问题到方案》在线指南 · <a href="book/index.html">在线阅读全书</a> · 示例代码与测试见 <a href="https://github.com/liamamilin/Python-Design-Patterns">GitHub 仓库</a>。</div>
 </footer>
 
 <script>
@@ -607,6 +611,7 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
       ["34", "回顾：能解释自己为什么这样写", "", "展示两种可行设计，如何判断其复杂度与收益？未来需求不同，结论是否变化？"]
     ]}
   ];
+  var FILES = {"01": "book/part-01/01-data-and-processing.html", "02": "book/part-01/02-when-simple-code-resists-change.html", "03": "book/part-01/03-python-building-blocks.html", "04": "book/part-01/04-choosing-a-pattern.html", "05": "book/part-02/05-factory-method.html", "06": "book/part-02/06-abstract-factory.html", "07": "book/part-02/07-builder.html", "08": "book/part-02/08-prototype.html", "09": "book/part-02/09-singleton.html", "10": "book/part-03/10-adapter.html", "11": "book/part-03/11-bridge.html", "12": "book/part-03/12-composite.html", "13": "book/part-03/13-decorator.html", "14": "book/part-03/14-facade.html", "15": "book/part-03/15-flyweight.html", "16": "book/part-03/16-proxy.html", "17": "book/part-04/17-strategy.html", "18": "book/part-04/18-observer.html", "19": "book/part-04/19-command.html", "20": "book/part-04/20-state.html", "21": "book/part-04/21-template-method.html", "22": "book/part-04/22-chain-of-responsibility.html", "23": "book/part-04/23-iterator.html", "24": "book/part-04/24-mediator.html", "25": "book/part-04/25-memento.html", "26": "book/part-04/26-visitor.html", "27": "book/part-04/27-interpreter.html", "28": "book/part-05/28-functions-as-design-tools.html", "29": "book/part-05/29-types-and-interfaces.html", "30": "book/part-05/30-decorators-context-managers-generators.html", "31": "book/part-05/31-simple-versus-pattern-code.html", "32": "book/part-06/32-first-version.html", "33": "book/part-06/33-selective-refactoring.html", "34": "book/part-06/34-retrospective.html"};
   var KIND_LABEL = { create: "创建型", struct: "结构型", behav: "行为型", py: "Python 写法", base: "基础", case: "综合案例" };
   var GOF = { create: 1, struct: 1, behav: 1 };
 
@@ -631,7 +636,7 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
     p.chapters.forEach(function (c) {
       html += '<li class="ch' + (isGof ? ' k-' + p.kind + ' gof' : '') + '" id="ch-' + c[0] + '">' +
         '<span class="num"><a href="#ch-' + c[0] + '" aria-label="第 ' + c[0] + ' 章链接">' + c[0] + '</a></span>' +
-        '<span class="t">' + esc(c[1]) + (c[2] ? '<span class="en">' + esc(c[2]) + '</span>' : '') +
+        '<span class="t"><a class="read" href="' + FILES[c[0]] + '">' + esc(c[1]) + '</a>' + (c[2] ? '<span class="en">' + esc(c[2]) + '</span>' : '') +
         (isGof ? '<span class="tag cat-' + p.kind + '">' + KIND_LABEL[p.kind] + '</span>' : '') + '</span>' +
         '<span class="d">' + esc(c[3]) + '</span></li>';
     });
@@ -685,7 +690,7 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
       return;
     }
     resEl.innerHTML = list.length ? list.map(function (c) {
-      return '<a class="card k-' + c.kind + '" href="#ch-' + c.num + '"><div class="top"><span>第 ' + c.num + ' 章</span><span>' + KIND_LABEL[c.kind] + '</span></div>' +
+      return '<a class="card k-' + c.kind + '" href="' + FILES[c.num] + '"><div class="top"><span>第 ' + c.num + ' 章</span><span>' + KIND_LABEL[c.kind] + '</span></div>' +
         '<h3>' + hl(c.title, terms) + (c.en ? ' <span class="en" style="font-family:var(--font-mono);font-weight:400;font-size:.8rem;color:var(--ink-soft)">' + hl(c.en, terms) + '</span>' : '') + '</h3>' +
         '<p>' + hl(c.q, terms) + '</p></a>';
     }).join("") : (hiddenByCat
@@ -753,7 +758,7 @@ UrgentJob().run("系统告警")  →  SMS: 系统告警</div></div>
 
   // Highlight the nav link of the section being read
   var nav = document.querySelector(".navlinks");
-  var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+  var links = Array.prototype.slice.call(nav.querySelectorAll('a[href^="#"]'));
   var byId = {};
   links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
   function setActive(id) {

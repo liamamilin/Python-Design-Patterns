@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 24 章 中介者 Mediator · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：一组对象彼此牵连，改一个就要影响好几个时，怎样避免它们互相引用、织成一张谁也理不清的网？ 第 18 章的观察者处理“一个对象变了，通知许多对象”。这一章的情况更纠缠：许多对象之间互相影响，每一个都可能是变化的起点，也可能是被影响">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html" aria-current="page"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第四部分 · 协调处理（GoF 行为型）</p>
+<h1>第 24 章　中介者 Mediator</h1>
+<blockquote><p>本章要回答：一组对象彼此牵连，改一个就要影响好几个时，怎样避免它们互相引用、织成一张谁也理不清的网？</p></blockquote>
+<p><a href="18-observer.html">第 18 章</a>的观察者处理“一个对象变了，通知许多对象”。这一章的情况更纠缠：<strong>许多对象之间互相影响</strong>，每一个都可能是变化的起点，也可能是被影响的一方。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个机票预订页面上有这些控件：出发地、目的地、出发日期、“往返”复选框、返程日期、护照号码栏、查询按钮。它们之间有联动规则：</p>
+<ul><li>勾选“往返”时，返程日期才能填写；</li><li>出发地和目的地中，只要有一个在国外，就显示护照号码栏；</li><li>出发地、目的地、日期都填好，出发地和目的地不同，并且（如果是往返）填了返程日期，查询按钮才可用。</li></ul>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>最直接的做法是：每个控件在自己的值改变时，去更新它影响到的那些控件。城市框持有查询按钮、护照栏和另一个城市框的引用：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CityBox</span>(Widget):
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, search: SearchButton, passport: PassportField) -&gt; <span class="k">None</span>:
+        <span class="b">super</span>().__init__()
+        <span class="b">self</span>.search, <span class="b">self</span>.passport = search, passport
+        <span class="b">self</span>.other: CityBox | <span class="k">None</span> = <span class="k">None</span>  <span class="c"># 另一个城市框，创建后再连上</span>
+
+    <span class="k">def</span> <span class="f">set</span>(<span class="b">self</span>, city: <span class="b">str</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.value = city
+        <span class="b">self</span>.passport.visible = city <span class="k">not</span> <span class="k">in</span> DOMESTIC
+        <span class="k">if</span> <span class="b">self</span>.other <span class="k">is</span> <span class="k">not</span> <span class="k">None</span> <span class="k">and</span> <span class="b">self</span>.other.value <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>:
+            <span class="b">self</span>.search.enabled = city != <span class="b">self</span>.other.value</code></pre></div>
+<p>“往返”复选框持有返程日期的引用，勾上时启用它。控件少的时候，每条规则都写在“触发它的那个控件”里，<strong>看起来很自然</strong>。</p>
+<h2 id="变化-规则越多-漏洞越多">变化：规则越多，漏洞越多<a class="anchor" href="#变化-规则越多-漏洞越多" aria-label="本节链接">#</a></h2>
+<p>问题出在护照栏的规则。“只要有一个城市在国外就显示”，这条规则涉及<strong>两个</strong>城市框，但每个城市框在更新护照栏时，只看了<strong>自己</strong>的值。</p>
+<p>用户先选出发地“东京”，护照栏出现了；再选目的地“上海”，上海是国内城市，目的地框把护照栏藏了起来。东京飞上海是国际航线，护照栏却不见了（测试 <code>test_passport_depends_on_whichever_city_changed_last</code>）。</p>
+<p>查询按钮的规则更复杂：它取决于五个控件。按这种写法，五个控件都要持有查询按钮的引用，都要在自己改变时判断一遍完整的条件，而每个控件只知道自己和少数几个邻居的状态。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<ol><li><strong>规则涉及多个控件，却被写在了其中某一个控件里。</strong> 一条规则被拆成了好几段，分布在每一个可能触发它的控件中，每一段都只看到局部。</li><li><strong>引用织成了网。</strong> n 个控件两两牵连，最多有 n×(n-1) 条引用。加一个“乘客类型”下拉框，要找出它和其他每个控件的关系，再到相应的类里各加一段代码。</li><li><strong>控件无法复用。</strong> <code>CityBox</code> 认识查询按钮和护照栏，它只能用在这个表单里。</li></ol>
+<h2 id="中介者-控件只和表单说话">中介者：控件只和表单说话<a class="anchor" href="#中介者-控件只和表单说话" aria-label="本节链接">#</a></h2>
+<p>GoF 对中介者的描述是：<strong>用一个中介对象来封装一系列的对象交互。中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。</strong></p>
+<p>做法是：控件不再认识彼此，只认识一个<strong>中介者</strong>。值改变时，控件只告诉中介者“我变了”：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Field</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, mediator: Mediator, value: <span class="b">object</span> = <span class="k">None</span>, visible: <span class="b">bool</span> = <span class="k">True</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.mediator = mediator
+        <span class="b">self</span>.value = value
+        <span class="b">self</span>.enabled = <span class="k">True</span>
+        <span class="b">self</span>.visible = visible
+
+    <span class="k">def</span> <span class="f">set</span>(<span class="b">self</span>, value: <span class="b">object</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.value = value
+        <span class="b">self</span>.mediator.changed(<span class="b">self</span>)  <span class="c"># 控件不认识别的控件，只告诉中介者</span></code></pre></div>
+<p>所有联动规则集中在中介者，也就是表单里。表单认识所有控件；任何控件变了，它都<strong>从完整的表单内容重新算出</strong>所有联动状态：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">_refresh</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="s">"""每次有控件变化，都从完整的表单内容重新算出所有联动状态。"""</span>
+        cities = {<span class="b">self</span>.origin.value, <span class="b">self</span>.dest.value} - {<span class="k">None</span>}
+        <span class="b">self</span>.passport.visible = <span class="b">any</span>(c <span class="k">not</span> <span class="k">in</span> DOMESTIC <span class="k">for</span> c <span class="k">in</span> cities)
+        <span class="b">self</span>.return_date.enabled = <span class="b">bool</span>(<span class="b">self</span>.round_trip.value)
+        <span class="b">self</span>.search.enabled = (
+            <span class="b">self</span>.origin.value <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>
+            <span class="k">and</span> <span class="b">self</span>.dest.value <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>
+            <span class="k">and</span> <span class="b">self</span>.origin.value != <span class="b">self</span>.dest.value
+            <span class="k">and</span> <span class="b">self</span>.depart.value <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>
+            <span class="k">and</span> (<span class="k">not</span> <span class="b">self</span>.round_trip.value <span class="k">or</span> <span class="b">self</span>.return_date.value <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>)
+        )</code></pre></div>
+<p>护照栏的规则现在同时看两个城市，东京飞上海时显示护照栏，改成北京飞上海时又隐藏了（测试 <code>test_passport_considers_both_cities</code>）。查询按钮的完整条件写在一处，测试 <code>test_search_needs_a_complete_and_sensible_form</code> 逐步检查了它在各种情况下的状态。</p>
+<p><code>Field</code> 只有四个属性：中介者、值、是否可用、是否可见，不引用任何别的控件（测试 <code>test_fields_do_not_know_each_other</code>）。它可以用在任何表单里。</p>
+<p>下图是中介者之后的结构：控件之间不再有箭头，所有联系都经过表单。</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    origin["出发地"] --&gt;|"我变了"| form["TicketForm"]
+    dest["目的地"] --&gt;|"我变了"| form
+    depart["出发日期"] --&gt;|"我变了"| form
+    trip["往返"] --&gt;|"我变了"| form
+    form --&gt;|"是否显示"| passport["护照栏"]
+    form --&gt;|"是否可用"| ret["返程日期"]
+    form --&gt;|"是否可用"| search["查询按钮"]</pre></figure>
+<h3 id="全部重算-的取舍">“全部重算”的取舍<a class="anchor" href="#全部重算-的取舍" aria-label="本节链接">#</a></h3>
+<p>本例的中介者不管哪个控件变了，都把所有规则重算一遍。这是一个有意的选择：</p>
+<ul><li><strong>好处</strong>：不可能漏掉某条路径。规则只描述“在什么情况下应该是什么样子”，不描述“谁变了要更新谁”，所以不存在“某个控件改变时忘了更新某个状态”的问题。本章开头的护照栏错误，正是“按变化路径更新”的产物。</li><li><strong>代价</strong>：每次都重算全部规则。对一个只有十几个控件的表单，这点计算无足轻重；如果某条规则很昂贵（比如要查询服务器上的余票），就要按 <code>changed(field)</code> 的参数区分是谁变了，只重算受影响的部分。</li></ul>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>中介者（Mediator）</td><td><code>Mediator</code> 协议</td><td>定义同事对象通知它的接口</td></tr><tr><td>具体中介者（ConcreteMediator）</td><td><code>TicketForm</code></td><td>认识所有同事，实现它们之间的协作规则</td></tr><tr><td>同事（Colleague）</td><td><code>Field</code></td><td>只认识中介者，变化时通知它</td></tr></tbody></table></div>
+<h3 id="和观察者的区别">和观察者的区别<a class="anchor" href="#和观察者的区别" aria-label="本节链接">#</a></h3>
+<p>两者都在“对象变了，其他对象要反应”的场景里出现，但关注点不同：</p>
+<ul><li><strong>观察者</strong>：目标不关心谁在听，也不关心它们做什么。订阅者之间互不相干，规则分散在各个订阅者里。</li><li><strong>中介者</strong>：中介者<strong>知道</strong>所有参与者，<strong>集中</strong>了它们之间的协作规则。</li></ul>
+<p>实际上，同事对象通知中介者这一步，本身就可以用观察者实现：中介者订阅每个控件的“值改变”事件。两者经常一起出现。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>中介者可能变成一个什么都管的大类。</strong> 所有规则都集中到了这里。表单有五十个控件、上百条规则时，<code>_refresh</code> 会变得很长。这时可以把规则按主题拆成几个函数，或者把表单拆成几个各有中介者的小区域。</li><li><strong>复杂度是搬过来的，不是消失的。</strong> 控件之间的关系依然存在，只是从“分散在每个控件里”变成了“集中在一处”。集中通常更容易理解，但读中介者的人仍然要理解全部的规则。</li><li><strong>中介者本身难以复用。</strong> 控件变得可以复用，代价是中介者变得非常具体：<code>TicketForm</code> 只能用于订票。</li></ul>
+<p><strong>什么时候不该用</strong>：对象之间的关系简单，比如只有“勾选往返，启用返程日期”这样一对一的联动。直接让复选框更新日期栏就好，引入中介者反而让一个简单的关系变得间接。</p>
+<h2 id="python-角度-联动状态是一个纯函数">Python 角度：联动状态是一个纯函数<a class="anchor" href="#python-角度-联动状态是一个纯函数" aria-label="本节链接">#</a></h2>
+<p><code>_refresh</code> 有一个值得注意的特点：它算出的联动状态，<strong>完全由表单的内容决定</strong>。同样的内容，算出来的状态永远一样。既然如此，它可以写成一个纯函数：输入一份表单内容，输出界面应该怎样显示：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">ui_state</span>(v: FormValues) -&gt; UiState:
+    cities = {v.origin, v.dest} - {<span class="k">None</span>}
+    <span class="k">return</span> UiState(
+        passport_visible=<span class="b">any</span>(c <span class="k">not</span> <span class="k">in</span> DOMESTIC <span class="k">for</span> c <span class="k">in</span> cities),
+        return_date_enabled=v.round_trip,
+        search_enabled=(
+            v.origin <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>
+            <span class="k">and</span> v.dest <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>
+            <span class="k">and</span> v.origin != v.dest
+            <span class="k">and</span> v.depart <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>
+            <span class="k">and</span> (<span class="k">not</span> v.round_trip <span class="k">or</span> v.return_date <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>)
+        ),
+    )</code></pre></div>
+<p><code>FormValues</code> 和 <code>UiState</code> 都是冻结的数据类。这个函数和 <code>TicketForm</code> 遵守完全相同的规则（测试 <code>test_same_rules_as_the_mediator</code> 对几种表单内容逐一比较），但它有几个额外的好处：</p>
+<ul><li><strong>测试极其简单</strong>：构造一份 <code>FormValues</code>，检查返回的 <code>UiState</code>。不需要创建控件，不需要模拟用户的操作顺序。</li><li><strong>规则和界面完全分开</strong>：同一个函数可以用于网页、手机应用，甚至用于服务器端检查提交的数据是否合理。</li><li><strong>没有“更新顺序”的问题</strong>：没有什么被修改，所以也不存在先改谁后改谁。</li></ul>
+<p>这正是<a href="../part-01/01-data-and-processing.html">第 01 章</a>里“数据与处理分开”的又一次应用。很多现代界面框架也采用了类似的思路：界面是状态的函数，状态变了，就重新计算界面应该是什么样子。</p>
+<p>那么中介者对象还有用吗？有。总得有一个地方，在用户改动控件时收集最新的表单内容、调用 <code>ui_state</code>、再把结果应用到真实的控件上。这个“地方”就是中介者，只不过它变得很薄：联动规则本身交给了纯函数，中介者只负责“收集、计算、应用”。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当一组对象互相影响、每一个都可能是变化的起点时，中介者让它们只和一个中心对象通信，由它集中管理所有协作规则。</li><li>中介者把复杂度集中起来，而不是消除它。中心对象可能变大，需要按主题拆分。</li><li>“任何变化都从完整状态重算全部规则”的写法，可以避免按变化路径更新时漏掉某条路径。</li><li>在 Python 里，如果联动状态只取决于当前的内容，把规则写成纯函数，中介者只负责收集输入和应用结果。规则更容易测试，也可以在不同界面之间复用。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>订票页面加了一个“乘客类型”下拉框：成人、儿童、婴儿。新规则：</p>
+<ul><li>婴儿不能单独乘机：选了“婴儿”时，查询按钮显示“请先添加一名成人”并且不可用；</li><li>国际航线上，所有乘客都需要护照（不论成人、儿童还是婴儿）。</li></ul>
+<ol><li>在本章开头的写法里，加这两条规则需要修改哪些类？</li><li>在中介者的写法里，需要修改哪里？</li><li>在纯函数的写法里，<code>FormValues</code>、<code>UiState</code>、<code>ui_state</code> 各要怎样变化？怎样测试“婴儿 + 国际航线”的组合？</li></ol>
+<p><strong>思路提示</strong>：开头的写法里，乘客类型要影响查询按钮，于是新的下拉框要持有查询按钮的引用，并且要在自己改变时判断一遍完整的查询条件，还要和城市框的判断保持一致，很容易出错。中介者的写法只需要在 <code>TicketForm</code> 里加一个控件，并在 <code>_refresh</code> 的查询条件里加一项。纯函数的写法里，<code>FormValues</code> 加一个 <code>passenger</code> 字段，<code>UiState</code> 可能加一个 <code>search_hint</code> 字段来放提示文字，<code>ui_state</code> 里加相应的规则；测试只需要构造 <code>FormValues(origin="东京", dest="上海", passenger="婴儿", ...)</code>，检查结果即可。第二条规则（“所有乘客都需要护照”）其实不改变任何联动，护照栏本来就按城市显示。读需求时分辨出“哪些规则其实已经满足了”，和写新规则一样重要。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch24_form_v1.py" target="_blank" rel="noopener"><code>examples/ch24_form_v1.py</code></a>：控件互相引用（含错误）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch24_mediator.py" target="_blank" rel="noopener"><code>examples/ch24_mediator.py</code></a>：<code>TicketForm</code> 中介者</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch24_pythonic.py" target="_blank" rel="noopener"><code>examples/ch24_pythonic.py</code></a>：联动状态的纯函数</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch24_mediator.py" target="_blank" rel="noopener"><code>tests/test_ch24_mediator.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-04/23-iterator.html"><small>上一篇</small>23 迭代器 Iterator</a><a class="next" href="../part-04/25-memento.html"><small>下一篇</small>25 备忘录 Memento</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-04/24-mediator.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-规则越多-漏洞越多">变化：规则越多，漏洞越多</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#中介者-控件只和表单说话">中介者：控件只和表单说话</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-联动状态是一个纯函数">Python 角度：联动状态是一个纯函数</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

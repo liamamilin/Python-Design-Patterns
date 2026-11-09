@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 08 章 原型 Prototype · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：当新对象应该“照着一个现成的对象做一份”时，复制到底复制了什么？浅拷贝和深拷贝怎样影响程序的行为？哪些东西复制时反而不该复制？ 前两章的工厂和建造者，都是“按照代码里写好的方法造一个新对象”。这一章换个角度：有时候，新对象的样子">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html" aria-current="page"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第二部分 · 创建对象（GoF 创建型）</p>
+<h1>第 08 章　原型 Prototype</h1>
+<blockquote><p>本章要回答：当新对象应该“照着一个现成的对象做一份”时，复制到底复制了什么？浅拷贝和深拷贝怎样影响程序的行为？哪些东西复制时反而不该复制？</p></blockquote>
+<p>前两章的工厂和建造者，都是“按照代码里写好的方法造一个新对象”。这一章换个角度：有时候，新对象的样子事先并不写在代码里，而是<strong>由某个已经存在的对象决定的</strong>。最自然的做法就是照着它复制一份。复制听起来很简单，但在 Python 里，一不小心就会复制出一个和原件藕断丝连的对象。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一家小健身房的教练用一个小程序给学员排训练计划。一份计划有标题，以及每个训练日要做的动作，每个动作有组数和次数：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>
+<span class="k">class</span> <span class="f">Exercise</span>:
+    name: <span class="b">str</span>
+    sets: <span class="b">int</span>
+    reps: <span class="b">int</span>
+
+
+<span class="d">@dataclass</span>
+<span class="k">class</span> <span class="f">Plan</span>:
+    title: <span class="b">str</span>
+    days: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">list</span>[Exercise]]</code></pre></div>
+<p>教练给新学员用的基础计划是这样的：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">beginner_template</span>() -&gt; Plan:
+    <span class="k">return</span> Plan(
+        <span class="s">"新手计划"</span>,
+        {
+            <span class="s">"周一"</span>: [Exercise(<span class="s">"深蹲"</span>, <span class="n">3</span>, <span class="n">10</span>), Exercise(<span class="s">"俯卧撑"</span>, <span class="n">3</span>, <span class="n">8</span>)],
+            <span class="s">"周四"</span>: [Exercise(<span class="s">"硬拉"</span>, <span class="n">3</span>, <span class="n">8</span>)],
+        },
+    )</code></pre></div>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>只要计划写在代码里，<code>beginner_template()</code> 就是一个够用的工厂函数：每次调用都会造出一份全新的计划，学员之间互不影响。<strong>这已经是好代码</strong>，如果需求停在这里，什么都不用改。</p>
+<h2 id="变化-模板由教练在程序里调整">变化：模板由教练在程序里调整<a class="anchor" href="#变化-模板由教练在程序里调整" aria-label="本节链接">#</a></h2>
+<p>用了一段时间，教练们不满意了：基础计划每个季度都要调，每次都得找程序员改代码。于是程序加了一个功能，教练可以在界面上编辑模板，改好后保存，然后从模板出发给每位学员生成计划，再根据学员的情况个别调整。</p>
+<p>这样一来，<strong>模板不再是代码，而是运行时的一个对象</strong>，是教练一点点改出来的。代码里没有一个函数能“重新造出”它。要给新学员生成计划，只能照着这个对象复制。</p>
+<p>第一版的复制用了数据类自带的 <code>dataclasses.replace</code>，它会复制一个对象，同时替换指定的字段，看起来正合适：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">plan_for</span>(template: Plan, student: <span class="b">str</span>) -&gt; Plan:
+    <span class="k">return</span> replace(template, title=<span class="s">f"{student}的计划"</span>)</code></pre></div>
+<p>然后教练给小陈的深蹲加到 4 组：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">show_the_trap</span>() -&gt; <span class="b">tuple</span>[Plan, Plan, Plan]:
+    template = beginner_template()
+    chen = plan_for(template, <span class="s">"小陈"</span>)
+    wang = plan_for(template, <span class="s">"小王"</span>)
+    chen.days[<span class="s">"周一"</span>][<span class="n">0</span>].sets = <span class="n">4</span>  <span class="c"># 只想给小陈的深蹲加到 4 组</span>
+    <span class="k">return</span> template, chen, wang</code></pre></div>
+<p>运行结果：</p>
+<div class="code" data-lang="输出"><pre><code>小王： Exercise(name='深蹲', sets=4, reps=10)
+模板： Exercise(name='深蹲', sets=4, reps=10)
+同一个字典吗？ True</code></pre></div>
+<p>只改了小陈，小王的计划和模板也一起变成了 4 组。</p>
+<h2 id="困难在哪里-浅拷贝">困难在哪里：浅拷贝<a class="anchor" href="#困难在哪里-浅拷贝" aria-label="本节链接">#</a></h2>
+<p><code>replace</code> 确实创建了一个新的 <code>Plan</code> 对象，标题也确实换了。但它只复制了<strong>最外面一层</strong>：新 <code>Plan</code> 的 <code>days</code> 字段，指向的还是模板的<strong>同一个字典</strong>，字典里还是<strong>同一批列表和 <code>Exercise</code> 对象</strong>。</p>
+<p>这叫<strong>浅拷贝</strong>（shallow copy）：新建一个外壳，里面的东西照原样引用。标准库的 <code>copy.copy</code> 也是浅拷贝，换成它不会有任何改善。测试 <code>test_copy_copy_has_the_same_problem</code> 展示了另一种表现：给小陈去掉深蹲，模板里的深蹲也没了。</p>
+<p>这类错误特别难发现，因为它<strong>不会立刻出现</strong>。生成计划的那一刻一切正常，直到某个学员的计划被修改，才悄悄波及其他人。而且不报错，只是数据不对。</p>
+<p>与之相对的是<strong>深拷贝</strong>（deep copy）：<code>copy.deepcopy</code> 会顺着对象的引用一路复制下去，字典、列表、每个 <code>Exercise</code> 都复制一份新的。</p>
+<p>但“全部复制”也不总是对的。下面会看到，有些东西复制时恰恰<strong>应该</strong>共享。</p>
+<h2 id="原型-让对象自己负责复制自己">原型：让对象自己负责复制自己<a class="anchor" href="#原型-让对象自己负责复制自己" aria-label="本节链接">#</a></h2>
+<p>GoF 对原型模式的描述是：<strong>用原型实例指定创建对象的种类，并且通过复制这个原型来创建新的对象。</strong></p>
+<p>这里的关键不是“复制”这个动作，而是<strong>谁知道该怎么复制</strong>。浅拷贝还是深拷贝，哪些部分共享、哪些部分独立，这些只有这个类的作者最清楚。所以原型模式让对象自己提供一个复制方法，调用方只管说“给我一份”。</p>
+<p>先把需求补完整。教练们维护着一个<strong>动作库</strong>：每个动作有名称和一段讲解视频。计划里的每一项引用动作库中的动作。某天教练给深蹲换了一段更清楚的视频，<strong>所有计划都应该看到新视频</strong>。</p>
+<p>也就是说，复制一份计划时：</p>
+<ul><li>训练日、动作列表、组数和次数：每份计划<strong>各自独立</strong>；</li><li>引用的动作库条目：所有计划<strong>共同使用</strong>同一个。</li></ul>
+<p>于是计划里的每一项不再只存动作名称，而是引用动作库里的条目：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>
+<span class="k">class</span> <span class="f">Exercise</span>:
+    movement: Movement
+    sets: <span class="b">int</span>
+    reps: <span class="b">int</span></code></pre></div>
+<p><code>Movement</code> 用 <code>__deepcopy__</code> 声明自己在深拷贝时不被复制：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(eq=<span class="k">False</span>)
+<span class="k">class</span> <span class="f">Movement</span>:
+    <span class="s">"""动作库里的一个动作。教练改了讲解视频，所有计划都应该看到新视频。"""</span>
+
+    name: <span class="b">str</span>
+    video: <span class="b">str</span>
+
+    <span class="k">def</span> <span class="f">__deepcopy__</span>(<span class="b">self</span>, memo: <span class="b">dict</span>) -&gt; Movement:
+        <span class="k">return</span> <span class="b">self</span>  <span class="c"># 共享，不复制</span></code></pre></div>
+<p><code>copy.deepcopy</code> 遇到一个对象时，会先看它有没有 <code>__deepcopy__</code> 方法，有的话就交给它决定怎么复制。返回 <code>self</code>，意思是“我不复制，直接引用原来的我”。（<code>eq=False</code> 让两个动作只在是同一个对象时才相等，因为动作库里的条目是按身份区分的。）</p>
+<p><code>Plan</code> 提供自己的复制方法：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">clone</span>(<span class="b">self</span>, title: <span class="b">str</span>) -&gt; Plan:
+        twin = copy.deepcopy(<span class="b">self</span>)
+        twin.title = title
+        <span class="k">return</span> twin</code></pre></div>
+<p>现在，<code>template.clone("小陈的计划")</code> 得到的计划可以随意修改，不会影响模板；而教练修改动作库里深蹲的视频后，小陈的计划里看到的也是新视频（测试 <code>test_clone_is_independent</code> 和 <code>test_movements_stay_shared</code>）。</p>
+<h3 id="原型注册表">原型注册表<a class="anchor" href="#原型注册表" aria-label="本节链接">#</a></h3>
+<p>模板不止一个：新手、减脂、康复……教练需要按名字保存和取用。GoF 把这种按名字保存原型的对象称为<strong>原型管理器</strong>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">TemplateShelf</span>:
+    <span class="s">"""原型注册表：按名字保存模板，需要时复制一份。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._templates: <span class="b">dict</span>[<span class="b">str</span>, Plan] = {}
+
+    <span class="k">def</span> <span class="f">save</span>(<span class="b">self</span>, name: <span class="b">str</span>, plan: Plan) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._templates[name] = plan.clone(plan.title)  <span class="c"># 存一份副本，之后再改草稿不影响已存的模板</span>
+
+    <span class="k">def</span> <span class="f">new_plan</span>(<span class="b">self</span>, name: <span class="b">str</span>, title: <span class="b">str</span>) -&gt; Plan:
+        <span class="k">return</span> <span class="b">self</span>._templates[name].clone(title)</code></pre></div>
+<p>注意 <code>save</code> 里也复制了一次。教练保存模板之后，往往还会继续在同一份草稿上改；如果直接把草稿对象存进去，已经保存的模板会跟着草稿一起变。<strong>复制发生在两个地方：存进来的时候，取出去的时候。</strong> 测试 <code>test_shelf_keeps_its_own_copy</code> 验证了这一点。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>原型（Prototype）</td><td>有 <code>clone</code> 方法的 <code>Plan</code></td><td>声明复制自己的接口</td></tr><tr><td>具体原型（ConcretePrototype）</td><td>教练编辑出的各个模板对象</td><td>实现复制，决定哪些部分独立、哪些共享</td></tr><tr><td>客户（Client）</td><td>给学员生成计划的代码</td><td>让原型复制自己来得到新对象</td></tr><tr><td>原型管理器</td><td><code>TemplateShelf</code></td><td>按名字保存和取出原型</td></tr></tbody></table></div>
+<p>在 C++ 里，原型模式还有一层意义：代码不用写出具体类名就能创建对象。在 Python 里这一层不重要，因为类本身就能当参数传递（见<a href="05-factory-method.html">第 05 章</a>）。Python 里原型模式留下的价值，主要就是本章的这一层：<strong>新对象的内容由一个运行时的对象决定，而复制的规则由这个对象的类负责</strong>。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>深拷贝的成本和对象的大小成正比。</strong> 对象引用得越多、越深，复制要做的事就越多。本例的计划很小，无所谓；如果模板里挂着大量数据，就要掂量一下。这里不给具体数字，因为它完全取决于对象的结构，需要时请用 <code>timeit</code> 实测。</li><li><strong>深拷贝不知道哪些东西不该复制，除非你告诉它。</strong> 打开的文件、数据库连接、线程锁，深拷贝时会直接抛出 <code>TypeError</code>；本例的动作库条目则相反，能复制，却不该复制。每加一个这种字段，都要想一想它在复制时应该怎样处理。</li><li><strong>共享是一个需要写下来的决定。</strong> <code>Movement.__deepcopy__</code> 返回 <code>self</code>，意味着任何人修改动作库条目都会影响所有计划。这正是本例想要的，但对读代码的人来说并不显眼，所以要加注释、写测试。</li><li><strong>循环引用是安全的。</strong> <code>deepcopy</code> 用 <code>memo</code> 字典记住已经复制过的对象，所以对象之间互相引用也不会无限复制下去。这一点不用自己处理。</li></ul>
+<p><strong>什么时候不该用</strong>：新对象的样子可以用代码直接描述，比如本章开头的 <code>beginner_template()</code>。这时调用工厂函数比复制一个对象更直接，也没有任何“共享了不该共享的东西”的风险。只有当原件是<strong>运行时才确定的</strong>（用户编辑出来的、从文件读进来的、计算代价很高的），复制才比重新构造更合适。</p>
+<h2 id="python-角度-复制的问题-往往是-可变-的问题">Python 角度：复制的问题，往往是“可变”的问题<a class="anchor" href="#python-角度-复制的问题-往往是-可变-的问题" aria-label="本节链接">#</a></h2>
+<p>本章所有的麻烦都来自一件事：复制出来的对象和原件<strong>共享了可以被修改的部分</strong>。如果共享的部分根本不能被修改，浅拷贝就是安全的。</p>
+<p>Python 提供了表达“不可修改”的工具：冻结的数据类，以及元组：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Exercise</span>:
+    name: <span class="b">str</span>
+    sets: <span class="b">int</span>
+    reps: <span class="b">int</span>
+
+
+<span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Plan</span>:
+    title: <span class="b">str</span>
+    days: <span class="b">tuple</span>[<span class="b">tuple</span>[<span class="b">str</span>, <span class="b">tuple</span>[Exercise, ...]], ...]</code></pre></div>
+<p>这时 <code>replace(BEGINNER, title="小陈的计划")</code> 虽然仍是浅拷贝，却不会再出问题：任何人试图写 <code>plan.days[0][1][0].sets = 4</code>，都会得到 <code>FrozenInstanceError</code>。</p>
+<p>代价是，“修改”要写成“造一个新的”：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">change_sets</span>(plan: Plan, day: <span class="b">str</span>, name: <span class="b">str</span>, sets: <span class="b">int</span>) -&gt; Plan:
+    new_days = <span class="b">tuple</span>(
+        (d, <span class="b">tuple</span>(replace(e, sets=sets) <span class="k">if</span> d == day <span class="k">and</span> e.name == name <span class="k">else</span> e <span class="k">for</span> e <span class="k">in</span> exercises))
+        <span class="k">for</span> d, exercises <span class="k">in</span> plan.days
+    )
+    <span class="k">return</span> replace(plan, days=new_days)</code></pre></div>
+<p>这个函数返回一份新计划，原计划不变；没改动的 <code>Exercise</code> 对象直接被新计划引用，因为它们不会被修改，所以共享也没关系（测试 <code>test_change_returns_a_new_plan</code>）。</p>
+<p>两种做法怎么选？</p>
+<ul><li>如果数据经常要被<strong>局部修改</strong>（教练每天都在调某个学员的某个动作），可变对象加 <code>clone</code> 更顺手，<code>change_sets</code> 这种写法会越来越啰嗦。</li><li>如果数据<strong>生成之后基本只读</strong>（发布出去的模板、配置、历史记录），不可变数据更安全，浅拷贝随便用，也不需要原型模式。</li></ul>
+<p>在两者之间，还有一个常见的折中：模板本身用不可变数据保存，给学员生成计划时转换成可变对象，供教练编辑。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当新对象的样子由一个运行时的对象决定，而不是由代码决定时，复制这个对象是自然的做法。这就是原型模式要处理的情况。</li><li><code>copy.copy</code> 和 <code>dataclasses.replace</code> 都是浅拷贝，内部的列表、字典和对象仍与原件共享。修改副本可能悄悄改了原件。</li><li><code>copy.deepcopy</code> 复制整个对象图；用 <code>__deepcopy__</code> 可以声明某些部分应该共享而不复制。复制规则应该由类自己负责，这正是原型模式的核心。</li><li>如果共享的部分不可修改，浅拷贝就是安全的。在 Python 里，冻结的数据类和元组常常能让复制问题消失。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>教练提出：每份计划要记录<strong>修改历史</strong>，即一个字符串列表，比如 <code>["3月2日 深蹲改为4组"]</code>。从模板生成新计划时，新计划的历史应该从空白开始，而不是继承模板的修改记录。</p>
+<ol><li>如果给 <code>Plan</code> 加一个 <code>history: list[str]</code> 字段，现在的 <code>clone</code> 会怎样处理它？结果符合要求吗？</li><li>应该在哪里修改，才能让新计划的历史从空白开始？</li><li>如果把历史记录改成存在另一张独立的表里（按计划编号查询），复制的问题还存在吗？</li></ol>
+<p><strong>思路提示</strong>：<code>deepcopy</code> 会把模板的历史也完整复制一份，新计划一出生就带着模板的修改记录，不符合要求。这说明“怎么复制”不只是“浅还是深”的技术问题，还取决于每个字段的含义：动作库条目要共享，训练内容要独立复制，修改历史要重置。最直接的改法是在 <code>clone</code> 里复制之后把 <code>history</code> 设为空列表，这个规则写在 <code>Plan</code> 自己的方法里，正是原型模式的意义。第 3 问提示了另一个方向：如果历史不是计划对象的一部分，复制时自然就不用考虑它。把对象的边界划清楚，有时比写复杂的复制规则更简单。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch08_copy_trap.py" target="_blank" rel="noopener"><code>examples/ch08_copy_trap.py</code></a>：浅拷贝的陷阱</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch08_prototype.py" target="_blank" rel="noopener"><code>examples/ch08_prototype.py</code></a>：<code>clone</code>、共享的动作库条目、原型注册表</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch08_pythonic.py" target="_blank" rel="noopener"><code>examples/ch08_pythonic.py</code></a>：不可变数据</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch08_prototype.py" target="_blank" rel="noopener"><code>tests/test_ch08_prototype.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-02/07-builder.html"><small>上一篇</small>07 建造者 Builder</a><a class="next" href="../part-02/09-singleton.html"><small>下一篇</small>09 单例 Singleton</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-02/08-prototype.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-模板由教练在程序里调整">变化：模板由教练在程序里调整</a></li><li><a href="#困难在哪里-浅拷贝">困难在哪里：浅拷贝</a></li><li><a href="#原型-让对象自己负责复制自己">原型：让对象自己负责复制自己</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-复制的问题-往往是-可变-的问题">Python 角度：复制的问题，往往是“可变”的问题</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

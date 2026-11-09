@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 23 章 迭代器 Iterator · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：怎样逐个访问一组元素，而不必关心它们存放在哪里、怎样取回？Python 已经把迭代器做进了语言，我们还需要知道什么？ 迭代器是 GoF 23 种模式中，被 Python 完全吸收进语言的一个。每一个 for 循环背后都是迭代器协">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html" aria-current="page"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第四部分 · 协调处理（GoF 行为型）</p>
+<h1>第 23 章　迭代器 Iterator</h1>
+<blockquote><p>本章要回答：怎样逐个访问一组元素，而不必关心它们存放在哪里、怎样取回？Python 已经把迭代器做进了语言，我们还需要知道什么？</p></blockquote>
+<p>迭代器是 GoF 23 种模式中，被 Python <strong>完全吸收进语言</strong>的一个。每一个 <code>for</code> 循环背后都是迭代器协议。所以这一章不是教你“怎样实现迭代器模式”，而是讲清楚：Python 的迭代器协议是什么，什么时候需要自己写一个迭代器，以及“按需取用”能带来什么。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个家庭照片整理程序，要从云相册里找照片。云相册的接口是<strong>分页</strong>的：每次请求返回一页，每页 20 张，翻过最后一页时返回空列表。</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">get_page</span>(<span class="b">self</span>, page: <span class="b">int</span>) -&gt; <span class="b">list</span>[<span class="b">dict</span>]:
+        <span class="b">self</span>.requests += <span class="n">1</span>
+        start = (page - <span class="n">1</span>) * <span class="b">self</span>.page_size
+        stop = <span class="b">min</span>(start + <span class="b">self</span>.page_size, <span class="b">self</span>.total)
+        <span class="k">return</span> [{<span class="s">"id"</span>: i, <span class="s">"place"</span>: PLACES[i % <span class="b">len</span>(PLACES)], <span class="s">"year"</span>: <span class="n">2020</span> + i % <span class="n">5</span>} <span class="k">for</span> i <span class="k">in</span> <span class="b">range</span>(start, stop)]</code></pre></div>
+<p>（示例用一个模拟的接口代替真实的网络请求，<code>requests</code> 记录一共请求了几次。）</p>
+<p>用户的问题是：“找一张在成都拍的照片。”</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>先把所有页取回来，拼成一个列表，再在列表里找：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">all_photos</span>(api: FakePhotoApi) -&gt; <span class="b">list</span>[<span class="b">dict</span>]:
+    photos: <span class="b">list</span>[<span class="b">dict</span>] = []
+    page = <span class="n">1</span>
+    <span class="k">while</span> <span class="k">True</span>:
+        batch = api.get_page(page)
+        <span class="k">if</span> <span class="k">not</span> batch:
+            <span class="k">break</span>
+        photos += batch
+        page += <span class="n">1</span>
+    <span class="k">return</span> photos</code></pre></div>
+<p>相册只有几十张照片时，<strong>这是好代码</strong>：简单，取回来的列表可以反复使用。</p>
+<h2 id="变化-相册变大了">变化：相册变大了<a class="anchor" href="#变化-相册变大了" aria-label="本节链接">#</a></h2>
+<p>相册里有 200 张照片，10 页。第一张成都的照片就在第 1 页，可程序仍然把 10 页全部取了回来，外加一次确认“没有更多了”的空请求，一共 11 次网络请求（测试 <code>test_fetches_every_page_even_for_the_first_match</code>）。</p>
+<p>如果相册有两万张照片，就是一千次请求，而用户只想看一张。如果用户只想看“最近的 25 张”，也是一样。更糟的是，所有照片的信息都要同时放在内存里。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<p><code>all_photos</code> 把两件事绑在了一起：</p>
+<ol><li><strong>怎样取得下一张照片</strong>：要知道当前在第几页、这一页取完了没有、什么时候算结束。</li><li><strong>拿到照片之后做什么</strong>：找成都的、数一数、取前 25 张。</li></ol>
+<p>因为第 1 件事被写成了“一次全部取完”，第 2 件事无论多么简单，都要等全部取完才能开始。我们希望的是：<strong>调用方要一张，就给一张；需要翻页时，才去请求下一页。</strong> 至于怎样翻页，调用方不必知道。</p>
+<h2 id="迭代器-按需给出下一个元素">迭代器：按需给出下一个元素<a class="anchor" href="#迭代器-按需给出下一个元素" aria-label="本节链接">#</a></h2>
+<p>GoF 对迭代器的描述是：<strong>提供一种方法顺序访问一个聚合对象中的各个元素，而又不需暴露该对象的内部表示。</strong></p>
+<p>GoF 原书中的迭代器接口有四个操作：<code>First</code>、<code>Next</code>、<code>IsDone</code>、<code>CurrentItem</code>。Python 把它简化成了一个<strong>协议</strong>，只有两个方法：</p>
+<ul><li><code>__iter__()</code>：返回迭代器本身；</li><li><code>__next__()</code>：返回下一个元素；没有更多元素时，抛出 <code>StopIteration</code>。</li></ul>
+<p><code>for</code> 循环、<code>list()</code>、<code>next()</code>、生成器表达式……Python 里所有“逐个取元素”的地方，都是在调用这两个方法。只要一个对象实现了它们，就可以用在所有这些地方。</p>
+<p>把“翻页”的细节藏进一个迭代器：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">PhotoIterator</span>:
+    <span class="s">"""实现 Python 的迭代器协议：__iter__ 返回自己，__next__ 给出下一张或抛出 StopIteration。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, api: FakePhotoApi) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.api = api
+        <span class="b">self</span>.page = <span class="n">0</span>
+        <span class="b">self</span>.buffer: deque[<span class="b">dict</span>] = deque()
+        <span class="b">self</span>.finished = <span class="k">False</span>
+
+    <span class="k">def</span> <span class="f">__iter__</span>(<span class="b">self</span>) -&gt; PhotoIterator:
+        <span class="k">return</span> <span class="b">self</span>
+
+    <span class="k">def</span> <span class="f">__next__</span>(<span class="b">self</span>) -&gt; <span class="b">dict</span>:
+        <span class="k">if</span> <span class="k">not</span> <span class="b">self</span>.buffer:
+            <span class="k">if</span> <span class="b">self</span>.finished:
+                <span class="k">raise</span> <span class="b">StopIteration</span>
+            <span class="b">self</span>.page += <span class="n">1</span>
+            <span class="b">self</span>.buffer.extend(<span class="b">self</span>.api.get_page(<span class="b">self</span>.page))
+            <span class="k">if</span> <span class="k">not</span> <span class="b">self</span>.buffer:
+                <span class="b">self</span>.finished = <span class="k">True</span>
+                <span class="k">raise</span> <span class="b">StopIteration</span>
+        <span class="k">return</span> <span class="b">self</span>.buffer.popleft()</code></pre></div>
+<p>它在内部保存一页的缓冲区。缓冲区空了，才去请求下一页；请求到空页，就记下“已经结束”，之后再被调用也不会再发请求（测试 <code>test_stop_iteration_is_sticky</code>）。</p>
+<p>调用方的代码几乎没变，只是把 <code>all_photos(api)</code> 换成了 <code>PhotoIterator(api)</code>：</p>
+<div class="code" data-lang="Python"><pre><code>    first = <span class="b">next</span>(p <span class="k">for</span> p <span class="k">in</span> PhotoIterator(api) <span class="k">if</span> p[<span class="s">"place"</span>] == <span class="s">"成都"</span>)</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>{'id': 1, 'place': '成都', 'year': 2021} 请求次数： 1</code></pre></div>
+<p>找到第一张成都的照片，只请求了 1 次（测试 <code>test_fetches_only_what_is_needed</code>）。如果完整地遍历一遍，仍然是 11 次请求，得到全部 200 张，一张不多、一张不少（测试 <code>test_full_iteration_gives_everything_once</code>）。迭代器没有让总的工作变少，它让调用方<strong>只为自己用到的部分付出代价</strong>。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>迭代器（Iterator）</td><td>Python 的迭代器协议</td><td><code>__next__</code> 给出下一个元素，<code>StopIteration</code> 表示结束</td></tr><tr><td>具体迭代器（ConcreteIterator）</td><td><code>PhotoIterator</code></td><td>记住遍历到了哪里（第几页、缓冲区）</td></tr><tr><td>聚合（Aggregate）</td><td>云相册接口</td><td>存放元素，但不暴露它怎样分页</td></tr></tbody></table></div>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>迭代器只能走一遍。</strong> <code>PhotoIterator</code> 遍历完之后就结束了，再用它得到的是空的。想要再遍历一次，要重新创建一个。这是很多“为什么第二次循环什么都没有”的错误的来源（下一节会再谈）。</li><li><strong>不能随机访问，也不知道总数。</strong> 想要“第 150 张”，只能从头数过去；想知道“一共有几张”，只能全部遍历一遍。如果经常需要这些操作，取回一个列表反而更合适。</li><li><strong>遍历过程中，数据可能变化。</strong> 如果用户在遍历到第 3 页时删除了第 1 页的一张照片，后面的页会整体前移一位，迭代器会漏掉一张。这是分页接口的固有问题，迭代器解决不了，只能由接口本身提供稳定的游标。</li><li><strong>错误发生的时机推迟了。</strong> 网络错误不会在创建迭代器时出现，而是在遍历到需要翻页的那一刻才出现，可能在调用方的某个循环中间。</li></ul>
+<p><strong>什么时候不该用</strong>：数据量小，或者调用方需要反复访问、随机访问、知道总数。一次取回一个列表，简单直接。</p>
+<h2 id="python-角度-生成器-可迭代对象和-itertools">Python 角度：生成器、可迭代对象和 <code>itertools</code><a class="anchor" href="#python-角度-生成器-可迭代对象和-itertools" aria-label="本节链接">#</a></h2>
+<h3 id="生成器函数">生成器函数<a class="anchor" href="#生成器函数" aria-label="本节链接">#</a></h3>
+<p>自己写一个实现 <code>__iter__</code> 和 <code>__next__</code> 的类，需要手动管理“遍历到哪里了”。Python 提供了更省事的写法：<strong>生成器函数</strong>。函数里只要出现 <code>yield</code>，调用它就会返回一个迭代器：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">iter_photos</span>(api: FakePhotoApi) -&gt; Iterator[<span class="b">dict</span>]:
+    page = <span class="n">1</span>
+    <span class="k">while</span> batch := api.get_page(page):
+        <span class="k">yield</span> <span class="k">from</span> batch
+        page += <span class="n">1</span></code></pre></div>
+<p>这几行和 <code>PhotoIterator</code> 做的事情完全一样（测试 <code>test_same_items_as_the_class</code>）。每次执行到 <code>yield</code>，函数就暂停，把一个元素交给调用方；下次需要元素时，再从暂停的地方继续。“当前在第几页”就是函数里的局部变量 <code>page</code>，不需要自己保存在对象的字段里。<code>yield from batch</code> 把一页里的照片逐个交出去。</p>
+<p>在 Python 里，<strong>需要一个迭代器时，先写生成器函数</strong>。只有当迭代器还需要提供别的方法（比如“跳到某一页”“当前进度”）时，才写成类。</p>
+<h3 id="迭代器和可迭代对象">迭代器和可迭代对象<a class="anchor" href="#迭代器和可迭代对象" aria-label="本节链接">#</a></h3>
+<p>Python 区分两个概念：</p>
+<ul><li><strong>迭代器</strong>（iterator）：有 <code>__next__</code>，记着遍历的位置，只能走一遍。<code>iter_photos(api)</code> 返回的就是迭代器。</li><li><strong>可迭代对象</strong>（iterable）：有 <code>__iter__</code>，每次被要求时，返回一个<strong>新的</strong>迭代器。列表就是可迭代对象，可以对同一个列表反复 <code>for</code> 循环。</li></ul>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Album</span>:
+    <span class="s">"""可迭代对象：每次 for 循环都从头开始，得到一个新的迭代器。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, api: FakePhotoApi) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.api = api
+
+    <span class="k">def</span> <span class="f">__iter__</span>(<span class="b">self</span>) -&gt; Iterator[<span class="b">dict</span>]:
+        <span class="k">return</span> iter_photos(<span class="b">self</span>.api)</code></pre></div>
+<p>对同一个生成器对象连续两次 <code>list()</code>，第二次是空的；对同一个 <code>Album</code> 连续两次 <code>list()</code>，两次都完整（测试 <code>test_an_iterator_is_used_up</code> 和 <code>test_an_iterable_can_be_looped_again</code>）。如果你写的函数需要遍历参数<strong>两次</strong>，要么要求调用方传入可迭代对象，要么在函数开头用 <code>list()</code> 把它存下来，并且在文档里写清楚。</p>
+<h3 id="组合迭代器的工具">组合迭代器的工具<a class="anchor" href="#组合迭代器的工具" aria-label="本节链接">#</a></h3>
+<p>迭代器的另一个好处是可以<strong>组合</strong>。标准库的 <code>itertools</code> 提供了很多现成的工具，它们都只在需要时才向上游要元素。比如“最近的 25 张”：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="b">print</span>([p[<span class="s">"id"</span>] <span class="k">for</span> p <span class="k">in</span> islice(iter_photos(api), <span class="n">25</span>)][-<span class="n">3</span>:], <span class="s">"请求次数："</span>, api.requests)</code></pre></div>
+<p><code>islice</code> 取够 25 张就停下，只请求了 2 页（测试 <code>test_islice_takes_just_enough_pages</code>）。</p>
+<h3 id="边读边处理">边读边处理<a class="anchor" href="#边读边处理" aria-label="本节链接">#</a></h3>
+<p><a href="../part-03/15-flyweight.html">第 15 章</a>提到过：面对大量数据，首先要问“需不需要把它们全部留在内存里”。迭代器正是回答这个问题的工具。统计某一年在各地拍了多少照片：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">places_by_year</span>(api: FakePhotoApi, year: <span class="b">int</span>) -&gt; Counter[<span class="b">str</span>]:
+    <span class="s">"""边取边数：任何时刻内存里最多只有一页照片。"""</span>
+    <span class="k">return</span> Counter(p[<span class="s">"place"</span>] <span class="k">for</span> p <span class="k">in</span> iter_photos(api) <span class="k">if</span> p[<span class="s">"year"</span>] == year)</code></pre></div>
+<p>这一行需要遍历全部照片（测试 <code>test_streaming_count</code> 中仍然是 11 次请求），但任何时刻内存里只有当前这一页，以及一个计数器。照片从两百张变成两百万张，这个函数占用的内存也基本不变。读大文件时，<code>for line in file</code> 一行一行地读，是同样的道理。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>迭代器把“怎样取得下一个元素”和“拿到元素之后做什么”分开，让调用方按需取用，只为自己用到的部分付出代价。</li><li>Python 把迭代器做进了语言：<code>__iter__</code> 和 <code>__next__</code> 两个方法，<code>StopIteration</code> 表示结束。所有 <code>for</code> 循环都基于这个协议。</li><li>需要迭代器时，优先写生成器函数。分清迭代器（只能走一遍）和可迭代对象（每次给出新的迭代器）。</li><li>迭代器可以用 <code>itertools</code> 组合，也可以让程序边读边处理，不必把全部数据同时放进内存。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>云相册接口升级了：不再用页码，而是每次返回一页数据和一个“下一页的游标”（一个字符串）；最后一页的游标是 <code>None</code>。</p>
+<ol><li><code>iter_photos</code> 需要怎样修改？调用它的代码（查找成都、取前 25 张、按年份统计）需要修改吗？</li><li>用户想要“从上次看到的地方继续”。你会怎样让迭代器支持这个需求？生成器函数还够用吗？</li><li>如果在遍历过程中网络断了，你希望调用方看到什么？迭代器应该自动重试吗？</li></ol>
+<p><strong>思路提示</strong>：只需要改 <code>iter_photos</code> 内部：把页码换成游标，<code>while</code> 的条件换成“游标不是 <code>None</code>”。所有调用方都不用改，这正是迭代器“不暴露内部表示”的好处。“从上次的地方继续”需要把当前游标交给调用方保存，下次从它开始。生成器函数可以接收一个起始游标参数，但它没有办法让外部随时读取“当前游标”，这时写成一个带 <code>cursor</code> 属性的迭代器类更合适。第 3 问：迭代器里的网络错误会在调用方的循环中间抛出。是否重试，取决于接口是否幂等，以及调用方能否承受等待（参见<a href="19-command.html">第 19 章</a>关于重试与幂等的讨论）。通常让迭代器把错误抛出去、由调用方决定，比在迭代器里悄悄重试更清楚。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch23_photos_v1.py" target="_blank" rel="noopener"><code>examples/ch23_photos_v1.py</code></a>：模拟的分页接口，先取全部再查找</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch23_iterator.py" target="_blank" rel="noopener"><code>examples/ch23_iterator.py</code></a>：实现迭代器协议的类</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch23_pythonic.py" target="_blank" rel="noopener"><code>examples/ch23_pythonic.py</code></a>：生成器函数、可迭代对象、<code>islice</code> 与边读边统计</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch23_iterator.py" target="_blank" rel="noopener"><code>tests/test_ch23_iterator.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-04/22-chain-of-responsibility.html"><small>上一篇</small>22 责任链 Chain of Responsibility</a><a class="next" href="../part-04/24-mediator.html"><small>下一篇</small>24 中介者 Mediator</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-04/23-iterator.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-相册变大了">变化：相册变大了</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#迭代器-按需给出下一个元素">迭代器：按需给出下一个元素</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-生成器-可迭代对象和-itertools">Python 角度：生成器、可迭代对象和 itertools</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

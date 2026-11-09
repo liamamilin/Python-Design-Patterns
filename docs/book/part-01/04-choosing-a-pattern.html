@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 04 章 从问题选择模式 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：范式、设计模式、架构和惯用写法有什么不同？怎样根据变化和代价，而不是根据名称，来选择方案？ 前三章一直在说“先看清问题”。这一章把方法收拢起来：设计模式到底是什么，它和其他常被混在一起的概念有什么区别，以及面对一个具体变化时，怎">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part" open><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html" aria-current="page"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第一部分 · 为什么需要设计</p>
+<h1>第 04 章　从问题选择模式</h1>
+<blockquote><p>本章要回答：范式、设计模式、架构和惯用写法有什么不同？怎样根据变化和代价，而不是根据名称，来选择方案？</p></blockquote>
+<p>前三章一直在说“先看清问题”。这一章把方法收拢起来：设计模式到底是什么，它和其他常被混在一起的概念有什么区别，以及面对一个具体变化时，怎样在“直接写法、经典模式、Python 的简化写法”之间做选择。</p>
+<h2 id="先分清几个层次">先分清几个层次<a class="anchor" href="#先分清几个层次" aria-label="本节链接">#</a></h2>
+<p>“设计模式”这个词经常被用得很宽：有人把面向对象叫作模式，有人把微服务叫作模式，也有人把 Python 的装饰器语法叫作模式。为了后面讨论不走样，本书把它们分成五个层次：</p>
+<div class="table"><table><thead><tr><th>层次</th><th>典型例子</th><th>是什么</th></tr></thead><tbody><tr><td>基本表达</td><td>数字、变量、判断、循环、函数、类</td><td>编程语言允许我们写什么</td></tr><tr><td>编程范式</td><td>命令式、过程式、面向对象、函数式</td><td>程序采用什么组织与表达方式</td></tr><tr><td>设计模式</td><td>GoF 工厂方法、策略、代理等</td><td>针对反复出现的设计困难的方案</td></tr><tr><td>Python 惯用法</td><td>直接传函数、迭代协议、装饰器语法</td><td>Python 语言特性支持的简洁写法</td></tr><tr><td>更大范围的设计</td><td>分层、消息队列、分布式部署等</td><td>系统级组织问题，本书只在必要处提及</td></tr></tbody></table></div>
+<p>几个容易混淆的地方：</p>
+<ul><li><strong>面向对象是范式，不是模式。</strong> 它是一种组织程序的整体方式；设计模式是在这种方式里，针对某个具体困难的一种做法。</li><li><strong>Python 的 <code>@decorator</code> 是语法，不是 GoF 装饰器模式。</strong> 两者有相似的思想（在不改动原有代码的情况下叠加行为），但用了 <code>@</code> 不代表采用了 GoF 装饰器，GoF 装饰器也不必用 <code>@</code> 来写。<a href="../part-03/13-decorator.html">第 13 章</a>和<a href="../part-05/30-decorators-context-managers-generators.html">第 30 章</a>会详细区分。</li><li><strong>“工厂”在 Python 社区常泛指任何“返回对象的函数”。</strong> 这种简单工厂函数很常用，但它不是 GoF 23 种模式之一。GoF 的工厂方法有更具体的含义（<a href="../part-02/05-factory-method.html">第 05 章</a>）。</li><li><strong>架构关心的是整个系统怎样分块、怎样部署。</strong> 本书讲的设计模式发生在函数、类和对象之间，范围小得多。</li></ul>
+<h2 id="gof-是什么">GoF 是什么<a class="anchor" href="#gof-是什么" aria-label="本节链接">#</a></h2>
+<p>本书说的 23 种设计模式，来自 1994 年出版的《设计模式：可复用面向对象软件的基础》（<em>Design Patterns: Elements of Reusable Object-Oriented Software</em>）。四位作者 Erich Gamma、Richard Helm、Ralph Johnson、John Vlissides 常被称为“四人帮”（Gang of Four），所以这套模式也叫 GoF 模式。</p>
+<p>这本书的贡献是给一批反复出现的设计做法起了名字，并说明了每种做法的意图、适用情境、参与者和后果。有了共同的名字，开发者之间讨论设计就方便了。</p>
+<p>但要记住它诞生的背景：书中示例主要使用 C++ 和 Smalltalk。在那样的语言里，函数不能像普通数据一样随手传递，很多事情只能靠类和继承来完成。Python 里函数就是对象，还有迭代协议、装饰器语法、<code>dataclass</code> 等工具，<strong>有些模式在 Python 里会变得非常简单，有些甚至已经内建在语言里了</strong>。本书对每个模式都会先忠实讲清它的经典意图，再说明在 Python 里可以怎样写得更轻。</p>
+<p>GoF 按用途把 23 种模式分成三类：</p>
+<div class="table"><table><thead><tr><th>类别</th><th>关心的问题</th><th>模式（本书章号）</th></tr></thead><tbody><tr><td>创建型（5 种）</td><td>对象怎样被创建，创建的决定放在哪里</td><td>工厂方法 05、抽象工厂 06、建造者 07、原型 08、单例 09</td></tr><tr><td>结构型（7 种）</td><td>类和对象怎样组合成更大的结构</td><td>适配器 10、桥接 11、组合 12、装饰器 13、外观 14、享元 15、代理 16</td></tr><tr><td>行为型（11 种）</td><td>对象之间怎样分配职责、怎样协作</td><td>策略 17、观察者 18、命令 19、状态 20、模板方法 21、责任链 22、迭代器 23、中介者 24、备忘录 25、访问者 26、解释器 27</td></tr></tbody></table></div>
+<p>每种模式的意图可以用一句话概括。这张表适合在读完对应章节后回来查，而不是现在背下来：</p>
+<div class="table"><table><thead><tr><th>模式</th><th>一句话意图</th></tr></thead><tbody><tr><td>工厂方法</td><td>定义一个创建对象的接口，让子类决定实例化哪一个类</td></tr><tr><td>抽象工厂</td><td>提供一个接口，用来创建一系列相关或相互依赖的对象，而不指定它们的具体类</td></tr><tr><td>建造者</td><td>把复杂对象的构建过程与它的表示分离，同样的构建过程可以得到不同的表示</td></tr><tr><td>原型</td><td>用一个现成的实例作为原型，通过复制它来创建新对象</td></tr><tr><td>单例</td><td>保证一个类只有一个实例，并提供访问它的全局入口</td></tr><tr><td>适配器</td><td>把一个类的接口转换成调用方期望的另一个接口</td></tr><tr><td>桥接</td><td>把抽象部分与实现部分分开，使两者可以独立变化</td></tr><tr><td>组合</td><td>把对象组织成树形的“部分—整体”结构，让调用方统一对待单个对象和组合对象</td></tr><tr><td>装饰器</td><td>动态地给一个对象叠加额外的职责</td></tr><tr><td>外观</td><td>为子系统中的一组接口提供一个统一、易用的入口</td></tr><tr><td>享元</td><td>通过共享来高效地支持大量细粒度的对象</td></tr><tr><td>代理</td><td>为另一个对象提供一个替身，以控制对它的访问</td></tr><tr><td>策略</td><td>定义一系列算法，把它们分别封装起来，使它们可以互相替换</td></tr><tr><td>观察者</td><td>定义一对多的依赖，当一个对象的状态改变时，所有依赖它的对象都得到通知</td></tr><tr><td>命令</td><td>把一个请求封装成对象，从而可以排队、记录、撤销请求</td></tr><tr><td>状态</td><td>让对象在内部状态改变时改变自己的行为</td></tr><tr><td>模板方法</td><td>在一个操作里定义算法的骨架，把其中某些步骤留给子类实现</td></tr><tr><td>责任链</td><td>让多个对象都有机会处理请求，把它们连成一条链，请求沿链传递直到被处理</td></tr><tr><td>迭代器</td><td>提供一种方法，顺序访问集合中的元素，而不暴露集合的内部表示</td></tr><tr><td>中介者</td><td>用一个中介对象封装一组对象之间的交互，使它们不必互相直接引用</td></tr><tr><td>备忘录</td><td>在不破坏封装的前提下，保存对象的内部状态，以便以后恢复</td></tr><tr><td>访问者</td><td>在不修改元素类的前提下，为一个对象结构中的元素定义新的操作</td></tr><tr><td>解释器</td><td>为一种语言定义文法的表示，并用它来解释这种语言中的句子</td></tr></tbody></table></div>
+<h2 id="用变化来选择-而不是用名称">用变化来选择，而不是用名称<a class="anchor" href="#用变化来选择-而不是用名称" aria-label="本节链接">#</a></h2>
+<p>初学者最常见的选择方式是：“我在学策略模式，这里有一堆 <code>if</code>，那就用策略吧。”这样选出来的方案，常常比原来的代码更难读。</p>
+<p>本书建议反过来：<strong>先说清楚变化是什么，再看哪些方案能把这个变化放到一个合适的位置，最后比较代价。</strong></p>
+<p>下面用一个具体例子走一遍。</p>
+<h3 id="停车场收费">停车场收费<a class="anchor" href="#停车场收费" aria-label="本节链接">#</a></h3>
+<p>停车场按车型收费：小汽车每小时 5 元，摩托车每小时 2 元，不足一小时按一小时算。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">billable_hours</span>(minutes: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+    <span class="s">"""不足一小时按一小时算，最少收一小时。"""</span>
+    <span class="k">return</span> <span class="b">max</span>(<span class="n">1</span>, math.ceil(minutes / <span class="n">60</span>))</code></pre></div>
+<p>最直接的写法是条件判断：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">fee_by_if</span>(vehicle: <span class="b">str</span>, minutes: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+    hours = billable_hours(minutes)
+    <span class="k">if</span> vehicle == <span class="s">"car"</span>:
+        <span class="k">return</span> <span class="n">5</span> * hours
+    <span class="k">if</span> vehicle == <span class="s">"motorcycle"</span>:
+        <span class="k">return</span> <span class="n">2</span> * hours
+    <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知车型: {vehicle}"</span>)</code></pre></div>
+<p>停 90 分钟的小汽车收 10 元，停 30 分钟的摩托车收 2 元。</p>
+<p>现在来了一个新需求：<strong>货车每小时 10 元，最低收 20 元。</strong></p>
+<h3 id="第一步-说清变化是什么">第一步：说清变化是什么<a class="anchor" href="#第一步-说清变化是什么" aria-label="本节链接">#</a></h3>
+<p>变化的是“某种车型怎样根据时长算钱”。这是一条<strong>规则</strong>，而且是一段<strong>行为</strong>：货车的规则不只是换一个单价，还多了“最低 20 元”。计费小时数的算法不变，调用收费的地方也不变。</p>
+<h3 id="第二步-看有没有证据">第二步：看有没有证据<a class="anchor" href="#第二步-看有没有证据" aria-label="本节链接">#</a></h3>
+<p>如果车型只有两三种，而且一年才变一次，那么在 <code>if</code> 里加一个分支就是最好的方案，改动小、一眼能看懂。</p>
+<p>但假设停车场运营方告诉我们：每个分店有自己的特殊车型（大巴、新能源车、残障车位），而且这些规则由各分店的开发者自己维护，他们不应该去改总部的收费函数。这就是一个明确的、可观察的变化来源：<strong>规则的种类会持续增加，而且增加规则的人不是写收费函数的人。</strong></p>
+<h3 id="第三步-列出候选方案">第三步：列出候选方案<a class="anchor" href="#第三步-列出候选方案" aria-label="本节链接">#</a></h3>
+<p><strong>写法一：继续加 <code>if</code>。</strong> 每加一种车型，就要修改 <code>fee_by_if</code>。分店的开发者必须改总部的代码。</p>
+<p><strong>写法二：字典里放函数。</strong></p>
+<div class="code" data-lang="Python"><pre><code>RATES = {
+    <span class="s">"car"</span>: <span class="k">lambda</span> hours: <span class="n">5</span> * hours,
+    <span class="s">"motorcycle"</span>: <span class="k">lambda</span> hours: <span class="n">2</span> * hours,
+}
+
+
+<span class="k">def</span> <span class="f">fee_by_table</span>(vehicle: <span class="b">str</span>, minutes: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+    <span class="k">try</span>:
+        rule = RATES[vehicle]
+    <span class="k">except</span> <span class="b">KeyError</span>:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知车型: {vehicle}"</span>) <span class="k">from</span> <span class="k">None</span>
+    <span class="k">return</span> rule(billable_hours(minutes))</code></pre></div>
+<p>新增货车只要定义一个函数，再往字典里注册一行，<code>fee_by_table</code> 一个字都不用改：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">truck_fee</span>(hours: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> <span class="b">max</span>(<span class="n">20</span>, <span class="n">10</span> * hours)</code></pre></div>
+<p>分店的代码里写 <code>RATES["truck"] = truck_fee</code> 即可。停 61 分钟的货车算 2 小时，收 20 元；停 3 小时收 30 元。</p>
+<p><strong>写法三：每种规则一个类。</strong> 这就是<a href="../part-04/17-strategy.html">第 17 章</a>要讲的策略模式的经典形式：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">FeeRule</span>(ABC):
+<span class="d">    @abstractmethod</span>
+    <span class="k">def</span> <span class="f">fee</span>(<span class="b">self</span>, hours: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+        <span class="s">"""根据计费小时数返回费用（元）。"""</span>
+
+
+<span class="k">class</span> <span class="f">CarRule</span>(FeeRule):
+    <span class="k">def</span> <span class="f">fee</span>(<span class="b">self</span>, hours: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+        <span class="k">return</span> <span class="n">5</span> * hours
+
+
+<span class="k">class</span> <span class="f">MotorcycleRule</span>(FeeRule):
+    <span class="k">def</span> <span class="f">fee</span>(<span class="b">self</span>, hours: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+        <span class="k">return</span> <span class="n">2</span> * hours
+
+
+<span class="k">def</span> <span class="f">fee_by_rule</span>(rule: FeeRule, minutes: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> rule.fee(billable_hours(minutes))</code></pre></div>
+<p>但请注意，调用方手里拿到的仍然是 <code>"car"</code> 这样的字符串。要把字符串变成规则对象，还得有一张表：</p>
+<div class="code" data-lang="Python"><pre><code>RULES = {<span class="s">"car"</span>: CarRule(), <span class="s">"motorcycle"</span>: MotorcycleRule()}</code></pre></div>
+<p><strong>选择并没有因为用了类而消失，只是换了一个位置。</strong> 这是很多人引入策略模式后才发现的事。</p>
+<h3 id="第四步-比较代价">第四步：比较代价<a class="anchor" href="#第四步-比较代价" aria-label="本节链接">#</a></h3>
+<p>三种写法的行为完全一样（<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch04_parking.py" target="_blank" rel="noopener">测试</a>逐一验证了这一点），区别在于：</p>
+<div class="table"><table><thead><tr><th></th><th><code>if</code> 判断</th><th>字典里放函数</th><th>每种规则一个类</th></tr></thead><tbody><tr><td>新增货车要改哪里</td><td>修改 <code>fee_by_if</code></td><td>新写一个函数，注册一行</td><td>新写一个类，注册一行</td></tr><tr><td>分店能否不改总部代码</td><td>不能</td><td>能</td><td>能</td></tr><tr><td>读代码时一眼看全部规则</td><td>最容易</td><td>较容易</td><td>要翻好几个类</td></tr><tr><td>一条规则需要多个操作（算费用、生成说明、月卡折扣）</td><td>每个操作一串 <code>if</code></td><td>字典里要放好几个函数，开始别扭</td><td>很自然：一个类里放几个方法</td></tr><tr><td>额外的概念和代码</td><td>无</td><td>很少</td><td>抽象基类、多个子类</td></tr></tbody></table></div>
+<p>据此可以做出判断：</p>
+<ul><li>如果规则少、变化少：<strong>用 <code>if</code></strong>，不要犹豫。</li><li>如果规则会持续增加、由别人维护，而每条规则只是“一个计算”：<strong>用字典里放函数</strong>。在 Python 里，这常常就是策略模式最合适的样子。</li><li>如果每条规则不只是一个计算，而是带着好几个相关操作或自己的配置：<strong>用类</strong>，这时经典的策略模式才真正划算。</li></ul>
+<h2 id="不同的变化-指向不同的方案">不同的变化，指向不同的方案<a class="anchor" href="#不同的变化-指向不同的方案" aria-label="本节链接">#</a></h2>
+<p>同一个停车场程序，换一种变化，候选方案就完全不同：</p>
+<div class="table"><table><thead><tr><th>你观察到的变化</th><th>候选方案</th><th>先试试的 Python 写法</th></tr></thead><tbody><tr><td>规则或算法的种类在增加</td><td>策略（17）</td><td>字典里放函数、直接传函数</td></tr><tr><td>要创建哪种对象，取决于具体情境</td><td>工厂方法（05）</td><td>一个返回对象的函数</td></tr><tr><td>要接入一个接口不一样的已有组件，比如新的支付终端</td><td>适配器（10）</td><td>一个转换参数的小函数</td></tr><tr><td>车辆出场后，财务、空位显示屏、会员积分都要知道</td><td>观察者（18）</td><td>一个回调函数列表</td></tr><tr><td>车位的可用、预约、占用、维修状态下，允许的操作不同</td><td>状态（20）</td><td>先用一个清晰的状态字段和集中判断</td></tr><tr><td>想在不改原代码的情况下给收费加上日志、缓存</td><td>装饰器（13）、代理（16）</td><td>Python 函数装饰器</td></tr><tr><td>一次收费操作要能排队、记录、撤销</td><td>命令（19）</td><td>把操作参数存成数据</td></tr></tbody></table></div>
+<p>“先试试的 Python 写法”那一列很重要。很多时候，它就已经够用了。只有当它开始别扭，比如字典里要放的东西越来越多，回调之间开始互相依赖，才需要经典模式提供的更完整的结构。</p>
+<h2 id="一份选择清单">一份选择清单<a class="anchor" href="#一份选择清单" aria-label="本节链接">#</a></h2>
+<p>面对一个具体的改动需求，可以按这个顺序问自己：</p>
+<ol><li><strong>变化是什么？</strong> 用一句话说出“什么在变、什么不变”。</li><li><strong>有证据吗？</strong> 这个变化已经发生，或者有明确的计划；还是只是“将来可能”？</li><li><strong>最简单的写法够不够？</strong> 加一个分支、提取一个函数、把规则写成数据，能不能解决？</li><li><strong>如果不够，困难具体在哪？</strong> 能指到具体代码，最好能写出一个会失败的测试。</li><li><strong>候选方案把变化放到了哪里？</strong> 新增一种情况时，要改几处？谁来改？</li><li><strong>代价是什么？</strong> 多了几个类、几层间接调用？读代码的人要多理解什么？测试要多写什么？</li><li><strong>将来如果需求没有来，这个抽象能不能轻松撤回？</strong></li></ol>
+<p>最后一条常被忽略。设计是可以撤回的：如果当初为“将来会有很多规则”准备的抽象，两年后发现只用到了两种，把它改回 <code>if</code> 也是一次好的重构。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>范式、设计模式、Python 惯用法、架构是不同层次的东西，不要混为一谈。</li><li>GoF 23 种模式分为创建型、结构型、行为型三类；它们诞生于 C++ 和 Smalltalk 的语境，在 Python 里很多可以写得更轻。</li><li>选择方案时，先说清变化，再找证据，然后比较“直接写法、Python 简化写法、经典模式”三者的代价。</li><li>引入模式往往不会让“选择”消失，只是把它挪到一个更合适的位置；要看清它挪到了哪里。</li><li>设计可以撤回。为没有发生的需求准备的抽象，也是一种负担。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>停车场又来了一个需求：会员可以按月付费，月卡车辆每次停车都免费，但要记录停车次数，月底生成报告。</p>
+<ol><li>这个变化属于上面哪一类？它影响的是“收费规则”，还是别的东西？</li><li>用“字典里放函数”能不能实现？用“每种规则一个类”呢？哪一种更自然？</li><li>有人建议把“月卡”也做成一种车型，放进 <code>RATES</code>。你觉得这个建模合适吗？</li></ol>
+<p><strong>思路提示</strong>：月卡不是一种车型，而是车主的一种<strong>身份</strong>，它和车型是两个独立的维度：一辆货车也可以办月卡。把它塞进车型字典，会把两个独立的变化搅在一起。更合适的做法可能是：先判断是否月卡，是则记一次、收 0 元；否则再按车型计费。“记录次数、月底出报告”带有状态，适合放进一个小类。这个变化暂时用不上任何 GoF 模式，但当“身份”和“车型”两个维度都在增长时，可以回头看看<a href="../part-03/11-bridge.html">第 11 章</a>“桥接”讨论的那类问题。</p>
+<p>完整代码：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch04_parking.py" target="_blank" rel="noopener"><code>examples/ch04_parking.py</code></a>，测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch04_parking.py" target="_blank" rel="noopener"><code>tests/test_ch04_parking.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-01/03-python-building-blocks.html"><small>上一篇</small>03 Python 组织程序的基本工具</a><a class="next" href="../part-02/05-factory-method.html"><small>下一篇</small>05 工厂方法 Factory Method</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-01/04-choosing-a-pattern.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#先分清几个层次">先分清几个层次</a></li><li><a href="#gof-是什么">GoF 是什么</a></li><li><a href="#用变化来选择-而不是用名称">用变化来选择，而不是用名称</a></li><li><a href="#不同的变化-指向不同的方案">不同的变化，指向不同的方案</a></li><li><a href="#一份选择清单">一份选择清单</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 17 章 策略 Strategy · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：同一件事有好几种可以互相替换的做法时，怎样避免在多处重复同一串判断？在 Python 里，直接传一个函数是不是就够了？ 第四部分讨论对象之间怎样分配职责、怎样协作。第一个模式是策略。第 04 章用停车场收费比较过三种写法，其中“">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html" aria-current="page"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第四部分 · 协调处理（GoF 行为型）</p>
+<h1>第 17 章　策略 Strategy</h1>
+<blockquote><p>本章要回答：同一件事有好几种可以互相替换的做法时，怎样避免在多处重复同一串判断？在 Python 里，直接传一个函数是不是就够了？</p></blockquote>
+<p>第四部分讨论对象之间怎样分配职责、怎样协作。第一个模式是策略。<a href="../part-01/04-choosing-a-pattern.html">第 04 章</a>用停车场收费比较过三种写法，其中“每种规则一个类”就是策略的经典形式。那一章关心的是“怎样选择”；这一章把策略本身讲透：它真正解决的问题、策略对象应该长什么样，以及什么时候一个函数就够了。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一家网店要为订单计算运费。订单的信息是这样的：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Order</span>:
+    weight_g: <span class="b">int</span>
+    distance_km: <span class="b">float</span>
+    subtotal: <span class="b">int</span>  <span class="c"># 商品金额，单位：分</span></code></pre></div>
+<p>今天只有普通快递：首重 1 公斤 8 元，续重每公斤 3 元，商品满 99 元包邮。一个函数、几行代码就能算出来。</p>
+<p>后来加了同城急送（起步 15 元，每公里 2 元）和到店自提（免费）。函数里加两个判断，也完全合理。</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>结算页根据顾客选的配送方式算运费：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">checkout_fee</span>(order: Order, method: <span class="b">str</span>) -&gt; <span class="b">int</span>:
+    <span class="s">"""结算页：顾客选定一种配送方式后显示运费。"""</span>
+    <span class="k">if</span> method == <span class="s">"express"</span>:
+        <span class="k">if</span> order.subtotal &gt;= <span class="n">9900</span>:
+            <span class="k">return</span> <span class="n">0</span>
+        kg = math.ceil(order.weight_g / <span class="n">1000</span>)
+        <span class="k">return</span> <span class="n">800</span> + (kg - <span class="n">1</span>) * <span class="n">300</span>  <span class="c"># 续重费上个月从 2 元调到了 3 元</span>
+    <span class="k">if</span> method == <span class="s">"same_city"</span>:
+        <span class="k">return</span> <span class="n">1500</span> + math.ceil(order.distance_km) * <span class="n">200</span>
+    <span class="k">if</span> method == <span class="s">"pickup"</span>:
+        <span class="k">return</span> <span class="n">0</span>
+    <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知配送方式: {method}"</span>)</code></pre></div>
+<p><strong>单看这个函数，这是好代码。</strong> 三种方式、三个分支，一目了然。</p>
+<h2 id="变化-同一套规则出现在好几个地方">变化：同一套规则出现在好几个地方<a class="anchor" href="#变化-同一套规则出现在好几个地方" aria-label="本节链接">#</a></h2>
+<p>问题出在别处。客服后台有一个“批量报价”功能，把一个订单所有配送方式的运费都列出来，方便回答顾客“哪种最便宜”。写它的同事没有调用 <code>checkout_fee</code>（那个函数一次只能算一种），而是照着规则又写了一遍：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">quote_all</span>(order: Order) -&gt; <span class="b">dict</span>[<span class="b">str</span>, <span class="b">int</span>]:
+    <span class="s">"""批量报价：给客服看一个订单所有配送方式的运费。"""</span>
+    kg = math.ceil(order.weight_g / <span class="n">1000</span>)
+    express = <span class="n">0</span> <span class="k">if</span> order.subtotal &gt;= <span class="n">9900</span> <span class="k">else</span> <span class="n">800</span> + (kg - <span class="n">1</span>) * <span class="n">200</span>  <span class="c"># 这里还是旧费率</span>
+    <span class="k">return</span> {
+        <span class="s">"express"</span>: express,
+        <span class="s">"same_city"</span>: <span class="n">1500</span> + math.ceil(order.distance_km) * <span class="n">200</span>,
+        <span class="s">"pickup"</span>: <span class="n">0</span>,
+    }</code></pre></div>
+<p>上个月续重费从 2 元调到了 3 元，改的人只改了结算页。于是一个 2.3 公斤、68 元的订单，客服报价 12 元，顾客结算时却是 14 元（测试 <code>test_pages_disagree_after_a_rate_change</code>）。订单管理页面里还有第三份规则，用来在顾客改地址时重新计算运费。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<p>这不是“<code>if</code> 太多”的问题。三个分支一点都不多。真正的问题是：</p>
+<ol><li><strong>“普通快递怎么收费”这条知识，被复制到了好几个地方。</strong> 每个地方都要按需要的形式用它：结算页算一种，报价页算全部，订单管理页重新算。没有一个地方是这条规则的“唯一出处”。</li><li><strong>规则不只是一个数字。</strong> 普通快递有首重、续重、包邮门槛；同城急送有起步价、每公里价，还有最远距离，超过 20 公里不送。规则还要回答“多久送到”，报价页要显示这一项。</li></ol>
+<p>我们需要的是：<strong>把每种配送方式的全部规则放到一个地方，做成一个可以拿来替换的东西</strong>。结算页拿到顾客选中的那一个，报价页拿到所有的，订单管理页拿到订单原来的那一个，大家用的都是同一个东西。</p>
+<h2 id="策略-把可替换的做法变成对象">策略：把可替换的做法变成对象<a class="anchor" href="#策略-把可替换的做法变成对象" aria-label="本节链接">#</a></h2>
+<p>GoF 对策略的描述是：<strong>定义一系列算法，把它们一个个封装起来，并且使它们可以相互替换。本模式使得算法可独立于使用它的客户而变化。</strong></p>
+<p>先说清楚，一种配送方式需要回答哪些问题：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">ShippingMethod</span>(Protocol):
+    name: <span class="b">str</span>
+
+    <span class="k">def</span> <span class="f">available</span>(<span class="b">self</span>, order: Order) -&gt; <span class="b">bool</span>: ...
+    <span class="k">def</span> <span class="f">fee</span>(<span class="b">self</span>, order: Order) -&gt; <span class="b">int</span>: ...
+    <span class="k">def</span> <span class="f">eta</span>(<span class="b">self</span>, order: Order) -&gt; <span class="b">str</span>: ...</code></pre></div>
+<p>每种配送方式是一个对象，费率作为字段保存，所以“调整费率”只需要改一处默认值，或者创建一个不同配置的对象：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Express</span>:
+    name: ClassVar[<span class="b">str</span>] = <span class="s">"普通快递"</span>
+    first: <span class="b">int</span> = <span class="n">800</span>
+    per_extra_kg: <span class="b">int</span> = <span class="n">300</span>
+    free_over: <span class="b">int</span> = <span class="n">9900</span>
+
+    <span class="k">def</span> <span class="f">available</span>(<span class="b">self</span>, order: Order) -&gt; <span class="b">bool</span>:
+        <span class="k">return</span> <span class="k">True</span>
+
+    <span class="k">def</span> <span class="f">fee</span>(<span class="b">self</span>, order: Order) -&gt; <span class="b">int</span>:
+        <span class="k">if</span> order.subtotal &gt;= <span class="b">self</span>.free_over:
+            <span class="k">return</span> <span class="n">0</span>
+        kg = math.ceil(order.weight_g / <span class="n">1000</span>)
+        <span class="k">return</span> <span class="b">self</span>.first + (kg - <span class="n">1</span>) * <span class="b">self</span>.per_extra_kg
+
+    <span class="k">def</span> <span class="f">eta</span>(<span class="b">self</span>, order: Order) -&gt; <span class="b">str</span>:
+        <span class="k">return</span> <span class="s">"2–3 天"</span></code></pre></div>
+<p>同城急送有自己的“最远距离”规则，这条规则就写在它自己的 <code>available</code> 里：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">available</span>(<span class="b">self</span>, order: Order) -&gt; <span class="b">bool</span>:
+        <span class="k">return</span> order.distance_km &lt;= <span class="b">self</span>.max_km</code></pre></div>
+<p>所有配送方式登记在一处：</p>
+<div class="code" data-lang="Python"><pre><code>METHODS: <span class="b">dict</span>[<span class="b">str</span>, ShippingMethod] = {
+    <span class="s">"express"</span>: Express(),
+    <span class="s">"same_city"</span>: SameCity(),
+    <span class="s">"pickup"</span>: Pickup(),
+}</code></pre></div>
+<p>结算页和报价页都只和 <code>ShippingMethod</code> 接口打交道：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">checkout_fee</span>(order: Order, method: ShippingMethod) -&gt; <span class="b">int</span>:
+    <span class="k">if</span> <span class="k">not</span> method.available(order):
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"{method.name}不支持这个订单"</span>)
+    <span class="k">return</span> method.fee(order)
+
+
+<span class="k">def</span> <span class="f">quote_all</span>(order: Order, methods: <span class="b">dict</span>[<span class="b">str</span>, ShippingMethod] = METHODS) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    <span class="k">return</span> [
+        <span class="s">f"{m.name}：{m.fee(order) / 100:.2f} 元，{m.eta(order)}"</span>
+        <span class="k">for</span> m <span class="k">in</span> methods.values()
+        <span class="k">if</span> m.available(order)
+    ]</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>普通快递：14.00 元，2–3 天
+同城急送：33.00 元，2 小时内
+到店自提：0.00 元，今天可取</code></pre></div>
+<p>两个页面的运费一定一致，因为它们调用的是同一个对象的同一个方法。一个 25 公里外的订单，报价页自动不显示同城急送，结算页如果被选了同城急送，会明确拒绝（测试 <code>test_free_shipping_and_availability</code>）。</p>
+<h3 id="策略对象可以带配置">策略对象可以带配置<a class="anchor" href="#策略对象可以带配置" aria-label="本节链接">#</a></h3>
+<p>会员日普通快递满 59 元包邮？不需要新的类，也不需要改 <code>Express</code>，创建一个不同配置的对象就行：</p>
+<div class="code" data-lang="输出"><pre><code>member_day = Express(free_over=5900)</code></pre></div>
+<p>默认的 <code>Express()</code> 不受影响（测试 <code>test_configured_strategy</code>）。这是把策略写成“带字段的对象”的好处：<strong>同一种算法、不同的参数</strong>，也能当作不同的策略来替换。</p>
+<h3 id="新增一种方式-不碰任何页面">新增一种方式，不碰任何页面<a class="anchor" href="#新增一种方式-不碰任何页面" aria-label="本节链接">#</a></h3>
+<p>要加“快递柜自提”，写一个提供 <code>name</code>、<code>available</code>、<code>fee</code>、<code>eta</code> 的类，登记进 <code>METHODS</code>。结算页、报价页、订单管理页都不用改（测试 <code>test_new_method_needs_no_change_elsewhere</code>）。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>策略（Strategy）</td><td><code>ShippingMethod</code> 协议</td><td>所有配送方式共同的接口</td></tr><tr><td>具体策略（ConcreteStrategy）</td><td><code>Express</code>、<code>SameCity</code>、<code>Pickup</code></td><td>各自的规则</td></tr><tr><td>上下文（Context）</td><td><code>checkout_fee</code>、<code>quote_all</code> 等</td><td>持有或接收一个策略，通过接口使用它</td></tr></tbody></table></div>
+<p>GoF 原书里，上下文通常是一个对象，把策略保存为字段。本例的上下文是两个函数，策略作为参数传入，这在 Python 里更常见，意思是一样的。</p>
+<h3 id="选择-去哪了">“选择”去哪了<a class="anchor" href="#选择-去哪了" aria-label="本节链接">#</a></h3>
+<p><a href="../part-01/04-choosing-a-pattern.html">第 04 章</a>强调过：用了策略，“根据情况选哪一个”的判断并没有消失，只是换了位置。本例中它变成了一次字典查找 <code>METHODS[key]</code>，发生在请求进来的地方（顾客提交的配送方式是一个字符串）。好处是这个选择<strong>只发生一次</strong>，之后的代码拿到的就是一个对象，不用再关心它是哪一种。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>接口要事先想好。</strong> <code>ShippingMethod</code> 有四个成员。如果将来要加“是否需要上门签收”，四个类都要跟着改（或者给一个默认实现）。接口越大，加新策略的门槛越高。</li><li><strong>策略需要的数据，要能从上下文拿到。</strong> 同城急送要距离，普通快递要重量和金额。本例把整个 <code>Order</code> 传给每个策略，各取所需，这很简单，但也意味着每个策略都依赖 <code>Order</code> 的完整结构。另一种做法是只传策略需要的数据，接口会更窄，但每加一种需要新数据的策略，就要改接口。</li><li><strong>调用方要知道有哪些策略可选。</strong> 策略模式让“怎么算”可以替换，但“有哪些可以选”这件事仍然要有人管理，本例是 <code>METHODS</code> 字典。</li><li><strong>策略之间不能互相依赖。</strong> 如果“同城急送的价格不能高于普通快递的两倍”，这条规则跨越了两个策略，放在哪一个里面都不合适，只能放到上下文或一个单独的规则里。</li></ul>
+<p><strong>什么时候不该用</strong>：只有一个地方用到这些规则，而且规则只是几个分支。开头那个 <code>checkout_fee</code> 函数，如果全网店只有结算页这一个地方算运费，就不需要任何改动。策略的价值，在于让<strong>多个地方共享同一套可替换的规则</strong>，或者让规则可以在运行时<strong>按配置替换</strong>。</p>
+<h2 id="python-角度-函数就是一种策略">Python 角度：函数就是一种策略<a class="anchor" href="#python-角度-函数就是一种策略" aria-label="本节链接">#</a></h2>
+<p>如果每种策略只需要回答<strong>一个</strong>问题，比如“运费是多少”，那么它就是一个函数。函数在 Python 里本来就是可以传来传去的对象：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">express_fee</span>(order: Order, first: <span class="b">int</span> = <span class="n">800</span>, per_extra_kg: <span class="b">int</span> = <span class="n">300</span>, free_over: <span class="b">int</span> = <span class="n">9900</span>) -&gt; <span class="b">int</span>:
+    <span class="k">if</span> order.subtotal &gt;= free_over:
+        <span class="k">return</span> <span class="n">0</span>
+    <span class="k">return</span> first + (math.ceil(order.weight_g / <span class="n">1000</span>) - <span class="n">1</span>) * per_extra_kg</code></pre></div>
+<div class="code" data-lang="Python"><pre><code>FEES: <span class="b">dict</span>[<span class="b">str</span>, FeeRule] = {
+    <span class="s">"express"</span>: express_fee,
+    <span class="s">"same_city"</span>: same_city_fee,
+    <span class="s">"pickup"</span>: pickup_fee,
+}
+
+<span class="c"># 会员日：普通快递满 59 元包邮。不用新写一个函数，固定一个参数即可。</span>
+member_day_express = partial(express_fee, free_over=<span class="n">5900</span>)</code></pre></div>
+<p><code>functools.partial</code> 把一个函数的部分参数固定下来，返回一个新的可调用对象。它在这里起的作用，和 <code>Express(free_over=5900)</code> 一样：同一个算法，不同的配置。</p>
+<p>这一版的结果和类的版本完全一样（测试 <code>test_functions_give_the_same_fees</code>），代码却短得多。那为什么本章的主体用了类？</p>
+<p>因为本例的每种配送方式要回答<strong>三个</strong>问题：能不能送、多少钱、多久到。如果用函数，就需要三个字典：<code>FEES</code>、<code>AVAILABLE</code>、<code>ETAS</code>。加一种配送方式，要在三个字典里各登记一次，漏掉一个也不会报错。这又回到了本章开头的问题：同一种配送方式的知识，被拆散到了多个地方。用一个类把三个方法放在一起，“一种配送方式”就是一个完整的单位。</p>
+<p>所以判断很简单：</p>
+<ul><li><strong>策略只有一个操作</strong>：用函数。需要配置时用 <code>partial</code> 或闭包。登记在字典里。</li><li><strong>策略有几个必须一起变化的操作，或者有自己的配置数据</strong>：用类（<code>Protocol</code> 描述接口，<code>dataclass</code> 保存配置）。</li></ul>
+<p><a href="../part-05/28-functions-as-design-tools.html">第 28 章</a>会更全面地讨论“函数作为设计工具”，包括什么时候闭包比类更合适。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>策略把一系列可以互相替换的做法分别封装成对象，使用它们的代码只依赖共同的接口。</li><li>策略真正解决的，往往不是“<code>if</code> 太多”，而是“同一套规则在多处重复、需要在运行时替换”。</li><li>策略对象可以带配置：同一种算法、不同参数，也可以作为不同的策略。</li><li>在 Python 里，只有一个操作的策略就是一个函数，配合字典和 <code>functools.partial</code> 就够了；有多个必须一起变化的操作时，再用类把它们放在一起。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>网店接入了一家第三方物流公司，它的运费要调用对方的接口查询，可能需要一两秒，偶尔还会失败。</p>
+<ol><li>把它写成一个新的 <code>ShippingMethod</code>，会遇到什么问题？想想报价页要同时算所有配送方式的情况。</li><li>如果查询失败了，<code>fee</code> 应该返回什么？抛出异常、返回一个默认值，还是让 <code>available</code> 返回 <code>False</code>？</li><li>这个新策略和其他三个“纯计算”的策略，是不是还应该共用同一个接口？</li></ol>
+<p><strong>思路提示</strong>：作为策略接入本身没有问题，这正是策略的好处：上下文不用改。但策略接口隐含了一个假设，即 <code>fee</code> 是一个很快、不会失败的计算。新策略打破了这个假设：报价页依次调用每个策略，一个慢的就会拖慢整页，一个失败的会让整页出错。可以让 <code>available</code> 在接口查询失败时返回 <code>False</code>，报价页就会自然地不显示它；结算页则要给出明确的提示。如果这类“慢的、会失败的”策略越来越多，就值得把接口拆开，或者在上下文里加上超时和错误处理。这说明，策略能否互相替换，不只取决于方法签名是否相同，还取决于它们的行为（速度、是否会失败）是否在同一个范围内。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch17_shipping_v1.py" target="_blank" rel="noopener"><code>examples/ch17_shipping_v1.py</code></a>：两份规则，费率不一致</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch17_strategy.py" target="_blank" rel="noopener"><code>examples/ch17_strategy.py</code></a>：配送方式策略对象</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch17_pythonic.py" target="_blank" rel="noopener"><code>examples/ch17_pythonic.py</code></a>：函数、字典与 <code>partial</code></li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch17_strategy.py" target="_blank" rel="noopener"><code>tests/test_ch17_strategy.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-03/16-proxy.html"><small>上一篇</small>16 代理 Proxy</a><a class="next" href="../part-04/18-observer.html"><small>下一篇</small>18 观察者 Observer</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-04/17-strategy.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-同一套规则出现在好几个地方">变化：同一套规则出现在好几个地方</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#策略-把可替换的做法变成对象">策略：把可替换的做法变成对象</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-函数就是一种策略">Python 角度：函数就是一种策略</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

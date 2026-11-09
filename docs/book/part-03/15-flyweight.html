@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 15 章 享元 Flyweight · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：当程序里有大量对象，每个都保存着一份同样的数据时，哪些部分可以共享？共享真的能省下内存吗？什么情况下根本不值得这样做？ 享元是一个关于内存的模式，所以这一章会比其他章节多一件事：测量。凡是“省了多少”的说法，都应该由实际测量支撑">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html" aria-current="page"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第三部分 · 组合对象（GoF 结构型）</p>
+<h1>第 15 章　享元 Flyweight</h1>
+<blockquote><p>本章要回答：当程序里有大量对象，每个都保存着一份同样的数据时，哪些部分可以共享？共享真的能省下内存吗？什么情况下根本不值得这样做？</p></blockquote>
+<p>享元是一个关于<strong>内存</strong>的模式，所以这一章会比其他章节多一件事：<strong>测量</strong>。凡是“省了多少”的说法，都应该由实际测量支撑，而不是凭感觉。本章所有关于内存的结论，都有对应的测试，而且测试只断言相对大小（“比原来小”），不断言具体字节数，因为具体数字在不同的 Python 版本和平台上都不一样。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一座城市的地铁公司要分析一天的闸机刷卡记录。闸机导出的是文本，每行一条：卡号、当天第几分钟、车站、线路、票价区。</p>
+<div class="code" data-lang="输出"><pre><code>C0000,0,西直门,2号线,1
+C0001,1,国贸,1号线,1
+C0002,2,望京,14号线,2</code></pre></div>
+<p>一天有几十万条。示例代码用 2 万条模拟，车站只有 5 个。</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>每行解析成一个数据类对象：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>
+<span class="k">class</span> <span class="f">Tap</span>:
+    card: <span class="b">str</span>
+    minute: <span class="b">int</span>
+    station: <span class="b">str</span>
+    line: <span class="b">str</span>
+    zone: <span class="b">int</span>
+
+
+<span class="k">def</span> <span class="f">parse</span>(lines: <span class="b">list</span>[<span class="b">str</span>]) -&gt; <span class="b">list</span>[Tap]:
+    taps = []
+    <span class="k">for</span> text <span class="k">in</span> lines:
+        card, minute, station, line, zone = text.split(<span class="s">","</span>)
+        taps.append(Tap(card, <span class="b">int</span>(minute), station, line, <span class="b">int</span>(zone)))
+    <span class="k">return</span> taps</code></pre></div>
+<p><strong>这是好代码。</strong> 清楚、直接，大多数时候完全够用。</p>
+<h2 id="变化-数据量变大了">变化：数据量变大了<a class="anchor" href="#变化-数据量变大了" aria-label="本节链接">#</a></h2>
+<p>分析范围从一天扩大到一个月，记录数从几十万变成上千万，程序开始占用大量内存，在分析服务器上被系统强行终止。</p>
+<p>看一看这些对象里存的是什么。2 万条记录、5 个车站，每个车站平均出现 4000 次。“西直门”“2号线”这两段文字，在内存里是不是只存了一份？</p>
+<div class="code" data-lang="输出"><pre><code>两条记录的车站名是同一个字符串对象吗？ False</code></pre></div>
+<p><strong>不是。</strong> <code>text.split(",")</code> 每次都会创建新的字符串对象。第 0 行和第 5 行都是“西直门”，内容相同，却是两个不同的对象。2 万条记录，就有 2 万个“西直门”“国贸”……的副本（测试 <code>test_every_record_has_its_own_strings</code>）。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<p>每条记录里的数据分成两类：</p>
+<ul><li><strong>每条记录各不相同的</strong>：卡号、时间。</li><li><strong>大量记录完全相同的</strong>：车站名、线路、票价区。它们其实描述的是“车站”，而不是“这一次刷卡”。</li></ul>
+<p>第二类数据被复制了成千上万份。如果能让所有在西直门刷卡的记录<strong>共享同一个</strong>“西直门车站”对象，这部分的内存就只需要一份。</p>
+<h2 id="享元-共享不变的部分">享元：共享不变的部分<a class="anchor" href="#享元-共享不变的部分" aria-label="本节链接">#</a></h2>
+<p>GoF 对享元的描述是：<strong>运用共享技术有效地支持大量细粒度的对象。</strong></p>
+<p>GoF 把对象的状态分成两部分：</p>
+<ul><li><strong>内部状态</strong>（intrinsic state）：可以共享的部分，与使用场合无关。本例中是车站的名称、线路、票价区。</li><li><strong>外部状态</strong>（extrinsic state）：随场合变化、不能共享的部分。本例中是卡号和时间。</li></ul>
+<p>共享的部分单独成为一个对象，而且<strong>必须是不可变的</strong>。原因很简单：几千条记录引用同一个车站对象，如果有人改了它，所有记录都会跟着变。</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>, slots=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Station</span>:
+    <span class="s">"""内部状态：同一个车站对所有记录都一样，而且不可修改。"""</span>
+
+    name: <span class="b">str</span>
+    line: <span class="b">str</span>
+    zone: <span class="b">int</span></code></pre></div>
+<p>谁来保证“同一个车站只创建一次”？一个<strong>享元工厂</strong>：先查有没有，有就返回已有的，没有才创建：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">StationPool</span>:
+    <span class="s">"""享元工厂：同样的车站只创建一次。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._stations: <span class="b">dict</span>[<span class="b">tuple</span>[<span class="b">str</span>, <span class="b">str</span>, <span class="b">int</span>], Station] = {}
+
+    <span class="k">def</span> <span class="f">get</span>(<span class="b">self</span>, name: <span class="b">str</span>, line: <span class="b">str</span>, zone: <span class="b">int</span>) -&gt; Station:
+        key = (name, line, zone)
+        station = <span class="b">self</span>._stations.get(key)
+        <span class="k">if</span> station <span class="k">is</span> <span class="k">None</span>:
+            station = <span class="b">self</span>._stations[key] = Station(name, line, zone)
+        <span class="k">return</span> station</code></pre></div>
+<p>刷卡记录只保存外部状态，加上对共享车站的引用：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(slots=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Tap</span>:
+    <span class="s">"""外部状态：每条记录各不相同的部分，加上对共享车站的引用。"""</span>
+
+    card: <span class="b">str</span>
+    minute: <span class="b">int</span>
+    station: Station</code></pre></div>
+<p>解析 2 万条记录之后，工厂里只有 5 个车站对象，所有记录引用的都是这 5 个之一（测试 <code>test_stations_are_shared</code>）。信息一点没少：每条记录的卡号、时间、车站名、线路、票价区，和原来逐一相同（测试 <code>test_same_information</code>）。试图修改共享的车站会立即报错（测试 <code>test_shared_state_cannot_be_changed</code>）。</p>
+<h3 id="测量">测量<a class="anchor" href="#测量" aria-label="本节链接">#</a></h3>
+<p>省了多少内存？用标准库的 <code>tracemalloc</code> 测：记下构造前后 Python 分配的内存差。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">measure</span>(build: Callable[[], <span class="b">object</span>]) -&gt; <span class="b">int</span>:
+    <span class="s">"""返回 build() 构造出的对象在保留状态下占用的内存（字节），由 tracemalloc 测得。"""</span>
+    tracemalloc.start()
+    <span class="k">try</span>:
+        before = tracemalloc.get_traced_memory()[<span class="n">0</span>]
+        result = build()
+        after = tracemalloc.get_traced_memory()[<span class="n">0</span>]
+    <span class="k">finally</span>:
+        tracemalloc.stop()
+    <span class="k">del</span> result
+    <span class="k">return</span> after - before</code></pre></div>
+<p>运行 <code>python -m examples.ch15_flyweight</code> 可以看到你机器上的数字。在我们测试过的 Python 3.11 和 3.12 上，共享车站的版本占用的内存明显少于原来的版本，但具体字节数两个版本并不相同。测试 <code>test_measured_memory_is_lower</code> 只断言“更小”这一个事实。</p>
+<p><strong>不要把任何一次测量的具体数字当作普遍结论。</strong> 它取决于 Python 的版本、平台、字符串的长度和内容（纯 ASCII 字符串和含中文的字符串内部表示不同）、对象的字段数。需要做决定时，用自己的真实数据测。</p>
+<h3 id="省下的内存从哪里来">省下的内存从哪里来<a class="anchor" href="#省下的内存从哪里来" aria-label="本节链接">#</a></h3>
+<p>仔细看，这个版本其实同时做了两件事：</p>
+<ol><li>车站信息被<strong>共享</strong>了；</li><li><code>Tap</code> 用了 <code>slots=True</code>，字段也从 5 个减少到 3 个。</li></ol>
+<p>两者各贡献了多少？可以把它们拆开测量。只做第一件事、不改 <code>Tap</code> 类的写法，是用 <code>sys.intern</code> 让相同内容的字符串共享同一个对象：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">parse_interned</span>(lines: <span class="b">list</span>[<span class="b">str</span>]) -&gt; <span class="b">list</span>[Tap]:
+    <span class="s">"""不改记录的类，只让相同的字符串共享同一个对象。"""</span>
+    taps = []
+    <span class="k">for</span> text <span class="k">in</span> lines:
+        card, minute, name, line, zone = text.split(<span class="s">","</span>)
+        taps.append(Tap(card, <span class="b">int</span>(minute), sys.intern(name), sys.intern(line), <span class="b">int</span>(zone)))
+    <span class="k">return</span> taps</code></pre></div>
+<p>测试 <code>test_interning_alone_helps</code> 测得的大小顺序是：</p>
+<div class="code" data-lang="输出"><pre><code>原来的版本  &gt;  只共享字符串（sys.intern）  &gt;  享元版本（共享车站 + __slots__）</code></pre></div>
+<p>在本例中，<strong>单是共享字符串就带来了很大一部分节省</strong>，<code>__slots__</code> 和减少字段又省下了一部分。这说明：享元的“思想”（共享重复的不可变数据）是省内存的关键，而“享元工厂加一个新类”只是实现这种共享的一种方式。在 Python 里，对于重复的字符串，<code>sys.intern</code> 是更轻的实现。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>享元（Flyweight）</td><td><code>Station</code></td><td>保存内部状态，不可变，可以被共享</td></tr><tr><td>享元工厂（FlyweightFactory）</td><td><code>StationPool</code></td><td>创建并管理享元，保证相同的享元只有一个</td></tr><tr><td>客户（Client）</td><td><code>Tap</code> 与 <code>parse</code></td><td>保存外部状态，引用享元</td></tr></tbody></table></div>
+<p>GoF 原书中的享元还会在调用时接收外部状态作为参数（例如“在这个位置画这个字符”）。本例的车站不需要外部状态就能回答自己的问题，所以省略了这一部分。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>共享的部分必须不可变。</strong> 这是硬性约束。如果某天需要“修改某个车站的票价区”，不能直接改共享对象，而要创建一个新的车站对象，再让需要的记录指向它。</li><li><strong>工厂本身也占内存，而且可能一直增长。</strong> <code>StationPool</code> 会记住它创建过的每一个车站。车站只有几百个，没有问题；如果被共享的东西种类非常多、而且不断出现新的，工厂会变成一个只增不减的缓存。</li><li><strong>代码变得间接。</strong> 原来 <code>tap.station</code> 就是车站名，现在要写 <code>tap.station.name</code>。数据的结构也不再是“一行一个扁平记录”，导出时需要重新展开。</li><li><strong>只有在数量巨大且重复度高时才有意义。</strong> 如果车站有几万个，每个只出现几次，共享几乎省不了什么，反而多了一个工厂。</li></ul>
+<p><strong>什么时候不该用</strong>：</p>
+<ul><li>对象数量不大。几千个对象，内存从来不是问题。</li><li>你<strong>根本不需要同时在内存里保留所有对象</strong>。这是最常被忽视的一点，见下一节。</li><li>没有测量过。如果没有证据表明内存是瓶颈，也没有测过改动的效果，就不要为了省内存而改变数据结构。</li></ul>
+<h2 id="python-角度-先问-需不需要这么多对象">Python 角度：先问“需不需要这么多对象”<a class="anchor" href="#python-角度-先问-需不需要这么多对象" aria-label="本节链接">#</a></h2>
+<p>面对“对象太多、内存不够”，Python 程序员首先应该问的不是“怎么共享”，而是“<strong>为什么要把它们全部留在内存里</strong>”。</p>
+<p>如果分析的目标是“每个车站有多少人次进站”，那么根本不需要为每一行创建一个对象：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">taps_per_station</span>(lines: <span class="b">list</span>[<span class="b">str</span>]) -&gt; Counter[<span class="b">str</span>]:
+    <span class="s">"""如果只需要统计，边读边数，不必为每一行保留一个对象。"""</span>
+    counts: Counter[<span class="b">str</span>] = Counter()
+    <span class="k">for</span> text <span class="k">in</span> lines:
+        counts[text.split(<span class="s">","</span>)[<span class="n">2</span>]] += <span class="n">1</span>
+    <span class="k">return</span> counts</code></pre></div>
+<p>边读边统计，内存里只有 5 个计数器。如果数据来自文件，逐行读取（<code>for line in file</code>），整个文件甚至不需要一次读进内存。<a href="../part-04/23-iterator.html">第 23 章</a>讨论迭代器时还会回到这一点。</p>
+<p>当确实需要保留大量对象时，Python 提供了几种比完整享元更轻的工具：</p>
+<ul><li><strong><code>sys.intern</code></strong>：让内容相同的字符串共享同一个对象，适合大量重复的短字符串，比如本例的车站名、日志里的级别名称。</li><li><strong><code>__slots__</code></strong>（或 <code>@dataclass(slots=True)</code>）：去掉每个实例的 <code>__dict__</code>，减少每个对象的固定开销。它和共享无关，但常常和享元一起出现，因为两者解决的是同一个问题。</li><li><strong><code>functools.cache</code></strong>：一个现成的享元工厂。相同参数的调用返回同一个对象：</li></ul>
+<div class="code" data-lang="Python"><pre><code><span class="d">@cache</span>
+<span class="k">def</span> <span class="f">station</span>(name: <span class="b">str</span>, line: <span class="b">str</span>, zone: <span class="b">int</span>) -&gt; Station:
+    <span class="k">return</span> Station(name, line, zone)</code></pre></div>
+<p><code>station("国贸", "1号线", 1) is station("国贸", "1号线", 1)</code> 为 <code>True</code>。它的缓存同样只增不减，和 <code>StationPool</code> 一样需要注意。</p>
+<p>顺便一提：CPython 自己也会在某些情况下共享对象，比如小整数、某些字符串常量。这些是<strong>实现细节</strong>，不同版本之间可能变化，不能作为程序正确性或性能的依据。本例的票价区 <code>zone</code> 是小整数，即使不共享，它对内存的影响也微乎其微。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当大量对象各自保存一份相同的数据时，享元把这部分数据（内部状态）抽出来成为不可变的共享对象，由一个工厂保证每种只有一个；各不相同的部分（外部状态）仍留在各自的对象里。</li><li>享元是为了省内存。是否值得，要用真实数据<strong>测量</strong>，并且只依据测量得出的相对结论；不要引用一个脱离环境的字节数。</li><li>在本例中，共享字符串本身就带来了很大一部分节省。Python 里，<code>sys.intern</code>、<code>__slots__</code>、<code>functools.cache</code> 往往能以更小的代价达到类似效果。</li><li>更根本的问题是：是否真的需要同时保留这么多对象。只需要统计时，边读边处理通常比任何共享技巧都有效。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>2 万条记录里只有 500 张不同的卡，每张卡平均刷 40 次。</p>
+<ol><li>卡号应该算内部状态还是外部状态？能不能像车站一样共享？</li><li>如果用 <code>sys.intern</code> 共享卡号字符串，你预计内存会怎样变化？请修改 <code>parse_interned</code>，用 <code>measure</code> 实际测一下，再和你的预计对比。</li><li>如果真实的数据是一个月、上千万条记录、上百万张不同的卡，结论会改变吗？</li></ol>
+<p><strong>思路提示</strong>：卡号是“这次刷卡是谁刷的”，属于每条记录的外部状态；但它的<strong>值</strong>大量重复，所以字符串本身可以共享。这说明“内部／外部状态”是从对象的含义来划分的，而“能不能共享”看的是值的重复程度，两者不完全是一回事。卡号 <code>C0000</code> 是短的 ASCII 字符串，单个对象本来就不大，共享后能省多少，要测了才知道，不要凭感觉下结论。第 3 问：卡的种类越多、每张卡出现的次数越少，共享的收益就越小，而 <code>sys.intern</code> 内部维护的表会越来越大。重复度是决定享元是否值得的关键数字。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch15_taps_v1.py" target="_blank" rel="noopener"><code>examples/ch15_taps_v1.py</code></a>：每条记录各存一份车站信息</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch15_flyweight.py" target="_blank" rel="noopener"><code>examples/ch15_flyweight.py</code></a>：共享的 <code>Station</code>、享元工厂与测量函数</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch15_pythonic.py" target="_blank" rel="noopener"><code>examples/ch15_pythonic.py</code></a>：<code>sys.intern</code>、<code>functools.cache</code>、边读边统计</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch15_flyweight.py" target="_blank" rel="noopener"><code>tests/test_ch15_flyweight.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-03/14-facade.html"><small>上一篇</small>14 外观 Facade</a><a class="next" href="../part-03/16-proxy.html"><small>下一篇</small>16 代理 Proxy</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-03/15-flyweight.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-数据量变大了">变化：数据量变大了</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#享元-共享不变的部分">享元：共享不变的部分</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-先问-需不需要这么多对象">Python 角度：先问“需不需要这么多对象”</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

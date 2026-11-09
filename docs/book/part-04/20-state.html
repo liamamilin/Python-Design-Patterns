@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 20 章 状态 State · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：一个对象在不同状态下，对同一个操作的反应完全不同时，怎样避免每个方法里都堆满“如果现在是某某状态”的判断？状态对象和一张转换表，各适合什么情况？ 第 01 章讲过：有状态的对象，调用的结果不只取决于参数，还取决于它此刻处于什么状">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html" aria-current="page"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第四部分 · 协调处理（GoF 行为型）</p>
+<h1>第 20 章　状态 State</h1>
+<blockquote><p>本章要回答：一个对象在不同状态下，对同一个操作的反应完全不同时，怎样避免每个方法里都堆满“如果现在是某某状态”的判断？状态对象和一张转换表，各适合什么情况？</p></blockquote>
+<p><a href="../part-01/01-data-and-processing.html">第 01 章</a>讲过：有状态的对象，调用的结果不只取决于参数，还取决于它此刻处于什么状态。状态模式处理的，就是这种依赖变得复杂之后的情况。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一家联合办公空间提供会议室预订。一个预订会经历这样的过程：</p>
+<ul><li>提交后是<strong>待审批</strong>；管理员审批后变成<strong>已确认</strong>；</li><li>已确认的预订，可以在开始前 10 分钟到开始后 15 分钟之间<strong>签到</strong>；</li><li>开始 15 分钟后还没签到，系统自动<strong>释放</strong>会议室；</li><li>审批前、签到前都可以<strong>取消</strong>。</li></ul>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>用一个字符串记录状态，每个操作先检查当前状态：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Booking</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, room: <span class="b">str</span>, start: datetime) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.room, <span class="b">self</span>.start = room, start
+        <span class="b">self</span>.status = <span class="s">"待审批"</span>
+
+    <span class="k">def</span> <span class="f">approve</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="k">if</span> <span class="b">self</span>.status != <span class="s">"待审批"</span>:
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"{self.status}的预订不能审批"</span>)
+        <span class="b">self</span>.status = <span class="s">"已确认"</span>
+
+    <span class="k">def</span> <span class="f">check_in</span>(<span class="b">self</span>, now: datetime) -&gt; <span class="k">None</span>:
+        <span class="k">if</span> <span class="b">self</span>.status != <span class="s">"已确认"</span>:
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"{self.status}的预订不能签到"</span>)
+        <span class="k">if</span> <span class="k">not</span> <span class="b">self</span>.start - EARLY &lt;= now &lt;= <span class="b">self</span>.start + GRACE:
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">"不在签到时间内"</span>)
+        <span class="b">self</span>.status = <span class="s">"已签到"</span></code></pre></div>
+<p>状态只有两三个时，<strong>这是好代码</strong>。</p>
+<h2 id="变化-状态和操作越来越多">变化：状态和操作越来越多<a class="anchor" href="#变化-状态和操作越来越多" aria-label="本节链接">#</a></h2>
+<p>“取消”是后来加的。写它的同事想的是：已经取消的、已经释放的，不能再取消，其他都可以：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">cancel</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="k">if</span> <span class="b">self</span>.status <span class="k">in</span> (<span class="s">"已取消"</span>, <span class="s">"已释放"</span>):  <span class="c"># 后来加的，漏掉了“已签到”</span>
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"{self.status}的预订不能取消"</span>)
+        <span class="b">self</span>.status = <span class="s">"已取消"</span></code></pre></div>
+<p>他漏掉了“已签到”。于是一场正在进行的会议，预订可以被取消，会议室在系统里变成了空闲，下一个人订了它，推门进来发现里面有人（测试 <code>test_cancel_after_check_in_slips_through</code>）。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<ol><li><strong>一个状态的全部规则，散落在每个方法里。</strong> 想知道“已签到的预订能做什么”，要把 <code>approve</code>、<code>check_in</code>、<code>expire</code>、<code>cancel</code> 四个方法全看一遍，从每个 <code>if</code> 里拼出答案。</li><li><strong>默认是“允许”。</strong> <code>cancel</code> 用的是黑名单：列出不能取消的状态，其余都放行。每加一个新状态，就要回到每个用黑名单写法的方法里，判断要不要把它加进去。漏了，就是放行。</li><li><strong>状态的含义只在字符串里。</strong> 拼错一个字（“已确定”），程序不会报错，只是所有判断都对不上。</li></ol>
+<h2 id="状态模式-每个状态是一个对象">状态模式：每个状态是一个对象<a class="anchor" href="#状态模式-每个状态是一个对象" aria-label="本节链接">#</a></h2>
+<p>GoF 对状态模式的描述是：<strong>允许一个对象在其内部状态改变时改变它的行为。对象看起来似乎修改了它的类。</strong></p>
+<p>做法是：每个状态写成一个类，<strong>只实现这个状态下允许的操作</strong>。先定义一个基类，所有操作的默认行为都是<strong>拒绝</strong>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">State</span>:
+    name = <span class="s">"?"</span>
+
+    <span class="k">def</span> <span class="f">approve</span>(<span class="b">self</span>, b: Booking) -&gt; State:
+        <span class="k">raise</span> NotAllowed(<span class="s">f"{self.name}的预订不能审批"</span>)
+
+    <span class="k">def</span> <span class="f">cancel</span>(<span class="b">self</span>, b: Booking) -&gt; State:
+        <span class="k">raise</span> NotAllowed(<span class="s">f"{self.name}的预订不能取消"</span>)
+
+    <span class="k">def</span> <span class="f">check_in</span>(<span class="b">self</span>, b: Booking, now: datetime) -&gt; State:
+        <span class="k">raise</span> NotAllowed(<span class="s">f"{self.name}的预订不能签到"</span>)
+
+    <span class="k">def</span> <span class="f">expire</span>(<span class="b">self</span>, b: Booking, now: datetime) -&gt; State:
+        <span class="k">return</span> <span class="b">self</span>  <span class="c"># 只有“已确认”会因超时而改变，其他状态忽略</span></code></pre></div>
+<p>（超时检查是系统定时对所有预订执行的，所以对不相关的状态，它安静地什么也不做，而不是报错。）</p>
+<p>每个具体状态只覆盖它允许的操作，并返回操作之后的新状态：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Confirmed</span>(State):
+    name = <span class="s">"已确认"</span>
+
+    <span class="k">def</span> <span class="f">cancel</span>(<span class="b">self</span>, b: Booking) -&gt; State:
+        <span class="k">return</span> Cancelled()
+
+    <span class="k">def</span> <span class="f">check_in</span>(<span class="b">self</span>, b: Booking, now: datetime) -&gt; State:
+        <span class="k">if</span> <span class="k">not</span> b.start - EARLY &lt;= now &lt;= b.start + GRACE:
+            <span class="k">raise</span> NotAllowed(<span class="s">"不在签到时间内"</span>)
+        <span class="k">return</span> CheckedIn()
+
+    <span class="k">def</span> <span class="f">expire</span>(<span class="b">self</span>, b: Booking, now: datetime) -&gt; State:
+        <span class="k">return</span> Released() <span class="k">if</span> now &gt; b.start + GRACE <span class="k">else</span> <span class="b">self</span></code></pre></div>
+<p>已签到的状态什么都不允许，所以它的类里什么都不用写：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CheckedIn</span>(State):
+    name = <span class="s">"已签到"</span></code></pre></div>
+<p>预订对象本身不再判断状态，只是把操作转交给当前的状态对象，再换上它返回的新状态：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">cancel</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.state = <span class="b">self</span>.state.cancel(<span class="b">self</span>)
+
+    <span class="k">def</span> <span class="f">check_in</span>(<span class="b">self</span>, now: datetime) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.state = <span class="b">self</span>.state.check_in(<span class="b">self</span>, now)</code></pre></div>
+<p>现在，对已签到的预订调用 <code>cancel</code>，<code>CheckedIn</code> 没有覆盖 <code>cancel</code>，用的是基类的默认行为：拒绝（测试 <code>test_cancel_after_check_in_is_refused</code>）。</p>
+<p>这个结构改变了两件事：</p>
+<ul><li><strong>一个状态的全部规则在一个类里。</strong> “已确认的预订能做什么”，读 <code>Confirmed</code> 就够了。</li><li><strong>默认从“允许”变成了“拒绝”。</strong> 以后加一个“暂停”状态，即使什么都不写，它也会拒绝所有操作，而不是悄悄放行（测试 <code>test_new_state_refuses_everything_by_default</code>）。忘了写，结果是用户看到一个“不允许”的提示，而不是会议室被错误释放。</li></ul>
+<p>下图是预订的完整状态转换。图上没有画出的箭头，就是不允许的操作：</p>
+<figure class="diagram"><pre class="mermaid">stateDiagram-v2
+    state "待审批" as Pending
+    state "已确认" as Confirmed
+    state "已签到" as CheckedIn
+    state "已取消" as Cancelled
+    state "已释放" as Released
+    [*] --&gt; Pending
+    Pending --&gt; Confirmed: approve
+    Pending --&gt; Cancelled: cancel
+    Confirmed --&gt; Cancelled: cancel
+    Confirmed --&gt; CheckedIn: check_in（签到时间内）
+    Confirmed --&gt; Released: expire（超过宽限期）</pre></figure>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>上下文（Context）</td><td><code>Booking</code></td><td>持有当前状态，把请求转交给它</td></tr><tr><td>状态（State）</td><td><code>State</code> 基类</td><td>定义所有操作的接口和默认行为</td></tr><tr><td>具体状态（ConcreteState）</td><td><code>Pending</code>、<code>Confirmed</code>、<code>CheckedIn</code>、<code>Cancelled</code>、<code>Released</code></td><td>实现本状态下的行为，决定下一个状态</td></tr></tbody></table></div>
+<p>本例由状态对象<strong>返回</strong>下一个状态，上下文负责替换。GoF 也讨论过另一种做法：状态对象直接修改上下文的状态字段。返回新状态的写法让状态类不需要修改别的对象，更容易单独测试。</p>
+<h3 id="和策略的区别">和策略的区别<a class="anchor" href="#和策略的区别" aria-label="本节链接">#</a></h3>
+<p>状态模式和<a href="17-strategy.html">第 17 章</a>的策略在结构上几乎一样：上下文持有一个可替换的对象，把工作交给它。区别在于<strong>谁来替换</strong>：</p>
+<ul><li>策略由<strong>外部</strong>选择和替换（顾客选了同城急送），策略之间互不知道对方。</li><li>状态由<strong>状态自己</strong>决定替换成谁（<code>Confirmed.check_in</code> 返回 <code>CheckedIn()</code>），状态之间知道彼此，共同组成一张转换图。</li></ul>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>类多了。</strong> 五个状态就是五个类，加一个基类。状态少、规则简单时，这比一个字符串加几个 <code>if</code> 重得多。</li><li><strong>整体的转换图反而看不见了。</strong> 每个类只知道从自己出发的转换。想看“从待审批到已释放有几条路”，要把五个类拼起来看。</li><li><strong>状态对象之间互相引用。</strong> <code>Confirmed</code> 要知道 <code>CheckedIn</code>、<code>Cancelled</code>、<code>Released</code> 的存在。新增或删除一个状态，可能要改好几个类。</li><li><strong>状态之外的数据仍然在上下文里。</strong> 签到时间窗口要用到预订的开始时间，所以状态方法要接收预订对象作为参数。如果状态需要的数据越来越多，状态和上下文之间的耦合也会越来越紧。</li></ul>
+<p><strong>什么时候不该用</strong>：状态很少（两三个），每个状态下的行为差别不大，或者规则基本只是“哪些转换允许”。这时下一节的转换表更合适。</p>
+<h2 id="python-角度-枚举加一张转换表">Python 角度：枚举加一张转换表<a class="anchor" href="#python-角度-枚举加一张转换表" aria-label="本节链接">#</a></h2>
+<p>回头看本例的规则，大部分其实只是“在哪个状态下，哪个操作能把它变成哪个状态”。这种规则，用一张表来写最直观：</p>
+<div class="code" data-lang="Python"><pre><code>TRANSITIONS: <span class="b">dict</span>[<span class="b">tuple</span>[Status, <span class="b">str</span>], Status] = {
+    (Status.PENDING, <span class="s">"approve"</span>): Status.CONFIRMED,
+    (Status.PENDING, <span class="s">"cancel"</span>): Status.CANCELLED,
+    (Status.CONFIRMED, <span class="s">"cancel"</span>): Status.CANCELLED,
+    (Status.CONFIRMED, <span class="s">"check_in"</span>): Status.CHECKED_IN,
+    (Status.CONFIRMED, <span class="s">"expire"</span>): Status.RELEASED,
+}</code></pre></div>
+<p><code>Status</code> 是一个 <code>Enum</code>，状态的名字拼错会直接报 <code>AttributeError</code>，不会像字符串那样悄悄对不上。表里没有的组合就是不允许，<strong>默认同样是拒绝</strong>。整个状态机的全貌集中在这五行里，还可以直接从表中列出每个状态允许的操作：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">allowed</span>(status: Status) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    <span class="k">return</span> [event <span class="k">for</span> (s, event) <span class="k">in</span> TRANSITIONS <span class="k">if</span> s <span class="k">is</span> status]</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>待审批：approve, cancel
+已确认：cancel, check_in, expire
+已签到：（无可执行的操作）</code></pre></div>
+<p>这样的列表可以直接放进文档，或者让界面据此决定显示哪些按钮。</p>
+<p>表的弱点在于<strong>附加条件</strong>。签到要检查时间窗口，超时要检查是否已过宽限期，这些不是“状态加操作”就能决定的。在表的写法里，它们只能写成 <code>fire</code> 方法里针对特定操作的 <code>if</code>：</p>
+<div class="code" data-lang="Python"><pre><code>        <span class="k">if</span> event == <span class="s">"check_in"</span> <span class="k">and</span> <span class="k">not</span> (now <span class="k">and</span> <span class="b">self</span>.start - EARLY &lt;= now &lt;= <span class="b">self</span>.start + GRACE):
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">"不在签到时间内"</span>)</code></pre></div>
+<p>附加条件少的时候，这没有问题。如果每个状态下的行为都有不少自己的逻辑（不同状态下的提醒方式不同、计费规则不同、可编辑的字段不同），条件散落在 <code>fire</code> 里，又会回到本章开头的困难。那时，状态对象就更合适了，因为每个状态的全部行为可以写在自己的类里。</p>
+<p>所以选择的依据是：</p>
+<ul><li><strong>规则主要是“哪些转换允许”</strong>：枚举加转换表。全貌一目了然，加一个转换就是加一行。</li><li><strong>每个状态有大量不同的行为</strong>：状态对象。每个状态的行为集中在一个类里。</li></ul>
+<p>两种写法有一个共同点值得保留：<strong>没有明确允许的，就是不允许。</strong></p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当对象在不同状态下对同一操作的反应完全不同，而且状态和操作越来越多时，状态模式把每个状态写成一个对象，只实现它允许的操作，由它决定下一个状态。</li><li>用一个默认全部拒绝的基类，可以把“忘了处理”从悄悄放行变成明确拒绝。</li><li>状态模式与策略结构相同，区别在于替换由状态自身决定，状态之间构成一张转换图。</li><li>在 Python 里，如果规则主要是允许哪些转换，用 <code>Enum</code> 加一张转换表更简单，状态机的全貌也更清楚；每个状态的行为差别很大时，再用状态对象。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>办公空间要加一个功能：已签到的会议可以<strong>延长</strong>30 分钟，但前提是会议室接下来的 30 分钟没有被别人预订；一场会议最多延长两次。</p>
+<ol><li>用状态对象的写法，“延长”应该写在哪个类里？“最多两次”这个计数放在哪里？</li><li>用转换表的写法，“延长”这个操作会把状态变成什么？表能不能表达“最多两次”？</li><li>加上这个需求之后，你会选择哪种写法？</li></ol>
+<p><strong>思路提示</strong>：延长只对已签到的会议有意义，所以写在 <code>CheckedIn</code> 里，而它不改变状态，返回 <code>self</code> 即可。“延长了几次”是预订本身的数据，不是状态，应该放在 <code>Booking</code> 上，由 <code>CheckedIn.extend</code> 读取和检查。“下一个时段没有被预订”需要查询其他预订，这又是一个附加条件。在转换表里，延长是 <code>(CHECKED_IN, "extend") → CHECKED_IN</code>，表能表达“允许延长”，但“最多两次”和“下一时段空闲”只能写进 <code>fire</code> 里的条件判断。附加条件增加到这个程度，状态对象的写法开始显出优势，因为与“已签到”有关的全部规则都集中在 <code>CheckedIn</code> 这一个类里。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch20_booking_v1.py" target="_blank" rel="noopener"><code>examples/ch20_booking_v1.py</code></a>：字符串状态与分散的判断（含错误）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch20_state.py" target="_blank" rel="noopener"><code>examples/ch20_state.py</code></a>：状态对象</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch20_pythonic.py" target="_blank" rel="noopener"><code>examples/ch20_pythonic.py</code></a>：枚举与转换表</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch20_state.py" target="_blank" rel="noopener"><code>tests/test_ch20_state.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-04/19-command.html"><small>上一篇</small>19 命令 Command</a><a class="next" href="../part-04/21-template-method.html"><small>下一篇</small>21 模板方法 Template Method</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-04/20-state.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-状态和操作越来越多">变化：状态和操作越来越多</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#状态模式-每个状态是一个对象">状态模式：每个状态是一个对象</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-枚举加一张转换表">Python 角度：枚举加一张转换表</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

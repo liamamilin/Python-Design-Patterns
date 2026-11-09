@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 30 章 Python 装饰器、上下文管理器和生成器 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：Python 的 @ 装饰器、with 语句和 yield，分别让哪些经典模式变了样子？怎样区分“用了某种语法”和“用了某个模式”？ 前面的模式章里，这三种语言机制已经多次出现：第 13 章用 @ 写函数装饰器，第 23 章用生">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html" aria-current="page"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第五部分 · 回到 Python</p>
+<h1>第 30 章　Python 装饰器、上下文管理器和生成器</h1>
+<blockquote><p>本章要回答：Python 的 <code>@</code> 装饰器、<code>with</code> 语句和 <code>yield</code>，分别让哪些经典模式变了样子？怎样区分“用了某种语法”和“用了某个模式”？</p></blockquote>
+<p>前面的模式章里，这三种语言机制已经多次出现：<a href="../part-03/13-decorator.html">第 13 章</a>用 <code>@</code> 写函数装饰器，<a href="../part-04/23-iterator.html">第 23 章</a>用生成器写迭代器。这一章用一个小脚本把三者放在一起，说明它们各自承担了哪种经典模式的工作，以及在哪里不能混为一谈。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>旅行回来，相机里的照片名字是 <code>IMG_0101.jpg</code>、<code>IMG_0102.jpg</code>……想批量改成 <code>西湖_001.jpg</code>、<code>西湖_002.jpg</code>。</p>
+<h2 id="不用这些机制的写法">不用这些机制的写法<a class="anchor" href="#不用这些机制的写法" aria-label="本节链接">#</a></h2>
+<p>一个循环做完所有事：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">rename_all</span>(folder: Path, prefix: <span class="b">str</span>) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    done = []
+    <span class="k">for</span> i, path <span class="k">in</span> <span class="b">enumerate</span>(<span class="b">sorted</span>(folder.glob(<span class="s">"*.jpg"</span>)), <span class="n">1</span>):
+        target = path.with_name(<span class="s">f"{prefix}_{i:03d}.jpg"</span>)
+        <span class="k">if</span> target.exists():
+            <span class="k">raise</span> FileExistsError(target.name)
+        path.rename(target)
+        done.append(target.name)
+    <span class="k">return</span> done</code></pre></div>
+<p>大多数时候，<strong>这就够了</strong>。</p>
+<p>问题出现在中途出错时。文件夹里已经有一张上次整理好的 <code>西湖_002.jpg</code>，脚本把第一张改成 <code>西湖_001.jpg</code>，处理第二张时发现目标已存在，抛出异常。文件夹停在了一半改过、一半没改的状态（测试 <code>test_failure_leaves_half_renamed_folder</code>）。用户得手动去理清哪些改过了。</p>
+<p>后来还有别的需求：命名方式要能选（只用序号、保留原名加序号……）；先列出改名计划给用户确认，再执行。</p>
+<h2 id="上下文管理器-成对的-准备-和-收尾">上下文管理器：成对的“准备”和“收尾”<a class="anchor" href="#上下文管理器-成对的-准备-和-收尾" aria-label="本节链接">#</a></h2>
+<p>“要么全改，要么全不改”需要两件事：执行过程中记下改了哪些；出错时按相反顺序改回去。这是一个“准备 → 执行用户的代码 → 收尾”的结构，收尾的方式取决于执行是否成功。</p>
+<p>在经典的面向对象设计里，这种结构常用<a href="../part-04/21-template-method.html">第 21 章</a>的模板方法实现：父类的 <code>run()</code> 先调用 <code>setup()</code>，再调用子类的 <code>body()</code>，最后调用 <code>teardown()</code>。Python 把这个结构做进了语言：<code>with</code> 语句。</p>
+<p>用标准库 <code>contextlib.contextmanager</code>，一个生成器函数就能写出上下文管理器：<code>yield</code> 之前是准备，<code>yield</code> 交出的值给 <code>with ... as</code> 使用，<code>yield</code> 之后（或者异常处理里）是收尾：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@contextmanager</span>
+<span class="k">def</span> <span class="f">all_or_nothing</span>() -&gt; Iterator[Callable[[Path, Path], <span class="k">None</span>]]:
+    <span class="s">"""进入时准备好一个“改名”函数；离开时如果出了错，按相反顺序全部改回去。"""</span>
+    done: <span class="b">list</span>[<span class="b">tuple</span>[Path, Path]] = []
+
+    <span class="k">def</span> <span class="f">rename</span>(src: Path, dst: Path) -&gt; <span class="k">None</span>:
+        <span class="k">if</span> dst.exists():
+            <span class="k">raise</span> FileExistsError(dst.name)
+        src.rename(dst)
+        done.append((src, dst))
+
+    <span class="k">try</span>:
+        <span class="k">yield</span> rename
+    <span class="k">except</span> BaseException:
+        <span class="k">for</span> src, dst <span class="k">in</span> <span class="b">reversed</span>(done):
+            dst.rename(src)
+        <span class="k">raise</span></code></pre></div>
+<p>使用它的代码只需要把改名操作放进 <code>with</code> 块：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">rename_folder</span>(folder: Path, rule_name: <span class="b">str</span>, prefix: <span class="b">str</span> = <span class="s">""</span>) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    <span class="k">with</span> all_or_nothing() <span class="k">as</span> rename:
+        steps = <span class="b">list</span>(plan(photos(folder), RULES[rule_name], prefix))
+        <span class="k">for</span> src, dst <span class="k">in</span> steps:
+            rename(src, dst)
+    <span class="k">return</span> [dst.name <span class="k">for</span> _, dst <span class="k">in</span> steps]</code></pre></div>
+<p>同样的文件夹，第二张改名失败时，第一张被改回了原名，文件夹恢复原状，异常照常抛出（测试 <code>test_failure_rolls_everything_back</code>）。</p>
+<p>同样的上下文管理器也可以写成类，实现 <code>__enter__</code> 和 <code>__exit__</code> 两个方法：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">__exit__</span>(<span class="b">self</span>, exc_type, exc, tb) -&gt; <span class="b">bool</span>:
+        <span class="k">if</span> exc_type <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>:
+            <span class="k">for</span> src, dst <span class="k">in</span> <span class="b">reversed</span>(<span class="b">self</span>.done):
+                dst.rename(src)
+        <span class="k">return</span> <span class="k">False</span>  <span class="c"># 不吞掉异常</span></code></pre></div>
+<p><code>__exit__</code> 返回 <code>False</code> 表示“异常继续往外传”。返回 <code>True</code> 会把异常吞掉，除非确有理由，否则不要这样做。两种写法行为相同（测试 <code>test_class_based_context_manager_behaves_the_same</code>）。准备和收尾的逻辑简单时，用 <code>@contextmanager</code>；上下文管理器本身还需要提供方法、保存较多状态时，写成类。</p>
+<p>和模板方法相比，上下文管理器有一个重要的不同：<strong>它不需要继承。</strong> 任何代码块都可以放进 <code>with</code> 里，准备和收尾的逻辑与具体要做的事完全分开。文件的 <code>with open(...)</code>、锁的 <code>with lock:</code>、数据库事务的 <code>with conn:</code>，都是这种结构。</p>
+<p><strong>注意：</strong> 这个“回滚”只覆盖本程序自己做的改名。如果另一个程序同时在动这个文件夹，或者回滚时又出了错（比如磁盘满了），它保证不了一致性。它是一个实用的“尽力而为”，不是数据库那样的事务。</p>
+<h2 id="生成器-按需产出的迭代器">生成器：按需产出的迭代器<a class="anchor" href="#生成器-按需产出的迭代器" aria-label="本节链接">#</a></h2>
+<p>先列出改名计划，再执行。“计划”是一串 <code>(原路径, 新路径)</code>，用生成器逐个产出：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">photos</span>(folder: Path) -&gt; Iterator[Path]:
+    <span class="k">yield</span> <span class="k">from</span> <span class="b">sorted</span>(p <span class="k">for</span> p <span class="k">in</span> folder.iterdir() <span class="k">if</span> p.suffix.lower() <span class="k">in</span> (<span class="s">".jpg"</span>, <span class="s">".jpeg"</span>, <span class="s">".png"</span>))
+
+
+<span class="k">def</span> <span class="f">plan</span>(paths: Iterator[Path], name_rule: NameRule, prefix: <span class="b">str</span> = <span class="s">""</span>) -&gt; Iterator[<span class="b">tuple</span>[Path, Path]]:
+    <span class="k">for</span> i, path <span class="k">in</span> <span class="b">enumerate</span>(paths, <span class="n">1</span>):
+        target = path.with_name(prefix + name_rule(i, path))
+        <span class="k">if</span> target != path:
+            <span class="k">yield</span> path, target</code></pre></div>
+<p><a href="../part-04/23-iterator.html">第 23 章</a>讲过，生成器就是 Python 版的迭代器模式。这里还体现了它的另一个用途：<strong>管道</strong>。<code>photos</code> 产出照片，<code>plan</code> 消费照片、产出计划，每一级只在下一级需要时才工作。测试 <code>test_plan_is_lazy</code> 显示，只取第一项计划时，上游只产出了一张照片。</p>
+<p>在 <code>rename_folder</code> 里，计划被 <code>list(...)</code> 一次性取完。这是有意的：改名会改变文件夹的内容，如果边遍历文件夹边改名，遍历可能看到刚改过名的文件。<strong>先把计划算完，再执行</strong>，避免了遍历和修改互相干扰，这和<a href="../part-04/18-observer.html">第 18 章</a>“遍历订阅者的快照”是同一个道理。</p>
+<h2 id="装饰器-登记-而不是包装">装饰器：登记，而不是包装<a class="anchor" href="#装饰器-登记-而不是包装" aria-label="本节链接">#</a></h2>
+<p>命名方式要能选。每种方式是一个函数，接收序号和原路径，返回新名字。用一个装饰器把它们<strong>登记</strong>到一张表里：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">rule</span>(name: <span class="b">str</span>) -&gt; Callable[[NameRule], NameRule]:
+    <span class="s">"""登记用的装饰器：把函数放进 RULES，原样返回它。这不是 GoF 的装饰器模式。"""</span>
+
+    <span class="k">def</span> <span class="f">register</span>(func: NameRule) -&gt; NameRule:
+        RULES[name] = func
+        <span class="k">return</span> func
+
+    <span class="k">return</span> register
+
+
+<span class="d">@rule</span>(<span class="s">"序号"</span>)
+<span class="k">def</span> <span class="f">numbered</span>(i: <span class="b">int</span>, path: Path) -&gt; <span class="b">str</span>:
+    <span class="k">return</span> <span class="s">f"{i:03d}{path.suffix}"</span></code></pre></div>
+<p>定义函数的同时就完成了登记，不需要在别处维护一张“名字 → 函数”的表，也不会出现“写了新规则却忘了登记”。用户选择命名方式时，用 <code>RULES[rule_name]</code> 查找即可，这就是<a href="../part-02/05-factory-method.html">第 05 章</a>的简单工厂，只是登记的过程由装饰器自动完成。</p>
+<p>注意注释里的那句话：<strong>这不是 GoF 的装饰器模式。</strong> <code>register</code> 没有包装任何东西，它原样返回了传入的函数（测试 <code>test_rules_registered_by_decorator</code> 检查了 <code>RULES["序号"] is numbered</code>）。它只是借用了 <code>@</code> 语法“在定义时执行一段代码”的能力。<a href="../part-03/13-decorator.html">第 13 章</a>的 <code>@masking</code> 才是包装：返回一个新函数，在调用原函数前后加上额外的行为。</p>
+<h2 id="语法和模式的对应">语法和模式的对应<a class="anchor" href="#语法和模式的对应" aria-label="本节链接">#</a></h2>
+<div class="table"><table><thead><tr><th>经典模式</th><th>Python 中常见的形态</th><th>要注意的区别</th></tr></thead><tbody><tr><td>迭代器（<a href="../part-04/23-iterator.html">第 23 章</a>）</td><td>生成器函数、生成器表达式</td><td>生成器只能遍历一次</td></tr><tr><td>模板方法中的“准备／收尾”（<a href="../part-04/21-template-method.html">第 21 章</a>）</td><td>上下文管理器、<code>with</code> 语句</td><td>不需要继承；收尾在出错时也会执行</td></tr><tr><td>装饰器（<a href="../part-03/13-decorator.html">第 13 章</a>）</td><td>用 <code>@</code> 包装函数的高阶函数</td><td><code>@</code> 在定义时执行一次，包装永久生效；按次组合时直接调用包装函数</td></tr><tr><td>简单工厂的登记表（<a href="../part-02/05-factory-method.html">第 05 章</a>）</td><td>用 <code>@</code> 登记到字典</td><td>这是登记，不是包装，和装饰器模式无关</td></tr><tr><td>命令（<a href="../part-04/19-command.html">第 19 章</a>）中的“延后执行”</td><td><code>functools.partial</code>、<code>lambda</code></td><td>需要撤销时，单个函数就不够了</td></tr></tbody></table></div>
+<p>这张表说明的是：<strong>同一个设计思想，在 Python 里常常有比类层次更轻的表达方式。</strong> 但反过来，看到 <code>@</code> 不等于看到了装饰器模式，看到 <code>with</code> 也不等于用了模板方法。判断的依据始终是：这段代码在解决什么问题。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>上下文管理器把“准备—执行—收尾”的结构做进了语言，承担了模板方法中准备和收尾的部分，而且不需要继承；收尾逻辑在出错时也会执行。</li><li>生成器是 Python 版的迭代器，还可以组成按需工作的管道。会修改数据源的操作，先把计划算完，再执行。</li><li><code>@</code> 语法只是“在定义时用一个函数处理另一个函数”。包装函数是装饰器思想的体现；登记函数则是简单工厂的登记表，和装饰器模式无关。</li><li>判断用了什么模式，看代码解决的问题，而不是看用了什么语法。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>用户希望在真正改名之前看到计划，确认后再执行；还希望有一个 <code>--dry-run</code> 选项，只打印计划，不改任何文件。</p>
+<ol><li>用本章的 <code>plan</code> 生成器，怎样实现“先显示，再确认”？如果用户确认之前文件夹被修改了，会发生什么？</li><li><code>--dry-run</code> 应该在哪里实现：给 <code>all_or_nothing</code> 加一个参数，还是写另一个上下文管理器，或者干脆不进入 <code>with</code>？</li><li>回顾<a href="../part-02/06-abstract-factory.html">第 06 章</a>的“演练”问题。本章的情况和<a href="../part-02/06-abstract-factory.html">第 06 章</a>有什么相同和不同？</li></ol>
+<p><strong>思路提示</strong>：先 <code>steps = list(plan(...))</code>，显示 <code>steps</code>，用户确认后再在 <code>with all_or_nothing()</code> 里执行同一份 <code>steps</code>。如果确认之前文件夹被改了，执行时 <code>rename</code> 里的 <code>exists()</code> 检查和回滚能防止最坏的情况，但计划可能已经过时，比较稳妥的做法是执行前重新生成计划并与显示过的计划比较。<code>--dry-run</code> 最简单的实现是只生成并打印计划，根本不进入 <code>with</code> 块，因为这里只有一个会产生副作用的部件（改名）。<a href="../part-02/06-abstract-factory.html">第 06 章</a>的演练需要同时替换两个部件（发送和记录），所以才需要“家族”；部件只有一个时，一个 <code>if</code> 就够了。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch30_rename_v1.py" target="_blank" rel="noopener"><code>examples/ch30_rename_v1.py</code></a>：一个循环完成所有事（中途出错会留下半成品）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch30_language.py" target="_blank" rel="noopener"><code>examples/ch30_language.py</code></a>：登记装饰器、生成器管道、两种写法的上下文管理器</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch30_language.py" target="_blank" rel="noopener"><code>tests/test_ch30_language.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-05/29-types-and-interfaces.html"><small>上一篇</small>29 类型与接口的轻量表达</a><a class="next" href="../part-05/31-simple-versus-pattern-code.html"><small>下一篇</small>31 简单代码与模式代码的取舍</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-05/30-decorators-context-managers-generators.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用这些机制的写法">不用这些机制的写法</a></li><li><a href="#上下文管理器-成对的-准备-和-收尾">上下文管理器：成对的“准备”和“收尾”</a></li><li><a href="#生成器-按需产出的迭代器">生成器：按需产出的迭代器</a></li><li><a href="#装饰器-登记-而不是包装">装饰器：登记，而不是包装</a></li><li><a href="#语法和模式的对应">语法和模式的对应</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>
