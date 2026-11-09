@@ -77,5 +77,5 @@ python -m examples.ch05_factory_method
 ### 第六部分 · 把选择放回真实项目
 
 - [32 第一次实现：不使用模式](part-06/32-first-version.md)
-- 33 需求改变：有选择地重构（写作中）
+- [33 需求改变：有选择地重构](part-06/33-selective-refactoring.md)
 - 34 回顾：能解释自己为什么这样写（写作中）
