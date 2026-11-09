@@ -136,8 +136,7 @@ main { min-width: 0; padding: 40px 48px 32px; }
 .prose blockquote p:last-child { margin-bottom: 0; }
 
 .code { position: relative; margin: 0 0 1.4em; background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; }
-.code::before { content: attr(data-lang); position: absolute; top: 6px; right: 12px; font-family: var(--font-mono); font-size: .72rem; color: var(--ink-soft); }
-.code[data-lang="输出"] { background: transparent; border-style: dashed; }
+.code[data-lang]::before { content: attr(data-lang); position: absolute; top: 6px; right: 12px; font-family: var(--font-mono); font-size: .72rem; color: var(--ink-soft); }
 .code pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-size: .86rem; line-height: 1.65; tab-size: 4; }
 .code pre code { font-family: var(--font-mono); background: none; border: 0; padding: 0; font-size: inherit; overflow-wrap: normal; white-space: pre; }
 .code .copy {
@@ -145,8 +144,8 @@ main { min-width: 0; padding: 40px 48px 32px; }
   border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft); cursor: pointer; opacity: 0;
 }
 .code:hover .copy, .code .copy:focus { opacity: 1; }
-.code:hover::before { opacity: 0; }
-@media (hover: none) { .code .copy { opacity: 1; } .code::before { display: none; } }
+.code:hover[data-lang]::before { opacity: 0; }
+@media (hover: none) { .code .copy { opacity: 1; } .code[data-lang]::before { display: none; } }
 .k { color: var(--c-k); font-weight: 600; } .s { color: var(--c-s); } .c { color: var(--c-c); font-style: italic; }
 .n { color: var(--c-n); } .f { color: var(--c-f); font-weight: 600; } .b { color: var(--c-b); } .d { color: var(--c-n); }
 
@@ -156,10 +155,12 @@ main { min-width: 0; padding: 40px 48px 32px; }
 .table th { background: var(--accent-soft); font-weight: 700; white-space: nowrap; }
 .table tr:last-child td { border-bottom: 0; }
 
-.diagram { margin: 0 0 1.4em; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; text-align: center; }
+.diagram { margin: 0 0 1.4em; padding: 16px; -webkit-overflow-scrolling: touch; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; text-align: center; }
 .diagram pre { margin: 0; font-family: var(--font-mono); font-size: .82rem; text-align: left; white-space: pre; }
 .diagram pre[data-processed] { text-align: center; }
 .diagram svg { max-width: 100%; height: auto; }
+.diagram.wide { text-align: left; }
+.diagram.wide::before { content: "图比较宽，可以左右滑动查看"; position: sticky; left: 0; display: block; margin-bottom: 8px; font-size: .78rem; color: var(--ink-soft); }
 
 /* 翻页与页脚 */
 .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 46rem; margin: 48px auto 0; }
@@ -169,3 +170,15 @@ main { min-width: 0; padding: 40px 48px 32px; }
 .pager .next { text-align: right; grid-column: 2; }
 @media (max-width: 520px) { .pager { grid-template-columns: 1fr; } .pager .next { grid-column: 1; } .pager > span { display: none; } }
 .foot { max-width: 46rem; margin: 40px auto 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: .82rem; color: var(--ink-soft); line-height: 1.7; }
+
+/* 窄屏表格：每一行变成一张卡片，格子前标上列名 */
+.table a { white-space: nowrap; }
+@media (max-width: 600px) {
+  .table { border: 0; background: none; overflow: visible; }
+  .table table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+  .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .table tr { margin: 0 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 6px 0; }
+  .table td { border: 0; padding: 4px 14px; min-width: 0; }
+  .table td[data-label]:not([data-label=""])::before { content: attr(data-label); display: block; font-size: .78rem; color: var(--ink-soft); font-weight: 600; }
+  .table td:first-child { font-weight: 700; }
+}

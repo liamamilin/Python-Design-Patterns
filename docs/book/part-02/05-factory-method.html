@@ -45,7 +45,7 @@
     Task(<span class="s">"接入短信验证码"</span>, <span class="k">True</span>),
 ]</code></pre></div>
 <p><code>Task</code> 是一个只有两个字段的数据类：任务名称 <code>name</code>，是否完成 <code>done</code>。团队想从这份清单自动生成文档。第一个需求是每周例会的 Markdown 纪要：</p>
-<div class="code" data-lang="输出"><pre><code># 周会纪要
+<div class="code"><pre><code># 周会纪要
 - [x] 登录页改版
 - [ ] 修复导出乱码
 - [x] 接入短信验证码</code></pre></div>
@@ -62,7 +62,7 @@
         <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知格式: {fmt}"</span>)
     <span class="k">return</span> <span class="s">"\n"</span>.join(lines)</code></pre></div>
 <p><code>render("项目进度", [t for t in tasks if t.done], "html")</code> 得到：</p>
-<div class="code" data-lang="输出"><pre><code>&lt;h1&gt;项目进度&lt;/h1&gt;
+<div class="code"><pre><code>&lt;h1&gt;项目进度&lt;/h1&gt;
 &lt;li&gt;✔ 登录页改版&lt;/li&gt;
 &lt;li&gt;✔ 接入短信验证码&lt;/li&gt;</code></pre></div>
 <p>（<code>html.escape</code> 把 <code>&lt;</code>、<code>&amp;</code> 这类字符转义，避免任务名里的特殊字符破坏网页。）</p>
@@ -147,7 +147,7 @@
 
     <span class="k">def</span> <span class="f">create_renderer</span>(<span class="b">self</span>) -&gt; Renderer:
         <span class="k">return</span> PlainTextRenderer()</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>发布说明
+<div class="code"><pre><code>发布说明
 ========
 * 登录页改版
 * 接入短信验证码</code></pre></div>
@@ -177,7 +177,7 @@
     Renderer &lt;|.. HtmlRenderer</pre></figure>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
 <p>GoF 用四个角色描述这个模式，对应到代码里：</p>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>产品（Product）</td><td><code>Renderer</code> 协议</td><td>规定渲染器要提供 <code>title</code> 和 <code>item</code></td></tr><tr><td>具体产品（ConcreteProduct）</td><td><code>MarkdownRenderer</code>、<code>HtmlRenderer</code>、<code>PlainTextRenderer</code></td><td>各自的写法</td></tr><tr><td>创建者（Creator）</td><td><code>Document</code></td><td>定义共同流程，声明工厂方法 <code>create_renderer</code></td></tr><tr><td>具体创建者（ConcreteCreator）</td><td><code>WeeklyNotes</code>、<code>ClientReport</code>、<code>ReleaseNotes</code></td><td>实现工厂方法，决定创建哪种具体产品</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">产品（Product）</td><td data-label="本例"><code>Renderer</code> 协议</td><td data-label="职责">规定渲染器要提供 <code>title</code> 和 <code>item</code></td></tr><tr><td data-label="GoF 角色">具体产品（ConcreteProduct）</td><td data-label="本例"><code>MarkdownRenderer</code>、<code>HtmlRenderer</code>、<code>PlainTextRenderer</code></td><td data-label="职责">各自的写法</td></tr><tr><td data-label="GoF 角色">创建者（Creator）</td><td data-label="本例"><code>Document</code></td><td data-label="职责">定义共同流程，声明工厂方法 <code>create_renderer</code></td></tr><tr><td data-label="GoF 角色">具体创建者（ConcreteCreator）</td><td data-label="本例"><code>WeeklyNotes</code>、<code>ClientReport</code>、<code>ReleaseNotes</code></td><td data-label="职责">实现工厂方法，决定创建哪种具体产品</td></tr></tbody></table></div>
 <p><code>Renderer</code> 在这里用 <code>typing.Protocol</code> 来写（见<a href="../part-01/03-python-building-blocks.html">第 03 章</a>），三个渲染器不需要继承任何基类，只要提供这两个方法即可。</p>
 <h3 id="和简单工厂-抽象工厂的区别">和简单工厂、抽象工厂的区别<a class="anchor" href="#和简单工厂-抽象工厂的区别" aria-label="本节链接">#</a></h3>
 <p>这三个名字常被混用，这里一次说清：</p>

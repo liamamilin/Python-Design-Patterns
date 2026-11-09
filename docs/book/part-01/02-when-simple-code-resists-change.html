@@ -78,14 +78,14 @@
 <p>每一处单独看都说得过去。但这份代码里已经藏着两个真实的错误。</p>
 <h2 id="错误一-两处结论相反">错误一：两处结论相反<a class="anchor" href="#错误一-两处结论相反" aria-label="本节链接">#</a></h2>
 <p>小周化学考了 52 分。成绩单上写着：</p>
-<div class="code" data-lang="输出"><pre><code>小周 52 及格</code></pre></div>
+<div class="code"><pre><code>小周 52 及格</code></pre></div>
 <p>发给家长的通知却是：</p>
-<div class="code" data-lang="输出"><pre><code>小周 家长：本次化学 52 分，未及格，请留意。</code></pre></div>
+<div class="code"><pre><code>小周 家长：本次化学 52 分，未及格，请留意。</code></pre></div>
 <p>原因一眼就能看到：“及格线是多少”这条规则写在两个地方，变化三只改了其中一个。这就是<strong>共享的变化</strong>：同一条业务规则被两个功能使用，规则一变，两处都得跟着变；而代码里没有任何东西提醒你“这里还有一份”。</p>
 <p>复制粘贴本身不是罪过。问题在于被复制的东西是<strong>会变的规则</strong>。如果复制的是一段永远不会变的格式代码，影响就小得多。</p>
 <h2 id="错误二-姓名和分数对不上">错误二：姓名和分数对不上<a class="anchor" href="#错误二-姓名和分数对不上" aria-label="本节链接">#</a></h2>
 <p>更隐蔽的是第二个错误。生成数学成绩单，实际输出是：</p>
-<div class="code" data-lang="输出"><pre><code>数学 中位数：68.5
+<div class="code"><pre><code>数学 中位数：68.5
 小林 48 不及格
 小周 65 及格
 小吴 72 及格
@@ -101,7 +101,7 @@
 <p>这是一种<strong>意外影响</strong>：一个看起来只是“算一个数”的函数，悄悄修改了别人的数据。它之所以造成这么大的伤害，还因为第一版选择了“两个列表按位置对应”来表示数据。这种表示方式本身就很脆弱，任何一方被单独排序、插入或删除，对应关系就断了。</p>
 <h2 id="回头数一数-困难具体在哪里">回头数一数：困难具体在哪里<a class="anchor" href="#回头数一数-困难具体在哪里" aria-label="本节链接">#</a></h2>
 <p>把问题落实到代码上：</p>
-<div class="table"><table><thead><tr><th>困难</th><th>出现在哪里</th><th>后果</th></tr></thead><tbody><tr><td>判断重复</td><td><code>class_report</code> 和 <code>parent_notice</code> 各有一串 <code>if subject == ...</code></td><td>每加一科，要改两处</td></tr><tr><td>复制粘贴了会变的规则</td><td><code>parent_notice</code> 里的及格判断</td><td>变化三只改了一处，结论相反</td></tr><tr><td>意外影响</td><td><code>median</code> 里的 <code>values.sort()</code></td><td>调用方的列表被改，名单错位</td></tr><tr><td>脆弱的数据表示</td><td>姓名和分数分成两个列表</td><td>只要一方顺序变了，对应关系就断</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>困难</th><th>出现在哪里</th><th>后果</th></tr></thead><tbody><tr><td data-label="困难">判断重复</td><td data-label="出现在哪里"><code>class_report</code> 和 <code>parent_notice</code> 各有一串 <code>if subject == ...</code></td><td data-label="后果">每加一科，要改两处</td></tr><tr><td data-label="困难">复制粘贴了会变的规则</td><td data-label="出现在哪里"><code>parent_notice</code> 里的及格判断</td><td data-label="后果">变化三只改了一处，结论相反</td></tr><tr><td data-label="困难">意外影响</td><td data-label="出现在哪里"><code>median</code> 里的 <code>values.sort()</code></td><td data-label="后果">调用方的列表被改，名单错位</td></tr><tr><td data-label="困难">脆弱的数据表示</td><td data-label="出现在哪里">姓名和分数分成两个列表</td><td data-label="后果">只要一方顺序变了，对应关系就断</td></tr></tbody></table></div>
 <p>注意这张表里没有“耦合太高”这种词。每一行都能指到具体的代码，也都能写成一个会失败的测试（见 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch02_report.py" target="_blank" rel="noopener"><code>tests/test_ch02_report.py</code></a> 中的 <code>BeforeRefactorBugsTest</code>）。<strong>能写出失败测试的困难，才是值得动手解决的困难。</strong></p>
 <h2 id="修好它-只用最普通的手段">修好它：只用最普通的手段<a class="anchor" href="#修好它-只用最普通的手段" aria-label="本节链接">#</a></h2>
 <p>这些问题都不需要设计模式，用最基础的重构就够了：</p>

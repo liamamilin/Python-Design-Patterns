@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Python 设计模式：从问题到方案</title>
-<meta name="description" content="不从模式名称开始，而从它要解决的问题开始。 本目录是全书正文。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的">
+<meta name="description" content="不从模式名称开始，而从它要解决的问题开始。 这里是全书的目录。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的">
 <meta name="theme-color" content="#16212e">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/book.css">
@@ -35,15 +35,18 @@
     <article class="prose">
 <h1>《Python 设计模式：从问题到方案》正文</h1>
 <blockquote><p>不从模式名称开始，而从它要解决的问题开始。</p></blockquote>
-<p>本目录是全书正文。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的情况。</p>
+<p>这里是全书的目录。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的情况。</p>
 <h2 id="如何阅读">如何阅读<a class="anchor" href="#如何阅读" aria-label="本节链接">#</a></h2>
 <ul><li>先读<a href="preface.html">前言</a>：本书为什么这样组织，每一章怎样展开。</li><li>遇到不熟悉的术语，查<a href="glossary.html">术语表</a>。</li><li>第一部分是全书的基础，建议按顺序读。</li><li>第二到第四部分的每个模式章都可以单独阅读；遇到前面讲过的概念，会给出章节链接。</li><li>第五部分回到 Python 语言本身，第六部分用一个贯穿案例把前面的选择放回真实项目。</li></ul>
 <h2 id="运行示例与测试">运行示例与测试<a class="anchor" href="#运行示例与测试" aria-label="本节链接">#</a></h2>
-<p>需要 Python 3.11 或更高版本，只用标准库，不需要网络或 API 密钥。在仓库根目录运行：</p>
-<div class="code" data-lang="输出"><pre><code>python -m unittest discover -s tests -v</code></pre></div>
+<p>全部代码在本书的 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a> 中。需要 Python 3.11 或更高版本，只用标准库，不需要网络或 API 密钥。先把仓库下载到本地：</p>
+<div class="code"><pre><code>git clone https://github.com/liamamilin/Python-Design-Patterns.git
+cd Python-Design-Patterns</code></pre></div>
+<p>然后在仓库根目录运行全部测试：</p>
+<div class="code"><pre><code>python -m unittest discover -s tests -v</code></pre></div>
 <p>单独运行某一章的示例，例如：</p>
-<div class="code" data-lang="输出"><pre><code>python -m examples.ch05_factory_method</code></pre></div>
-<p>书中的示意图用 Mermaid 编写，在 GitHub 上会直接显示为图；在不支持 Mermaid 的阅读器里，会显示为图的源代码。</p>
+<div class="code"><pre><code>python -m examples.ch05_factory_method</code></pre></div>
+<p>书中的示意图用 Mermaid 编写，在线阅读网站和 GitHub 上都会直接显示为图；在不支持 Mermaid 的阅读器里，会显示为图的源代码。</p>
 <p>书中的每段 Python 代码都原样摘自 <code>examples/</code> 目录下对应的文件。<code>python tools/check_book_code.py</code> 会检查这一点，它也包含在上面的测试里。</p>
 <h2 id="目录">目录<a class="anchor" href="#目录" aria-label="本节链接">#</a></h2>
 <h3 id="第一部分-为什么需要设计">第一部分 · 为什么需要设计<a class="anchor" href="#第一部分-为什么需要设计" aria-label="本节链接">#</a></h3>

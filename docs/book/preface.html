@@ -43,7 +43,7 @@
 <ol><li><strong>一个具体的小任务</strong>：图书馆的还书提醒、租房网站的搜索、温室的温度传感器……每章换一个场景，避免所有例子都是“动物会叫”。</li><li><strong>最简单的写法</strong>：先用普通的 Python 把它写出来。这一步常常就是好代码，书里会明确这样说。</li><li><strong>需求发生变化</strong>：变化是具体的，比如“管理员想先演练一遍”“第二家供应商只提供 JSON”。</li><li><strong>原来的写法在哪里变难</strong>：不是抽象地说“不够灵活”，而是指出具体的错误。大多数章节里，这个错误都有一个测试能稳定地复现。</li><li><strong>新的设计</strong>：先说清楚要把什么放到哪里，再给出 GoF 的模式名称和意图。</li><li><strong>代价与边界</strong>：多了什么，难在哪里，以及<strong>什么时候不该用</strong>。</li><li><strong>Python 角度</strong>：同样的问题，Python 有没有更轻的写法？很多时候有：一个函数、一个字典、一个数据类。</li><li><strong>小结与练习</strong>：练习的答案通常不是“用这个模式”，而是“在这种情况下，要不要用”。</li></ol>
 <h2 id="代码">代码<a class="anchor" href="#代码" aria-label="本节链接">#</a></h2>
 <p>书中所有代码都可以运行，只用 Python 3.11 及以上版本的标准库，不需要安装任何第三方包，也不需要网络。</p>
-<p>每段代码都原样出自仓库 <code>examples/</code> 目录里的文件，每章正文中给出的输出都有测试核对。读到某一章时，可以打开对应的示例文件，改一改参数，再运行测试，看看哪些行为变了。这比只读文字有用得多。</p>
+<p>每段代码都原样出自本书 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a> 中 <code>examples/</code> 目录里的文件，每章正文中给出的输出都有测试核对。读到某一章时，可以打开对应的示例文件，改一改参数，再运行测试，看看哪些行为变了。这比只读文字有用得多。</p>
 <h2 id="这本书不讲什么">这本书不讲什么<a class="anchor" href="#这本书不讲什么" aria-label="本节链接">#</a></h2>
 <ul><li><strong>不讲架构。</strong> 微服务、分层、领域驱动设计这类话题，关心的是整个系统怎样划分。本书讨论的是函数、类和对象之间的设计，范围小得多。</li><li><strong>不追求凑齐模式。</strong> GoF 的 23 种模式都会讲到，但第六部分的贯穿案例只用到了其中几种。这是有意的：模式是对困难的回应，不是需要集齐的清单。</li><li><strong>不把 GoF 的类图当成 Python 的标准答案。</strong> GoF 的书写于 1994 年，示例语言是 C++ 和 Smalltalk。Python 的函数是对象，类本身可以当参数传递，很多模式在 Python 里有更简单的形态。每章的“Python 角度”专门讨论这一点。</li></ul>
 <h2 id="读者需要什么">读者需要什么<a class="anchor" href="#读者需要什么" aria-label="本节链接">#</a></h2>

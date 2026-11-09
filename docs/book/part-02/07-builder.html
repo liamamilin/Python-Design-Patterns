@@ -39,7 +39,7 @@
 <p>说起建造者，很多人想到的是一长串链式调用：<code>.where(...).order_by(...).limit(...)</code>。这种写法确实常见，但它只是建造者的一种外观。GoF 建造者真正要解决的问题，是<strong>同一套构建步骤，造出不同的结果</strong>。这一章从一个租房搜索页开始，看这个问题是怎样出现的。</p>
 <h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
 <p>一个租房网站把房源存在 SQLite 里（标准库自带的 <code>sqlite3</code>），每条房源有标题、所在区、月租、几室、面积和是否近地铁。搜索页是一个表单，用户可以选区、填最高月租、选最少几室，提交后浏览器把表单变成一个字典交给程序，值都是字符串，没填的项是空字符串或者干脆没有：</p>
-<div class="code" data-lang="输出"><pre><code>{"district": "朝阳", "max_rent": "6000", "min_rooms": "2"}</code></pre></div>
+<div class="code"><pre><code>{"district": "朝阳", "max_rent": "6000", "min_rooms": "2"}</code></pre></div>
 <p>程序要把它变成一条 SQL 查询。</p>
 <h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
 <p>逐项检查表单，填了的就加一个条件。值通过 <code>?</code> 占位符交给数据库，不拼进 SQL 字符串里，这是防止 SQL 注入的基本做法：</p>
@@ -66,7 +66,7 @@
 <p><strong>这是好代码。</strong> 一个函数，从上往下读，每个条件一目了然。很多人看到“一步步拼出 SQL”就想到建造者，但在这里，一个函数已经是最好的“建造者”。</p>
 <h2 id="第一次变化-同样的条件-要用两种方式表达">第一次变化：同样的条件，要用两种方式表达<a class="anchor" href="#第一次变化-同样的条件-要用两种方式表达" aria-label="本节链接">#</a></h2>
 <p>用户反馈：搜索结果页上看不出自己选了哪些条件，改了几次之后就不知道当前结果是怎么来的。产品经理要求在结果上方加一行“当前筛选条件”：</p>
-<div class="code" data-lang="输出"><pre><code>朝阳区，月租不超过 6000 元，至少 2 室</code></pre></div>
+<div class="code"><pre><code>朝阳区，月租不超过 6000 元，至少 2 室</code></pre></div>
 <p>于是有了第二个函数，同样逐项读表单：</p>
 <div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">describe</span>(form: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">str</span>]) -&gt; <span class="b">str</span>:
     parts = []
@@ -79,7 +79,7 @@
     <span class="k">return</span> <span class="s">"，"</span>.join(parts) <span class="k">or</span> <span class="s">"全部房源"</span></code></pre></div>
 <p>又过了一个月，另一位同事加了“近地铁”复选框。他在 <code>search</code> 里加了 <code>near_subway = 1</code> 的条件，测了搜索结果，没问题，上线了。他不知道 <code>describe</code> 也要改。</p>
 <p>于是用户勾选“朝阳”和“近地铁”，看到的是：</p>
-<div class="code" data-lang="输出"><pre><code>筛选条件： 朝阳区
+<div class="code"><pre><code>筛选条件： 朝阳区
 ('朝阳 两居 近地铁', 5800)
 ('朝阳 三居', 8800)</code></pre></div>
 <p>说明里只有“朝阳区”，可朝阳那套月租 4200 的一居室不见了。用户以为数据丢了。测试 <code>test_description_forgets_the_subway_filter</code> 复现了这个错误。</p>
@@ -160,7 +160,7 @@
 <p><strong>这个结构为什么能防止上一节的错误？</strong> 下次有人加一个“可养宠物”的筛选项，他必须在 <code>SearchBuilder</code> 上加一个 <code>allow_pets</code> 抽象方法。只要加了，<code>SqlBuilder</code> 和 <code>DescriptionBuilder</code> 如果不实现它，连对象都创建不出来（测试 <code>test_builder_must_implement_every_step</code> 验证了这一点）。“只改了 SQL、忘了改说明”从一个上线后才被用户发现的错误，变成了一个运行测试就会暴露的错误。</p>
 <p>如果有人在表单里提交 <code>sort=rent; DROP TABLE listings</code>，<code>apply_form</code> 会直接抛出 <code>ValueError</code>，数据表安然无恙（测试 <code>test_sort_is_whitelisted</code>）。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>建造者（Builder）</td><td><code>SearchBuilder</code></td><td>声明所有构建步骤</td></tr><tr><td>具体建造者（ConcreteBuilder）</td><td><code>SqlBuilder</code>、<code>DescriptionBuilder</code></td><td>实现每一步，并提供取得结果的方法</td></tr><tr><td>指挥者（Director）</td><td><code>apply_form</code></td><td>决定按什么顺序调用哪些步骤</td></tr><tr><td>产品（Product）</td><td><code>(sql, params)</code>、说明字符串</td><td>构建出的结果</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">建造者（Builder）</td><td data-label="本例"><code>SearchBuilder</code></td><td data-label="职责">声明所有构建步骤</td></tr><tr><td data-label="GoF 角色">具体建造者（ConcreteBuilder）</td><td data-label="本例"><code>SqlBuilder</code>、<code>DescriptionBuilder</code></td><td data-label="职责">实现每一步，并提供取得结果的方法</td></tr><tr><td data-label="GoF 角色">指挥者（Director）</td><td data-label="本例"><code>apply_form</code></td><td data-label="职责">决定按什么顺序调用哪些步骤</td></tr><tr><td data-label="GoF 角色">产品（Product）</td><td data-label="本例"><code>(sql, params)</code>、说明字符串</td><td data-label="职责">构建出的结果</td></tr></tbody></table></div>
 <p>注意 <code>result()</code> 没有放在 <code>SearchBuilder</code> 接口上。这不是遗漏：两个建造者的产品类型完全不同，一个是元组，一个是字符串，没有共同的接口可言。GoF 原书的结构图也是这样画的：取结果的方法只出现在具体建造者上，因为调用方本来就知道自己用的是哪一个建造者。</p>
 <h3 id="链式调用是什么">链式调用是什么<a class="anchor" href="#链式调用是什么" aria-label="本节链接">#</a></h3>
 <p>很多库的“建造者”长这样：<code>Query().where("district", "朝阳").order_by("rent").build()</code>，每个方法返回 <code>self</code>，于是可以连着写。这是一种<strong>接口风格</strong>（常被称为 fluent interface），可以和建造者配合使用，但它不是建造者的本质。本章的建造者方法都返回 <code>None</code>，并不影响模式成立；反过来，一个只是把构造参数拆成一串链式调用的类，如果只有一种产品，也谈不上“同一构建过程，不同表示”。</p>
@@ -193,7 +193,7 @@
 <ul><li>一步步拼出结果，本身不需要建造者，一个函数就是最简单的“建造过程”。</li><li>GoF 建造者的核心是：同一个构建过程（指挥者），交给不同的建造者，得到不同的表示。当同一套步骤需要产出两种以上结果，且必须保持一致时，它才有用武之地。</li><li>链式调用只是一种接口风格，不等于建造者。</li><li>在 Python 里，如果所有参数一次就能确定，先把输入解析成一个带校验的 <code>dataclass</code>，再由不同的函数生成不同的结果，通常比建造者更简单。</li></ul>
 <h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
 <p>产品经理提出：用户想保存常用的搜索，下次一键恢复。保存的内容要能写进数据库的一个文本字段里，例如：</p>
-<div class="code" data-lang="输出"><pre><code>district=朝阳&amp;subway=1&amp;sort=price_desc</code></pre></div>
+<div class="code"><pre><code>district=朝阳&amp;subway=1&amp;sort=price_desc</code></pre></div>
 <ol><li>用建造者的写法，“保存”需要新增什么？</li><li>用 <code>SearchFilter</code> 的写法，“保存”需要新增什么？“恢复”呢？</li><li>两种写法里，哪一种更容易保证“保存后再恢复，得到的筛选条件和原来完全相同”？怎么测试？</li></ol>
 <p><strong>思路提示</strong>：建造者的写法可以新增一个 <code>QueryStringBuilder</code>，指挥者 <code>apply_form</code> 不用改，这正是建造者擅长的“多一种表示”。但“恢复”是反方向的：从文本变回条件，建造者帮不上忙，还得另写解析。<code>SearchFilter</code> 的写法里，保存是一个 <code>to_query_string(f)</code> 函数，恢复就是 <code>parse_form</code>：用标准库的 <code>urllib.parse.parse_qsl</code> 把查询字符串拆成键值对，再转成字典，正好是表单那样的输入。数据类是一个值，可以直接写出“往返测试”：<code>parse_form(...)</code> 回来的对象等于原对象。这个练习说明，当“结果”需要被保存、比较、还原时，一个明确的值比一串构建步骤更方便。</p>
 <p>完整代码：</p>

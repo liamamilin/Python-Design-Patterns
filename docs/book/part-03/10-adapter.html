@@ -60,13 +60,13 @@
     <span class="k">def</span> <span class="f">fetch_events</span>(<span class="b">self</span>, since_ms: <span class="b">int</span> = <span class="n">0</span>) -&gt; <span class="b">list</span>[<span class="b">dict</span>]:
         <span class="k">return</span> [e <span class="k">for</span> e <span class="k">in</span> <span class="b">self</span>._events <span class="k">if</span> e[<span class="s">"ts"</span>] &gt;= since_ms]</code></pre></div>
 <p>它返回的数据长这样：</p>
-<div class="code" data-lang="输出"><pre><code>{"uid": "E-2002", "ts": 1773019020000, "type": "IN"}
+<div class="code"><pre><code>{"uid": "E-2002", "ts": 1773019020000, "type": "IN"}
 {"uid": "E-2002", "ts": 1773028800000, "type": "BREAK"}</code></pre></div>
 <p>老板想在同一张迟到报表里看到总部和分店的情况。</p>
 <p>两边的东西都不能随便改：</p>
 <ul><li><strong>报表模块</strong>是共用的。工资、排班都依赖它，改动它要通知好几个团队、重新测试一大片。</li><li><strong>SDK</strong> 是厂商的代码，改了下次升级就会被覆盖。</li></ul>
 <p>而它们之间的差别，比方法名不同要多得多：</p>
-<div class="table"><table><thead><tr><th>报表需要的</th><th>SDK 给的</th></tr></thead><tbody><tr><td>方法 <code>punches()</code></td><td>方法 <code>fetch_events()</code></td></tr><tr><td>员工姓名</td><td>工号 <code>uid</code>，姓名要查花名册</td></tr><tr><td>带时区的 <code>datetime</code></td><td>从 1970 年开始的<strong>毫秒数</strong></td></tr><tr><td><code>"上班"</code> / <code>"下班"</code></td><td><code>"IN"</code> / <code>"OUT"</code>，还有一种 <code>"BREAK"</code>（午休打卡）</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>报表需要的</th><th>SDK 给的</th></tr></thead><tbody><tr><td data-label="报表需要的">方法 <code>punches()</code></td><td data-label="SDK 给的">方法 <code>fetch_events()</code></td></tr><tr><td data-label="报表需要的">员工姓名</td><td data-label="SDK 给的">工号 <code>uid</code>，姓名要查花名册</td></tr><tr><td data-label="报表需要的">带时区的 <code>datetime</code></td><td data-label="SDK 给的">从 1970 年开始的<strong>毫秒数</strong></td></tr><tr><td data-label="报表需要的"><code>"上班"</code> / <code>"下班"</code></td><td data-label="SDK 给的"><code>"IN"</code> / <code>"OUT"</code>，还有一种 <code>"BREAK"</code>（午休打卡）</td></tr></tbody></table></div>
 <h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
 <p>最快的办法是在报表模块里加一个分支，认出 SDK 对象就地转换：</p>
 <div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">late_report</span>(sources: Iterable[<span class="b">object</span>]) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
@@ -132,7 +132,7 @@
         <span class="k">return</span> <span class="b">self</span>._adapter.punches()</code></pre></div>
 <p>它也能工作，但有两个问题。第一，它的构造函数要照着 SDK 的构造函数写，SDK 升级改了构造参数，适配器也要跟着改。第二，SDK 的所有方法都一起暴露了出来：<code>fetch_events()</code> 照样可以调用（测试 <code>test_class_adapter_also_exposes_the_sdk</code>），使用者可能绕过翻译直接拿原始数据。在 Python 里，<strong>优先使用对象适配器</strong>。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>目标（Target）</td><td><code>PunchSource</code> 协议</td><td>客户期望的接口</td></tr><tr><td>客户（Client）</td><td><code>late_report</code> 及其他报表</td><td>只通过目标接口使用对象</td></tr><tr><td>被适配者（Adaptee）</td><td><code>CloudAttendanceClient</code></td><td>已有的、接口不兼容的类</td></tr><tr><td>适配器（Adapter）</td><td><code>CloudClockAdapter</code></td><td>实现目标接口，内部调用被适配者</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">目标（Target）</td><td data-label="本例"><code>PunchSource</code> 协议</td><td data-label="职责">客户期望的接口</td></tr><tr><td data-label="GoF 角色">客户（Client）</td><td data-label="本例"><code>late_report</code> 及其他报表</td><td data-label="职责">只通过目标接口使用对象</td></tr><tr><td data-label="GoF 角色">被适配者（Adaptee）</td><td data-label="本例"><code>CloudAttendanceClient</code></td><td data-label="职责">已有的、接口不兼容的类</td></tr><tr><td data-label="GoF 角色">适配器（Adapter）</td><td data-label="本例"><code>CloudClockAdapter</code></td><td data-label="职责">实现目标接口，内部调用被适配者</td></tr></tbody></table></div>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>多了一层，也多了一个可能出错的地方。</strong> 翻译本身可能出错，比如上面的时区。所以适配器需要自己的测试，而且要测那些“翻译决定”，不只是测它能运行。</li><li><strong>翻译可能丢信息。</strong> 午休打卡被丢弃了。如果适配器丢掉的信息后来又需要了，要回头修改适配器，甚至扩展目标接口。</li><li><strong>接口差别太大时，适配器会变成一个小系统。</strong> 如果被适配的东西在概念上和目标差得很远，比如一边按“事件”推送，一边按“记录”拉取，适配器里会出现缓存、状态、重试等等。这时要想一想，是不是目标接口本身需要重新设计。</li><li><strong>适配器容易越积越多。</strong> 每接入一种来源就加一个适配器，这本身没问题；但如果几个适配器里出现了大段相同的转换代码，就该把共同的部分提取出来。</li></ul>
 <p><strong>什么时候不该用</strong>：两边代码中至少有一边是你能<strong>方便修改</strong>的。如果报表模块是你自己刚写的、没有别人依赖，直接让它支持新的数据形状，或者调整接口，通常比加一层适配器更简单。适配器适用于两边都不该动的情况。</p>

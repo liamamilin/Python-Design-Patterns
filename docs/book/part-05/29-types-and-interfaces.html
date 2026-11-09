@@ -42,7 +42,7 @@
 <div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">total_fee</span>(visits: <span class="b">int</span>, price: <span class="b">int</span>) -&gt; <span class="b">int</span>:
     <span class="k">return</span> visits * price</code></pre></div>
 <p>标注说两个参数都是整数。如果传入一个字符串 <code>"3"</code> 呢？</p>
-<div class="code" data-lang="输出"><pre><code>&gt;&gt;&gt; total_fee("3", 2)
+<div class="code"><pre><code>&gt;&gt;&gt; total_fee("3", 2)
 '33'</code></pre></div>
 <p><strong>没有报错</strong>，而是返回了字符串 <code>"33"</code>（测试 <code>test_wrong_type_runs_and_gives_a_wrong_answer</code>）。Python 在运行时<strong>不检查</strong>类型标注。标注对解释器来说只是附加在函数上的一些信息。字符串乘以整数在 Python 里恰好是合法操作（重复字符串），于是错误的输入变成了错误的结果，而不是一个异常。</p>
 <p>那么标注有什么用？它们服务于两类读者：</p>
@@ -99,7 +99,7 @@ OwnerId = NewType(<span class="s">"OwnerId"</span>, <span class="b">int</span>)
     slot: <span class="b">str</span></code></pre></div>
 <p>类型检查器会检查对这个字典的读写是否符合声明。在运行时，<code>VisitJson(pet=7, slot="周六上午")</code> 创建的就是一个<strong>普通的 <code>dict</code></strong>，<code>VisitJson(pet="七", slot=3)</code> 也一样能创建（测试 <code>test_typed_dict_is_a_plain_dict</code>）。它适合描述“JSON 长什么样”，但从外部读进来的 JSON 是否真的长这样，仍然要另外校验。</p>
 <h2 id="汇总-谁在什么时候检查什么">汇总：谁在什么时候检查什么<a class="anchor" href="#汇总-谁在什么时候检查什么" aria-label="本节链接">#</a></h2>
-<div class="table"><table><thead><tr><th>工具</th><th>类型检查器（运行前）</th><th>运行时</th></tr></thead><tbody><tr><td>参数和返回值标注</td><td>检查调用是否匹配</td><td><strong>不检查</strong></td></tr><tr><td><code>NewType</code></td><td>区分名义上不同的类型</td><td>就是原来的值，<strong>不检查</strong></td></tr><tr><td><code>Literal</code></td><td>检查取值是否在列举范围内</td><td><strong>不检查</strong></td></tr><tr><td><code>dataclass</code> 字段标注</td><td>检查构造参数</td><td><strong>不检查</strong>；需要校验就写 <code>__post_init__</code></td></tr><tr><td><code>Protocol</code></td><td>检查方法名和签名</td><td>默认不能用于 <code>isinstance</code>；加 <code>@runtime_checkable</code> 后只检查方法名</td></tr><tr><td><code>ABC</code> + <code>@abstractmethod</code></td><td>检查</td><td>实例化时检查抽象方法是否都已实现，不检查签名</td></tr><tr><td><code>TypedDict</code></td><td>检查键和值的类型</td><td>就是普通的 <code>dict</code>，<strong>不检查</strong></td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>工具</th><th>类型检查器（运行前）</th><th>运行时</th></tr></thead><tbody><tr><td data-label="工具">参数和返回值标注</td><td data-label="类型检查器（运行前）">检查调用是否匹配</td><td data-label="运行时"><strong>不检查</strong></td></tr><tr><td data-label="工具"><code>NewType</code></td><td data-label="类型检查器（运行前）">区分名义上不同的类型</td><td data-label="运行时">就是原来的值，<strong>不检查</strong></td></tr><tr><td data-label="工具"><code>Literal</code></td><td data-label="类型检查器（运行前）">检查取值是否在列举范围内</td><td data-label="运行时"><strong>不检查</strong></td></tr><tr><td data-label="工具"><code>dataclass</code> 字段标注</td><td data-label="类型检查器（运行前）">检查构造参数</td><td data-label="运行时"><strong>不检查</strong>；需要校验就写 <code>__post_init__</code></td></tr><tr><td data-label="工具"><code>Protocol</code></td><td data-label="类型检查器（运行前）">检查方法名和签名</td><td data-label="运行时">默认不能用于 <code>isinstance</code>；加 <code>@runtime_checkable</code> 后只检查方法名</td></tr><tr><td data-label="工具"><code>ABC</code> + <code>@abstractmethod</code></td><td data-label="类型检查器（运行前）">检查</td><td data-label="运行时">实例化时检查抽象方法是否都已实现，不检查签名</td></tr><tr><td data-label="工具"><code>TypedDict</code></td><td data-label="类型检查器（运行前）">检查键和值的类型</td><td data-label="运行时">就是普通的 <code>dict</code>，<strong>不检查</strong></td></tr></tbody></table></div>
 <p>表里的“不检查”不是缺点，而是 Python 的设计选择：类型标注是可选的、渐进的，不会拖慢程序运行，也不会让没有标注的旧代码无法运行。但它意味着：<strong>运行时需要保证的事情，必须用运行时的手段去保证</strong>，比如 <code>__post_init__</code>、显式的校验函数、抽象基类。</p>
 <h2 id="不为类型而类型">不为类型而类型<a class="anchor" href="#不为类型而类型" aria-label="本节链接">#</a></h2>
 <p>类型标注是表达设计的工具，不是目的。几条经验：</p>
@@ -108,7 +108,7 @@ OwnerId = NewType(<span class="s">"OwnerId"</span>, <span class="b">int</span>)
 <ul><li>Python 的类型标注在运行时不被检查。它们写给人和类型检查器看，类型检查器在运行前发现不匹配的调用。</li><li><code>NewType</code>、<code>Literal</code>、<code>TypedDict</code>、<code>dataclass</code> 的字段标注，都只在静态检查中起作用；<code>Protocol</code> 加上 <code>@runtime_checkable</code> 也只在运行时检查方法名；<code>ABC</code> 在实例化时检查抽象方法是否实现。</li><li>运行时必须成立的约束，要用运行时的手段保证：在数据进入程序的边界上校验，比如 <code>dataclass</code> 的 <code>__post_init__</code>。</li><li>类型用来表达设计：边界清晰、内部简洁；描述真正需要的东西；复杂的类型往往说明数据需要一个名字。</li></ul>
 <h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
 <p>宠物医院的预约接口收到这样一份 JSON：</p>
-<div class="code" data-lang="输出"><pre><code>{"owner": 3, "pet": 7, "slot": "周六上午", "species": "猫", "weight_kg": 4.2}</code></pre></div>
+<div class="code"><pre><code>{"owner": 3, "pet": 7, "slot": "周六上午", "species": "猫", "weight_kg": 4.2}</code></pre></div>
 <ol><li>你会用哪些工具来表示和校验它？<code>TypedDict</code>、<code>dataclass</code>，还是两者都用？各自负责什么？</li><li>校验应该在哪里进行？如果预约处理函数的参数类型是 <code>CheckedPet</code>，它内部还需要检查种类和体重吗？</li><li>如果团队里没人运行类型检查器，<code>NewType</code> 还有价值吗？</li></ol>
 <p><strong>思路提示</strong>：一种清晰的分工是：<code>TypedDict</code> 描述“原始 JSON 应该长什么样”，供解析代码和类型检查器使用；一个解析函数读取 JSON，逐项检查，然后构造 <code>OwnerId</code>、<code>PetId</code> 和 <code>CheckedPet</code>。之后的业务代码只接受这些已经校验过的对象，不需要再次检查，这就是“边界上校验一次”。第 3 问：没有类型检查器时，<code>NewType</code> 至少还是一种文档，函数签名 <code>book(owner: OwnerId, pet: PetId)</code> 比 <code>book(owner: int, pet: int)</code> 更不容易被传反。但它不会阻止任何错误。如果参数传反的代价很高，就要用运行时的手段，比如关键字参数（<code>book(*, owner, pet)</code>），强迫调用方写出名字。</p>
 <p>完整代码：</p>

@@ -2,7 +2,7 @@
 
 > 不从模式名称开始，而从它要解决的问题开始。
 
-本目录是全书正文。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的情况。
+这里是全书的目录。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的情况。
 
 ## 如何阅读
 
@@ -14,7 +14,14 @@
 
 ## 运行示例与测试
 
-需要 Python 3.11 或更高版本，只用标准库，不需要网络或 API 密钥。在仓库根目录运行：
+全部代码在本书的 [GitHub 仓库](https://github.com/liamamilin/Python-Design-Patterns) 中。需要 Python 3.11 或更高版本，只用标准库，不需要网络或 API 密钥。先把仓库下载到本地：
+
+```text
+git clone https://github.com/liamamilin/Python-Design-Patterns.git
+cd Python-Design-Patterns
+```
+
+然后在仓库根目录运行全部测试：
 
 ```text
 python -m unittest discover -s tests -v
@@ -26,7 +33,7 @@ python -m unittest discover -s tests -v
 python -m examples.ch05_factory_method
 ```
 
-书中的示意图用 Mermaid 编写，在 GitHub 上会直接显示为图；在不支持 Mermaid 的阅读器里，会显示为图的源代码。
+书中的示意图用 Mermaid 编写，在线阅读网站和 GitHub 上都会直接显示为图；在不支持 Mermaid 的阅读器里，会显示为图的源代码。
 
 书中的每段 Python 代码都原样摘自 `examples/` 目录下对应的文件。`python tools/check_book_code.py` 会检查这一点，它也包含在上面的测试里。
 

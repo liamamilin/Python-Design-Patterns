@@ -39,7 +39,7 @@
 <p>最后一部分用一个贯穿三章的案例，把前面的选择放回真实项目里。这一章故意<strong>不使用任何模式</strong>：先把一种格式的导入做对，写好测试。下一章再根据真实出现的变化，有选择地重构。</p>
 <h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
 <p>一家卖茶叶的小网店，每周从供应商那里收到一份价目表，是 Excel 导出的 CSV 文件：</p>
-<div class="code" data-lang="输出"><pre><code>sku,name,price,stock
+<div class="code"><pre><code>sku,name,price,stock
 TE-1001,西湖龙井 250g,128.00,40
 TE-1002,碧螺春 250g,96.5,25
 TE-1003,白毫银针 100g,-3,10</code></pre></div>
@@ -107,8 +107,8 @@ TE-1003,白毫银针 100g,-3,10</code></pre></div>
 <p>命令行工具有一个容易被忽视的“输出”：退出码。有被拒绝的行时返回 1，全部成功返回 0，用法错误返回 2。这样店主以后可以把它放进自动化脚本里，脚本能知道这次导入是否完全成功（测试 <code>test_exit_code_and_output</code>）。</p>
 <h2 id="运行结果">运行结果<a class="anchor" href="#运行结果" aria-label="本节链接">#</a></h2>
 <p>对示例文件运行：</p>
-<div class="code" data-lang="输出"><pre><code>python -m examples.ch32_import_v1 examples/data/supplier_a.csv</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>{
+<div class="code"><pre><code>python -m examples.ch32_import_v1 examples/data/supplier_a.csv</code></pre></div>
+<div class="code"><pre><code>{
   "imported": 2,
   "rejected": 6,
   "stock_value_yuan": "7532.50",

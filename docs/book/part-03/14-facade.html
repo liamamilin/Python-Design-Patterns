@@ -54,7 +54,7 @@
         zf.writestr(<span class="s">"manifest.json"</span>, json.dumps(manifest, ensure_ascii=<span class="k">False</span>))
     <span class="k">return</span> archive</code></pre></div>
 <p>看起来没问题，打开生成的压缩包却发现：</p>
-<div class="code" data-lang="输出"><pre><code>['var/folders/hr/…/文档/合同/租房.txt', 'manifest.json']</code></pre></div>
+<div class="code"><pre><code>['var/folders/hr/…/文档/合同/租房.txt', 'manifest.json']</code></pre></div>
 <p>这里有好几个只有熟悉这些模块才知道的细节：</p>
 <ol><li><strong><code>zf.write(path)</code> 不指定 <code>arcname</code> 时，压缩包里存的是文件的完整路径</strong>（去掉开头的 <code>/</code>），而不是相对于备份文件夹的路径。恢复时，文件会被解压到一串很深的目录里。</li><li><strong>清单用 <code>path.name</code> 作键</strong>，“合同/说明.txt”和“照片/说明.txt”只会留下一条，另一个文件的校验值丢了。</li><li>macOS 在每个文件夹里留下的 <code>.DS_Store</code> 也被打包了进去。</li><li><code>path.read_bytes()</code> 把整个文件一次读进内存，遇到几个 GB 的视频文件就麻烦了。</li><li>还没写“只保留 3 份”。</li></ol>
 <p>测试 <code>test_full_paths_and_name_collisions</code> 复现了前三个问题。</p>
@@ -101,17 +101,17 @@
 <p>现在，夜间任务、网页按钮、周一的校验，每个调用方都只需要一两行：</p>
 <div class="code" data-lang="Python"><pre><code>        backup = Backup(src, Path(tmp, <span class="s">"备份"</span>))
         archive = backup.run(datetime(<span class="n">2026</span>, <span class="n">3</span>, <span class="n">9</span>, <span class="n">2</span>, <span class="n">0</span>))</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>['合同/租房.txt', 'manifest.json']
+<div class="code"><pre><code>['合同/租房.txt', 'manifest.json']
 校验： 全部一致</code></pre></div>
 <p>连续备份五天，只剩最近三份（测试 <code>test_keeps_only_the_latest</code>）；把包里的一个文件改掉，<code>verify</code> 能准确指出是哪一个（测试 <code>test_verify_finds_a_tampered_file</code>）。</p>
 <h3 id="外观不是围墙">外观不是围墙<a class="anchor" href="#外观不是围墙" aria-label="本节链接">#</a></h3>
 <p>外观的另一半同样重要：<strong>它提供简单的入口，但不阻止使用者绕过它，直接使用子系统。</strong></p>
 <p>比如，客户找来说上周的一份合同被误删了，要从备份里恢复<strong>一个</strong>文件。<code>Backup</code> 没有提供“恢复单个文件”的方法，而且不必提供。外观生成的就是一个标准的 zip 文件，任何人都可以直接用 <code>zipfile</code> 打开它，取出需要的那一个（测试 <code>test_subsystem_is_still_available</code>）：</p>
-<div class="code" data-lang="输出"><pre><code>with zipfile.ZipFile(archive) as zf:
+<div class="code"><pre><code>with zipfile.ZipFile(archive) as zf:
     zf.read("合同/租房.txt")</code></pre></div>
 <p>这正是外观和“封装”的区别。外观的目标是<strong>让常见的事情变简单</strong>，而不是<strong>让所有事情都必须经过它</strong>。它背后的模块依然是公开的，有特殊需求的人可以直接用。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>外观（Facade）</td><td><code>Backup</code></td><td>知道该调用哪些子系统、按什么顺序，把请求转化为对子系统的调用</td></tr><tr><td>子系统类（Subsystem classes）</td><td><code>zipfile</code>、<code>hashlib</code>、<code>json</code>、<code>pathlib</code></td><td>完成实际的工作；它们不知道外观的存在</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">外观（Facade）</td><td data-label="本例"><code>Backup</code></td><td data-label="职责">知道该调用哪些子系统、按什么顺序，把请求转化为对子系统的调用</td></tr><tr><td data-label="GoF 角色">子系统类（Subsystem classes）</td><td data-label="本例"><code>zipfile</code>、<code>hashlib</code>、<code>json</code>、<code>pathlib</code></td><td data-label="职责">完成实际的工作；它们不知道外观的存在</td></tr></tbody></table></div>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>外观容易越长越大。</strong> 今天加“恢复单个文件”，明天加“上传到网盘”，后天加“发邮件通知”……每一个都“和备份有关”，最后 <code>Backup</code> 变成一个什么都管的大类。判断标准是：这个功能是不是大多数使用者都需要、并且必须遵守外观所维护的约定？“恢复单个文件”只是读一个标准 zip，不需要外观；“上传到网盘”和打包无关，应该是另一个模块，由调用方把 <code>run()</code> 返回的路径交给它。</li><li><strong>简单的入口意味着做了选择。</strong> <code>Backup</code> 决定了用 SHA-256、跳过哪些文件、清单叫什么名字。需要不同选择的人，要么给外观加参数，要么绕过它。参数加得太多，外观就不再简单了。</li><li><strong>外观不能替你理解子系统。</strong> 写外观的人仍然需要知道 <code>arcname</code> 的陷阱、zip 路径的分隔符约定。外观只是让<strong>使用者</strong>不必知道这些。</li></ul>
 <p><strong>什么时候不该用</strong>：只有一个地方用到这些模块，而且步骤很短。一个十行的函数直接调用 <code>zipfile</code> 就很好，不需要再包一层。外观的价值，在第二个、第三个调用方出现时才显现出来。</p>

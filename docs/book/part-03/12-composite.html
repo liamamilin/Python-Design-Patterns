@@ -98,7 +98,7 @@
             Group(<span class="s">"电器"</span>, percent=<span class="n">90</span>).add(Item(<span class="s">"油烟机"</span>, <span class="n">3000</span>), Item(<span class="s">"灶具"</span>, <span class="n">2000</span>)),
         ),
     )</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>新房装修 36,000
+<div class="code"><pre><code>新房装修 36,000
   设计费 5,000
   客厅 14,500
     地板 8,000
@@ -135,7 +135,7 @@
 <ul><li>放在接口上（<strong>透明</strong>）：调用方连“是不是组”都不用判断，但对一个项目调用 <code>add</code> 就没有意义，只能在运行时报错。</li><li>只放在组合节点上（<strong>安全</strong>）：项目上根本没有 <code>add</code>，类型检查能发现误用，但需要往树里加东西的代码，就得知道自己面对的是组。</li></ul>
 <p>本章选了“安全”：<code>BudgetNode</code> 只有 <code>cost</code> 和 <code>lines</code>，<code>add</code> 只在 <code>Group</code> 上。在 Python 里这通常是更好的选择，因为需要添加子节点的地方（比如搭建预算树的 <code>new_home</code>），本来就清楚自己在操作哪个组。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>组件（Component）</td><td><code>BudgetNode</code> 协议</td><td>叶子和组合共同的接口</td></tr><tr><td>叶子（Leaf）</td><td><code>Item</code></td><td>没有子节点，直接给出结果</td></tr><tr><td>组合（Composite）</td><td><code>Group</code></td><td>保存子节点，把请求转发给它们并汇总</td></tr><tr><td>客户（Client）</td><td>打印清单、算总价的代码</td><td>只通过组件接口操作整棵树</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">组件（Component）</td><td data-label="本例"><code>BudgetNode</code> 协议</td><td data-label="职责">叶子和组合共同的接口</td></tr><tr><td data-label="GoF 角色">叶子（Leaf）</td><td data-label="本例"><code>Item</code></td><td data-label="职责">没有子节点，直接给出结果</td></tr><tr><td data-label="GoF 角色">组合（Composite）</td><td data-label="本例"><code>Group</code></td><td data-label="职责">保存子节点，把请求转发给它们并汇总</td></tr><tr><td data-label="GoF 角色">客户（Client）</td><td data-label="本例">打印清单、算总价的代码</td><td data-label="职责">只通过组件接口操作整棵树</td></tr></tbody></table></div>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>“统一”有时是假的。</strong> 不是所有操作都对叶子和组合都有意义。比如“找出所有花费超过 6000 元的单个项目”，这个问题只对单个项目有意义，对组来说只是“往下找”。本章的 <code>expensive</code> 函数仍然用了一次 <code>isinstance</code> 来区分。强行在 <code>BudgetNode</code> 上加一个 <code>expensive</code> 方法，让 <code>Group</code> 返回子节点的结果、<code>Item</code> 返回自己，也可以，但接口会随着每个新需求膨胀。</li><li><strong>调试要跟着递归走。</strong> 总价不对时，要一层一层往下看是哪个节点算错了。带小计的清单在这里很有帮助。</li><li><strong>整棵树都在内存里。</strong> 对家庭预算没有问题；对一个包含几百万文件的目录树，一次性构造所有对象可能就不现实了，需要边遍历边处理。</li><li><strong>约束靠自己维护。</strong> 不能有环、一个节点不能同时属于两个组，这些规则组合模式本身不提供，要像本章的 <code>add</code> 一样自己检查。</li></ul>
 <p><strong>什么时候不该用</strong>：结构的深度是固定的，而且不会变。如果预算永远只有“房间 → 项目”两层，开头那个两层求和的函数比任何树结构都清楚。</p>

@@ -47,7 +47,7 @@
 <p><code>Loan</code> 是一个冻结的数据类，有读者、书名、到期日三个字段，还有一个 <code>key</code> 属性，把三者拼成一个字符串，用来识别“这一条借阅”。</p>
 <p>程序做三件事：找出两天内到期的借阅；给每位读者写一条提醒；记下发过哪些，避免明天重复发送。提醒先写进一个发件箱文件 <code>outbox.txt</code>，由图书馆已有的短信程序负责真正投递；发送记录存在 <code>sent.json</code> 里。</p>
 <p>3 月 9 日运行，发件箱里会多出两行：</p>
-<div class="code" data-lang="输出"><pre><code>王芳，您借的《城南旧事》将于3月10日到期
+<div class="code"><pre><code>王芳，您借的《城南旧事》将于3月10日到期
 李雷，您借的《活着》将于3月11日到期</code></pre></div>
 <h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
 <p>第一版很直接。后来管理员提出：改了提醒的措辞之后，想先<strong>演练</strong>一遍，看看会发给谁、发什么，但不要真的发出去。于是函数多了一个 <code>dry_run</code> 参数：</p>
@@ -74,7 +74,7 @@
 <p>修起来只要一行：<code>if not dry_run: log.write_text(...)</code>。但这个错误的根源不在某一行，而在结构上。</p>
 <h2 id="变化带来的困难">变化带来的困难<a class="anchor" href="#变化带来的困难" aria-label="本节链接">#</a></h2>
 <p>“演练”不是一个开关，而是<strong>一整套不同的部件</strong>：</p>
-<div class="table"><table><thead><tr><th>部件</th><th>正式运行</th><th>演练</th></tr></thead><tbody><tr><td>发送</td><td>写进发件箱文件</td><td>打印到屏幕</td></tr><tr><td>发送记录</td><td>读正式记录，运行后写回</td><td>读正式记录，<strong>不写回</strong></td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>部件</th><th>正式运行</th><th>演练</th></tr></thead><tbody><tr><td data-label="部件">发送</td><td data-label="正式运行">写进发件箱文件</td><td data-label="演练">打印到屏幕</td></tr><tr><td data-label="部件">发送记录</td><td data-label="正式运行">读正式记录，运行后写回</td><td data-label="演练">读正式记录，<strong>不写回</strong></td></tr></tbody></table></div>
 <p>两个部件必须一起切换。只换发送不换记录，就是上面的错误；只换记录不换发送，演练会真的把短信发出去，更糟。</p>
 <p>在第一版里，这两个决定分散在函数的不同位置，各自用 <code>if dry_run</code> 判断。没有任何东西把它们绑在一起，漏掉一个也不会报错。</p>
 <p>接着又来了第三个需求：写单元测试时，希望发送和记录都放在内存里，既不打印，也不碰文件。这又是一套部件。如果继续加开关，函数里就会出现 <code>dry_run</code> 和 <code>testing</code> 两个参数，四种组合里只有三种有意义，剩下一种是什么行为，没人说得清。</p>
@@ -170,7 +170,7 @@
     client -.-&gt; dry
     client -.-&gt; mem</pre></figure>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>抽象工厂（AbstractFactory）</td><td><code>ReminderServices</code></td><td>声明每种部件的创建方法</td></tr><tr><td>具体工厂（ConcreteFactory）</td><td><code>LiveServices</code>、<code>DryRunServices</code>、<code>MemoryServices</code></td><td>创建同一家族的全部部件</td></tr><tr><td>抽象产品（AbstractProduct）</td><td><code>Sender</code>、<code>SentLog</code> 协议</td><td>规定每种部件的接口</td></tr><tr><td>具体产品（ConcreteProduct）</td><td><code>FileSender</code>、<code>PrintSender</code>、<code>ReadOnlySentLog</code> 等</td><td>各家族的具体部件</td></tr><tr><td>客户（Client）</td><td><code>send_reminders</code></td><td>只通过抽象接口使用部件</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">抽象工厂（AbstractFactory）</td><td data-label="本例"><code>ReminderServices</code></td><td data-label="职责">声明每种部件的创建方法</td></tr><tr><td data-label="GoF 角色">具体工厂（ConcreteFactory）</td><td data-label="本例"><code>LiveServices</code>、<code>DryRunServices</code>、<code>MemoryServices</code></td><td data-label="职责">创建同一家族的全部部件</td></tr><tr><td data-label="GoF 角色">抽象产品（AbstractProduct）</td><td data-label="本例"><code>Sender</code>、<code>SentLog</code> 协议</td><td data-label="职责">规定每种部件的接口</td></tr><tr><td data-label="GoF 角色">具体产品（ConcreteProduct）</td><td data-label="本例"><code>FileSender</code>、<code>PrintSender</code>、<code>ReadOnlySentLog</code> 等</td><td data-label="职责">各家族的具体部件</td></tr><tr><td data-label="GoF 角色">客户（Client）</td><td data-label="本例"><code>send_reminders</code></td><td data-label="职责">只通过抽象接口使用部件</td></tr></tbody></table></div>
 <h3 id="和工厂方法的区别">和工厂方法的区别<a class="anchor" href="#和工厂方法的区别" aria-label="本节链接">#</a></h3>
 <p>两个名字都有“工厂”，关注点不同：</p>
 <ul><li><strong>工厂方法</strong>（<a href="05-factory-method.html">第 05 章</a>）：一个流程里有<strong>一个</strong>创建步骤，由子类决定创建什么。重点是“流程固定，创建的种类可变”。</li><li><strong>抽象工厂</strong>：一个对象提供<strong>一组</strong>创建方法，保证这组部件属于同一家族。重点是“部件要配套”。</li></ul>

@@ -69,7 +69,7 @@
     <span class="k">def</span> <span class="f">book</span>(<span class="b">self</span>) -&gt; <span class="b">str</span>:
         <span class="k">return</span> <span class="b">self</span>.machine.take()</code></pre></div>
 <p>上线第一天：</p>
-<div class="code" data-lang="输出"><pre><code>大厅： A001
+<div class="code"><pre><code>大厅： A001
 手机： A001</code></pre></div>
 <p>两位客户拿着同一个号码，在窗口前争了起来。（测试 <code>test_two_machines_give_the_same_number</code>。）</p>
 <p>问题很清楚：<strong>号码序列只能有一个</strong>，两个入口必须共用同一个计数器。第一反应往往是：让 <code>TicketMachine</code> 这个类自己保证只能有一个实例，谁再“创建”都拿到同一个。这正是 GoF 的单例。</p>
@@ -111,12 +111,12 @@
 <p>需要说明的是，这类竞争<strong>能否在某次运行中被观察到</strong>取决于时机，不是每次都会出现。测试 <code>test_unique_across_threads</code> 用 8 个线程各取 250 个号，验证有锁时 2000 个号码互不重复；但它不能证明没有锁就一定会出错。正确性来自锁的语义，而不是来自测试碰巧通过。</p>
 <h3 id="唯一的范围-只在一个进程里">唯一的范围：只在一个进程里<a class="anchor" href="#唯一的范围-只在一个进程里" aria-label="本节链接">#</a></h3>
 <p>网点的系统后来升级了：为了同时服务更多手机用户，预约服务用了多个进程。每个进程都 <code>import</code> 了取号模块，都调用了 <code>TicketMachine()</code>。</p>
-<div class="code" data-lang="输出"><pre><code>进程一： ['A001', 'A002']
+<div class="code"><pre><code>进程一： ['A001', 'A002']
 进程二： ['A001', 'A002']</code></pre></div>
 <p>号码又重复了。单例模式并没有失效，它一直在做它承诺的事：<strong>每个进程里只有一个实例</strong>。但每个进程有自己独立的内存，<code>TicketMachine._instance</code> 在每个进程里都是各自的一份。测试 <code>test_each_process_has_its_own_instance</code> 用两个新进程复现了这一点。</p>
 <p>（这个例子用 <code>spawn</code> 方式启动新进程，子进程从头导入模块，所以都从 <code>A001</code> 开始。如果用 <code>fork</code> 方式，子进程会继承父进程当时的内存，计数会从父进程当时的值继续。但那仍然是一份<strong>复制品</strong>，各进程之后各数各的，号码同样会重复。）</p>
 <p>“唯一”的范围可以分成几层：</p>
-<div class="table"><table><thead><tr><th>范围</th><th>单例能保证吗</th><th>需要什么</th></tr></thead><tbody><tr><td>一个线程内</td><td>能</td><td>什么都不用做</td></tr><tr><td>一个进程的多个线程之间</td><td>能，前提是创建和修改都加了锁</td><td><code>threading.Lock</code></td></tr><tr><td>多个进程之间（包括进程池）</td><td><strong>不能</strong></td><td>把状态放到进程之外</td></tr><tr><td>多台机器之间</td><td><strong>不能</strong></td><td>数据库、专门的序号服务等</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>范围</th><th>单例能保证吗</th><th>需要什么</th></tr></thead><tbody><tr><td data-label="范围">一个线程内</td><td data-label="单例能保证吗">能</td><td data-label="需要什么">什么都不用做</td></tr><tr><td data-label="范围">一个进程的多个线程之间</td><td data-label="单例能保证吗">能，前提是创建和修改都加了锁</td><td data-label="需要什么"><code>threading.Lock</code></td></tr><tr><td data-label="范围">多个进程之间（包括进程池）</td><td data-label="单例能保证吗"><strong>不能</strong></td><td data-label="需要什么">把状态放到进程之外</td></tr><tr><td data-label="范围">多台机器之间</td><td data-label="单例能保证吗"><strong>不能</strong></td><td data-label="需要什么">数据库、专门的序号服务等</td></tr></tbody></table></div>
 <p>要让多个进程共用一个号码序列，计数必须放在所有进程都能访问、并且能正确处理并发的地方。标准库里的 SQLite 就可以做到：</p>
 <div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">take_from</span>(path: Path) -&gt; <span class="b">str</span>:
     conn = sqlite3.connect(path, isolation_level=<span class="k">None</span>, timeout=<span class="n">10</span>)

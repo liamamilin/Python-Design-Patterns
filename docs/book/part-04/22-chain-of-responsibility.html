@@ -105,7 +105,7 @@
 <span class="k">def</span> <span class="f">kids_speaker</span>() -&gt; Handler:
     <span class="k">return</span> chain(ChildLock(), *common_handlers())</code></pre></div>
 <p><code>chain</code> 只是把处理者按顺序连起来。儿童音箱把儿童锁放在<strong>最前面</strong>，于是任何涉及花钱的话，在到达购物、外卖之前就被拦住了：</p>
-<div class="code" data-lang="输出"><pre><code>帮我买一盒彩笔 → 儿童模式下不能消费
+<div class="code"><pre><code>帮我买一盒彩笔 → 儿童模式下不能消费
 帮我点个外卖 → 儿童模式下不能消费
 明早七点的闹钟 → 好的，闹钟已设好
 讲个笑话 → 抱歉，我没听懂</code></pre></div>
@@ -127,7 +127,7 @@
 <h3 id="没人处理怎么办">没人处理怎么办<a class="anchor" href="#没人处理怎么办" aria-label="本节链接">#</a></h3>
 <p>请求可能走完整条链也没有人处理。这是责任链的固有特点，必须明确决定怎么办。本例在链的末端返回“抱歉，我没听懂”（测试 <code>test_unhandled_request_is_explicit</code>）。另一些系统会抛出异常，或者记录日志。最不好的做法是什么都不返回，让调用方拿到一个 <code>None</code>。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>处理者（Handler）</td><td><code>Handler</code></td><td>定义处理请求的接口，持有下一个处理者</td></tr><tr><td>具体处理者（ConcreteHandler）</td><td><code>Keyword</code>、<code>ChildLock</code></td><td>处理自己负责的请求，否则转发</td></tr><tr><td>客户（Client）</td><td>音箱程序</td><td>把请求交给链的第一个处理者</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">处理者（Handler）</td><td data-label="本例"><code>Handler</code></td><td data-label="职责">定义处理请求的接口，持有下一个处理者</td></tr><tr><td data-label="GoF 角色">具体处理者（ConcreteHandler）</td><td data-label="本例"><code>Keyword</code>、<code>ChildLock</code></td><td data-label="职责">处理自己负责的请求，否则转发</td></tr><tr><td data-label="GoF 角色">客户（Client）</td><td data-label="本例">音箱程序</td><td data-label="职责">把请求交给链的第一个处理者</td></tr></tbody></table></div>
 <p>GoF 原书中的责任链，一个请求只由一个处理者处理。实践中还有一种常见的变体：每个处理者都处理一下，再交给下一个，比如 Web 框架的中间件，每一层都可能修改请求或响应。那更接近一串装饰器。本章讨论的是 GoF 原意：<strong>找到第一个能处理的，就停下来。</strong></p>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>请求的去向不直观。</strong> 读 <code>kids.handle(text)</code> 这一行，看不出会被谁处理，要沿着链一个个看。调试时，可以让每个处理者在处理时记一笔日志。</li><li><strong>不保证一定被处理。</strong> 链的末尾必须有明确的兜底行为。</li><li><strong>链的组装容易出错，而且检查不出来。</strong> 顺序错了、漏了一环，类型系统都发现不了，只能靠测试。</li><li><strong>链接是对象上的状态。</strong> <code>chain()</code> 会修改每个处理者的 <code>next</code> 字段，所以同一个处理者对象不能同时出现在两条链上。本例每次都调用 <code>common_handlers()</code> 创建新的处理者，避开了这个问题。</li><li><strong>性能和链的长度成正比。</strong> 每个请求最坏要问遍所有处理者。对音箱的几十个功能无所谓；如果有上千个规则，就要考虑按关键词建索引，直接找到候选的处理者。</li></ul>

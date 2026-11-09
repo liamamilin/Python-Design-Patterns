@@ -41,7 +41,7 @@
 <p>一个气象爱好者小组每月整理本地的降雨量，想在终端里快速看一眼：</p>
 <div class="code" data-lang="Python"><pre><code>rainfall = {<span class="s">"1月"</span>: <span class="n">12</span>, <span class="s">"2月"</span>: <span class="n">30</span>, <span class="s">"3月"</span>: <span class="n">0</span>, <span class="s">"4月"</span>: <span class="n">45</span>}</code></pre></div>
 <p>画成横向条形图，最长的一条占满可用宽度，其他按比例缩短：</p>
-<div class="code" data-lang="输出"><pre><code>1月 █████
+<div class="code"><pre><code>1月 █████
 2月 █████████████
 3月
 4月 ████████████████████</code></pre></div>
@@ -65,7 +65,7 @@
 <h2 id="变化-两个方向同时增长">变化：两个方向同时增长<a class="anchor" href="#变化-两个方向同时增长" aria-label="本节链接">#</a></h2>
 <p>小组要把图表放到网站上，网页要的是 SVG 图形。于是有了 <code>SvgBarChart</code>，复制了 <code>TextBarChart</code> 的布局计算，把输出换成 <code>&lt;rect&gt;</code> 和 <code>&lt;text&gt;</code> 元素。</p>
 <p>又过了一阵，有人想看纵向的柱状图，比较各月份的高低更直观。于是又要有 <code>TextColumnChart</code> 和 <code>SvgColumnChart</code>。</p>
-<div class="table"><table><thead><tr><th></th><th>终端文本</th><th>SVG</th></tr></thead><tbody><tr><td>横向条形图</td><td><code>TextBarChart</code></td><td><code>SvgBarChart</code></td></tr><tr><td>纵向柱状图</td><td><code>TextColumnChart</code></td><td><code>SvgColumnChart</code></td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th></th><th>终端文本</th><th>SVG</th></tr></thead><tbody><tr><td data-label="">横向条形图</td><td data-label="终端文本"><code>TextBarChart</code></td><td data-label="SVG"><code>SvgBarChart</code></td></tr><tr><td data-label="">纵向柱状图</td><td data-label="终端文本"><code>TextColumnChart</code></td><td data-label="SVG"><code>SvgColumnChart</code></td></tr></tbody></table></div>
 <p>两种图、两种输出，四个类。再加一种折线图，就是六个；再加一种输出方式（比如给打印机用的 PostScript），就是九个。<strong>类的数量是两个维度的乘积。</strong></p>
 <p>数量还不是最糟的。同一种图在不同输出方式下的布局计算是重复的，修一处就要记得修所有副本。全为 0 的那个修复只加到了 <code>TextBarChart</code> 里：</p>
 <div class="code" data-lang="Python"><pre><code>        top = <span class="b">max</span>(data.values())  <span class="c"># 这里忘了同样的修复</span></code></pre></div>
@@ -123,7 +123,7 @@
 <div class="code" data-lang="Python"><pre><code>    <span class="b">print</span>(BarChart(TextCanvas(<span class="n">23</span>, <span class="n">4</span>)).draw(rainfall))
     <span class="b">print</span>(ColumnChart(TextCanvas(<span class="n">12</span>, <span class="n">6</span>)).draw(rainfall))
     <span class="b">print</span>(BarChart(SvgCanvas(<span class="n">23</span>, <span class="n">4</span>)).draw(rainfall))</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>         ██
+<div class="code"><pre><code>         ██
          ██
    ██    ██
    ██    ██
@@ -149,7 +149,7 @@
     Canvas &lt;|.. SvgCanvas
     Chart o-- Canvas : 桥</pre></figure>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>抽象（Abstraction）</td><td><code>Chart</code></td><td>定义图表的接口，持有一个画布</td></tr><tr><td>扩充抽象（RefinedAbstraction）</td><td><code>BarChart</code>、<code>ColumnChart</code></td><td>用画布的基本操作实现各自的布局</td></tr><tr><td>实现者（Implementor）</td><td><code>Canvas</code> 协议</td><td>定义基本绘图操作</td></tr><tr><td>具体实现者（ConcreteImplementor）</td><td><code>TextCanvas</code>、<code>SvgCanvas</code></td><td>用具体技术完成基本操作</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">抽象（Abstraction）</td><td data-label="本例"><code>Chart</code></td><td data-label="职责">定义图表的接口，持有一个画布</td></tr><tr><td data-label="GoF 角色">扩充抽象（RefinedAbstraction）</td><td data-label="本例"><code>BarChart</code>、<code>ColumnChart</code></td><td data-label="职责">用画布的基本操作实现各自的布局</td></tr><tr><td data-label="GoF 角色">实现者（Implementor）</td><td data-label="本例"><code>Canvas</code> 协议</td><td data-label="职责">定义基本绘图操作</td></tr><tr><td data-label="GoF 角色">具体实现者（ConcreteImplementor）</td><td data-label="本例"><code>TextCanvas</code>、<code>SvgCanvas</code></td><td data-label="职责">用具体技术完成基本操作</td></tr></tbody></table></div>
 <h3 id="和适配器的区别">和适配器的区别<a class="anchor" href="#和适配器的区别" aria-label="本节链接">#</a></h3>
 <p>桥接和<a href="10-adapter.html">第 10 章</a>的适配器都是“一个对象持有另一个对象，通过它完成工作”，结构上很像。区别在于<strong>时机和目的</strong>：</p>
 <ul><li>适配器是<strong>事后</strong>补救：两个已经存在的接口对不上，加一层翻译。</li><li>桥接是<strong>事先</strong>设计：一开始就预见到两个维度会独立变化，于是把它们分成两个层次，并约定好之间的接口（<code>Canvas</code> 的三个基本操作）。</li></ul>

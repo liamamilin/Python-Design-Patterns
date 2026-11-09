@@ -39,7 +39,7 @@
 <p><a href="32-first-version.html">第 32 章</a>的导入工具只做一件事：读一种 CSV，检查，出报告。它用了一个多月，一切正常。然后，三个变化在同一周到来。</p>
 <h2 id="三个变化">三个变化<a class="anchor" href="#三个变化" aria-label="本节链接">#</a></h2>
 <p><strong>一、第二家供应商。</strong> 网店开始卖云南的茶，新供应商“云岭茶业”只提供 JSON 格式的价目表，字段名也不一样：</p>
-<div class="code" data-lang="输出"><pre><code>{"code": "YN-2001", "title": "滇红金芽 200g", "price": 88.0, "qty": 30}</code></pre></div>
+<div class="code"><pre><code>{"code": "YN-2001", "title": "滇红金芽 200g", "price": 88.0, "qty": 30}</code></pre></div>
 <p><strong>二、新的校验规则。</strong> 网店后台要求 <code>sku</code> 必须是“两个大写字母、一个短横线、四位数字”，商品名不能超过 40 个字，否则在手机上显示不全。</p>
 <p><strong>三、写进数据库。</strong> 除了报告，合格的商品还要写进网店使用的 SQLite 数据库；同一个 <code>sku</code> 再次导入时，更新价格和库存。</p>
 <h2 id="先看哪里痛">先看哪里痛<a class="anchor" href="#先看哪里痛" aria-label="本节链接">#</a></h2>
@@ -53,7 +53,7 @@
 <ul><li>金额的处理、<code>Product</code> 的结构、BOM 的处理、退出码，都不需要改。</li><li>文件只有几百行，一次读进内存没有问题。</li><li>只有一种“商品”，没有“家族”。</li></ul>
 <h2 id="重构之前-测试">重构之前：测试<a class="anchor" href="#重构之前-测试" aria-label="本节链接">#</a></h2>
 <p><a href="32-first-version.html">第 32 章</a>的测试固定了 CSV 导入的全部行为。重构后的工具读同一个 CSV 文件，必须得到<strong>完全相同</strong>的商品和错误信息。这条要求本身就写成了一个测试：</p>
-<div class="code" data-lang="输出"><pre><code>old = v1.read_csv(...)
+<div class="code"><pre><code>old = v1.read_csv(...)
 new = imp.import_file(...)
 assert new.products == old.products
 assert 新的错误信息 == 旧的错误信息</code></pre></div>
@@ -130,8 +130,8 @@ assert 新的错误信息 == 旧的错误信息</code></pre></div>
 <ul><li><strong>抽象工厂</strong>：读取、校验、输出之间没有“必须成套切换”的家族关系。CSV 文件可以写进数据库，JSON 文件也可以只出报告。</li><li><strong>模板方法</strong>：可以把“读取 → 校验 → 输出”写成父类的模板方法，让 <code>CsvImporter</code>、<code>JsonImporter</code> 子类覆盖“读取”这一步。但各格式之间只有读取不同，一个字典就够了。<a href="34-retrospective.html">第 34 章</a>会把这种写法实际做出来比较。</li><li><strong>观察者</strong>：输出的去处确实是“结果出来后通知多个对象”，但它们由 <code>main</code> 在启动时一次性确定，不会在运行中订阅、退订。一个列表加一个循环就够了。</li><li><strong>建造者、责任链、访问者</strong>：没有对应的困难。</li></ul>
 <p><a href="../part-01/04-choosing-a-pattern.html">第 04 章</a>的提醒在这里依然适用：<strong>模式是对困难的回应，不是需要凑齐的清单。</strong></p>
 <h2 id="运行结果">运行结果<a class="anchor" href="#运行结果" aria-label="本节链接">#</a></h2>
-<div class="code" data-lang="输出"><pre><code>python -m examples.ch33_importer examples/data/supplier_b.json --db 商品.db</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>{
+<div class="code"><pre><code>python -m examples.ch33_importer examples/data/supplier_b.json --db 商品.db</code></pre></div>
+<div class="code"><pre><code>{
   "imported": 2,
   "rejected": 3,
   "stock_value_yuan": "4521.60",

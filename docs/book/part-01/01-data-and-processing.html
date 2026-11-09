@@ -58,7 +58,7 @@ order = [
 <p><code>order_total(order)</code> 得到 <code>7100</code>，<code>format_yuan(7100)</code> 得到 <code>"¥71.00"</code>。</p>
 <p>这两个函数有一个很好的性质：<strong>只看输入，只给输出</strong>。同样的订单传进去，无论调用多少次、在什么时候调用，结果都一样；它们也不会偷偷修改传进来的列表。这类函数最容易理解，也最容易测试，只要比较输入和输出即可。</p>
 <p>这就是最朴素的程序模型：</p>
-<div class="code" data-lang="输出"><pre><code>输入（订单） → 处理（求和、格式化） → 结果（¥71.00）</code></pre></div>
+<div class="code"><pre><code>输入（订单） → 处理（求和、格式化） → 结果（¥71.00）</code></pre></div>
 <p>很多小程序到这里就足够了。但只要再往前走一步，这个模型就开始不够用。</p>
 <h2 id="当-输入-处理-结果-不够用">当“输入 → 处理 → 结果”不够用<a class="anchor" href="#当-输入-处理-结果-不够用" aria-label="本节链接">#</a></h2>
 <h3 id="状态-结果取决于过去">状态：结果取决于过去<a class="anchor" href="#状态-结果取决于过去" aria-label="本节链接">#</a></h3>
