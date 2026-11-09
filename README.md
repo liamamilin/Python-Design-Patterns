@@ -8,6 +8,7 @@
 
 ## 阅读本仓库
 
+- [正文 book/](book/README.md)：全书 34 章初稿，从这里开始阅读。每章的示例代码在 [examples/](examples/)，测试在 [tests/](tests/)。
 - [在线指南](https://liamamilin.github.io/Python-Design-Patterns/)：面向读者的网页版，包括读法、34 章路线图、按问题查找章节和一个模式的推导示例（源文件 [docs/index.html](docs/index.html)）。
 - [BOOK_PLAN.md](BOOK_PLAN.md)：本书目标、边界、内容结构及逐章问题清单；**全书内容的基准**。
 - [WRITING_GUIDE.md](WRITING_GUIDE.md)：章节叙述方法、Python 代码质量和审稿标准。
@@ -26,7 +27,13 @@
 
 完整讨论 GoF 的 23 个经典设计模式，但不把 GoF 的类图当成 Python 的唯一标准答案。还会介绍函数、字典、协议、装饰器、组合和依赖注入等 Python 常见做法，以及在实际项目中如何做取舍。
 
-**当前状态：** 已建立书籍定位、全书规划和写作依据，**尚未启动全书正文初稿**。下一步可直接用 [AGENT_TASK.md](AGENT_TASK.md) 指导 Codex / Claude Code 写作。
+**当前状态：** 全书 34 章**正文初稿已完成**，等待人工审阅。每章都配有可运行的示例和测试；书中的每段 Python 代码都原样出自 `examples/` 中的文件。写作进度、已执行的检查和待人工判断的问题记录在 [DRAFT_REVIEW.md](DRAFT_REVIEW.md)。
+
+在仓库根目录运行全部测试（需要 Python 3.11 或更高版本，只用标准库）：
+
+```text
+python -m unittest discover -s tests
+```
 
 ## 读者需要什么
 
