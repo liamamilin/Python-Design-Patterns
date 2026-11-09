@@ -47,7 +47,7 @@ python -m examples.ch05_factory_method
 
 - [10 适配器 Adapter](part-03/10-adapter.md)
 - [11 桥接 Bridge](part-03/11-bridge.md)
-- 12 组合 Composite（写作中）
+- [12 组合 Composite](part-03/12-composite.md)
 - 13 装饰器 Decorator（写作中）
 - 14 外观 Facade（写作中）
 - 15 享元 Flyweight（写作中）
