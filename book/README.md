@@ -78,4 +78,4 @@ python -m examples.ch05_factory_method
 
 - [32 第一次实现：不使用模式](part-06/32-first-version.md)
 - [33 需求改变：有选择地重构](part-06/33-selective-refactoring.md)
-- 34 回顾：能解释自己为什么这样写（写作中）
+- [34 回顾：能解释自己为什么这样写](part-06/34-retrospective.md)

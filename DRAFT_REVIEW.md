@@ -53,7 +53,7 @@ python tools/check_links.py
 | 31 | 简单代码与模式代码的取舍 | 咖啡店会员积分（规则顺序依赖） | 完成 | `ch31_points.py` | 通过 |
 | 32 | 第一次实现 | 数据导入工具：茶叶店供应商价目表（CSV） | 完成 | `ch32_import_v1.py`、`data/supplier_a.csv` | 通过 |
 | 33 | 有选择地重构 | 数据导入工具：JSON 供应商、新规则、写入 SQLite | 完成 | `ch33_importer.py`、`data/supplier_b.json` | 通过 |
-| 34–34 | | | 未开始 | | |
+| 34 | 回顾 | 数据导入工具：两种设计的比较 | 完成 | `ch34_class_based.py` | 通过 |
 
 已预留的例子：第 17 章策略用运费计算（AGENT_TASK 的示例）；第六部分（32–34）用数据导入工具。其余章节选用新的领域，不与上表重复。
 
