@@ -56,7 +56,7 @@ python -m examples.ch05_factory_method
 ### 第四部分 · 协调处理（GoF 行为型）
 
 - [17 策略 Strategy](part-04/17-strategy.md)
-- 18 观察者 Observer（写作中）
+- [18 观察者 Observer](part-04/18-observer.md)
 - 19 命令 Command（写作中）
 - 20 状态 State（写作中）
 - 21 模板方法 Template Method（写作中）
