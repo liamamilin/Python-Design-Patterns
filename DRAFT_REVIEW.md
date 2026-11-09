@@ -35,7 +35,8 @@ python tools/check_links.py
 | 13 | 装饰器 | 客服聊天记录导出（打码、截断） | 完成 | `ch13_export_v1.py`、`ch13_decorator.py`、`ch13_pythonic.py` | 通过 |
 | 14 | 外观 | 设计工作室文档备份（zip、清单、轮换） | 完成 | `ch14_backup_v1.py`、`ch14_facade.py`、`ch14_pythonic.py` | 通过 |
 | 15 | 享元 | 地铁闸机刷卡记录（共享车站，tracemalloc 实测） | 完成 | `ch15_taps_v1.py`、`ch15_flyweight.py`、`ch15_pythonic.py` | 通过 |
-| 16–34 | | | 未开始 | | |
+| 16 | 代理 | 在线课程讲义（延迟加载、付费检查） | 完成 | `ch16_course_v1.py`、`ch16_proxy.py`、`ch16_pythonic.py` | 通过 |
+| 17–34 | | | 未开始 | | |
 
 已预留的例子：第 17 章策略用运费计算（AGENT_TASK 的示例）；第六部分（32–34）用数据导入工具。其余章节选用新的领域，不与上表重复。
 

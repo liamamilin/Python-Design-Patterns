@@ -51,7 +51,7 @@ python -m examples.ch05_factory_method
 - [13 装饰器 Decorator](part-03/13-decorator.md)
 - [14 外观 Facade](part-03/14-facade.md)
 - [15 享元 Flyweight](part-03/15-flyweight.md)
-- 16 代理 Proxy（写作中）
+- [16 代理 Proxy](part-03/16-proxy.md)
 
 ### 第四部分 · 协调处理（GoF 行为型）
 
