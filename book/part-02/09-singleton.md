@@ -188,7 +188,7 @@ def build_branch() -> tuple[Kiosk, PhoneBooking]:
 
 这里的 `TicketMachine` 是一个普通的类，没有改写 `__new__`，也没有类变量。“只有一个”不是类的性质，而是 `build_branch` 的**用法**：它只创建了一个，并把同一个对象交给了两个使用者。
 
-前面列出的代价都消失了：
+前面列出的前三个代价都消失了（第四个，唯一的范围只在一个进程内，这种写法同样存在，解决办法仍然是上一节的数据库）：
 
 - 共享是显式的：看 `Kiosk(machine)` 就知道它用的是外面传进来的取号机。
 - 每个测试调用 `build_branch()` 就得到全新的一套，不需要任何重置后门（测试 `test_each_test_gets_a_fresh_machine`）。

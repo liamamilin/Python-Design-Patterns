@@ -59,7 +59,7 @@ def keyword(*words: str, category: str) -> Rule:
 
 `keyword(...)` 返回内层函数 `rule`。`rule` 用到了外层函数的参数 `words` 和 `category`，即使 `keyword` 已经执行完毕，`rule` 依然记得它们。这就是闭包：**一个函数，加上它创建时所在环境中的变量。**
 
-`KeywordRule("地铁", ...)` 的构造参数，在这里变成了 `keyword("地铁", ...)` 的参数；`match` 方法的方法体，变成了内层函数的函数体。
+`KeywordRule(("地铁", "打车"), "交通")` 的构造参数，在这里变成了 `keyword("地铁", "打车", category="交通")` 的参数；`match` 方法的方法体，变成了内层函数的函数体。
 
 ### 高阶函数：接收函数作为参数
 
