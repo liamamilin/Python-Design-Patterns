@@ -39,7 +39,7 @@
 <p>享元是一个关于<strong>内存</strong>的模式，所以这一章会比其他章节多一件事：<strong>测量</strong>。凡是“省了多少”的说法，都应该由实际测量支撑，而不是凭感觉。本章所有关于内存的结论，都有对应的测试，而且测试只断言相对大小（“比原来小”），不断言具体字节数，因为具体数字在不同的 Python 版本和平台上都不一样。</p>
 <h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
 <p>一座城市的地铁公司要分析一天的闸机刷卡记录。闸机导出的是文本，每行一条：卡号、当天第几分钟、车站、线路、票价区。</p>
-<div class="code" data-lang="输出"><pre><code>C0000,0,西直门,2号线,1
+<div class="code"><pre><code>C0000,0,西直门,2号线,1
 C0001,1,国贸,1号线,1
 C0002,2,望京,14号线,2</code></pre></div>
 <p>一天有几十万条。示例代码用 2 万条模拟，车站只有 5 个。</p>
@@ -64,7 +64,7 @@ C0002,2,望京,14号线,2</code></pre></div>
 <h2 id="变化-数据量变大了">变化：数据量变大了<a class="anchor" href="#变化-数据量变大了" aria-label="本节链接">#</a></h2>
 <p>分析范围从一天扩大到一个月，记录数从几十万变成上千万，程序开始占用大量内存，在分析服务器上被系统强行终止。</p>
 <p>看一看这些对象里存的是什么。2 万条记录、5 个车站，每个车站平均出现 4000 次。“西直门”“2号线”这两段文字，在内存里是不是只存了一份？</p>
-<div class="code" data-lang="输出"><pre><code>两条记录的车站名是同一个字符串对象吗？ False</code></pre></div>
+<div class="code"><pre><code>两条记录的车站名是同一个字符串对象吗？ False</code></pre></div>
 <p><strong>不是。</strong> <code>text.split(",")</code> 每次都会创建新的字符串对象。第 0 行和第 5 行都是“西直门”，内容相同，却是两个不同的对象。2 万条记录，就有 2 万个“西直门”“国贸”……的副本（测试 <code>test_every_record_has_its_own_strings</code>）。</p>
 <h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
 <p>每条记录里的数据分成两类：</p>
@@ -131,10 +131,10 @@ C0002,2,望京,14号线,2</code></pre></div>
         taps.append(Tap(card, <span class="b">int</span>(minute), sys.intern(name), sys.intern(line), <span class="b">int</span>(zone)))
     <span class="k">return</span> taps</code></pre></div>
 <p>测试 <code>test_interning_alone_helps</code> 测得的大小顺序是：</p>
-<div class="code" data-lang="输出"><pre><code>原来的版本  &gt;  只共享字符串（sys.intern）  &gt;  享元版本（共享车站 + __slots__）</code></pre></div>
+<div class="code"><pre><code>原来的版本  &gt;  只共享字符串（sys.intern）  &gt;  享元版本（共享车站 + __slots__）</code></pre></div>
 <p>在本例中，<strong>单是共享字符串就带来了很大一部分节省</strong>，<code>__slots__</code> 和减少字段又省下了一部分。这说明：享元的“思想”（共享重复的不可变数据）是省内存的关键，而“享元工厂加一个新类”只是实现这种共享的一种方式。在 Python 里，对于重复的字符串，<code>sys.intern</code> 是更轻的实现。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>享元（Flyweight）</td><td><code>Station</code></td><td>保存内部状态，不可变，可以被共享</td></tr><tr><td>享元工厂（FlyweightFactory）</td><td><code>StationPool</code></td><td>创建并管理享元，保证相同的享元只有一个</td></tr><tr><td>客户（Client）</td><td><code>Tap</code> 与 <code>parse</code></td><td>保存外部状态，引用享元</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">享元（Flyweight）</td><td data-label="本例"><code>Station</code></td><td data-label="职责">保存内部状态，不可变，可以被共享</td></tr><tr><td data-label="GoF 角色">享元工厂（FlyweightFactory）</td><td data-label="本例"><code>StationPool</code></td><td data-label="职责">创建并管理享元，保证相同的享元只有一个</td></tr><tr><td data-label="GoF 角色">客户（Client）</td><td data-label="本例"><code>Tap</code> 与 <code>parse</code></td><td data-label="职责">保存外部状态，引用享元</td></tr></tbody></table></div>
 <p>GoF 原书中的享元还会在调用时接收外部状态作为参数（例如“在这个位置画这个字符”）。本例的车站不需要外部状态就能回答自己的问题，所以省略了这一部分。</p>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>共享的部分必须不可变。</strong> 这是硬性约束。如果某天需要“修改某个车站的票价区”，不能直接改共享对象，而要创建一个新的车站对象，再让需要的记录指向它。</li><li><strong>工厂本身也占内存，而且可能一直增长。</strong> <code>StationPool</code> 会记住它创建过的每一个车站。车站只有几百个，没有问题；如果被共享的东西种类非常多、而且不断出现新的，工厂会变成一个只增不减的缓存。</li><li><strong>代码变得间接。</strong> 原来 <code>tap.station</code> 就是车站名，现在要写 <code>tap.station.name</code>。数据的结构也不再是“一行一个扁平记录”，导出时需要重新展开。</li><li><strong>只有在数量巨大且重复度高时才有意义。</strong> 如果车站有几万个，每个只出现几次，共享几乎省不了什么，反而多了一个工厂。</li></ul>

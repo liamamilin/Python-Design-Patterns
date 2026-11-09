@@ -127,18 +127,18 @@
         <span class="k">for</span> m <span class="k">in</span> methods.values()
         <span class="k">if</span> m.available(order)
     ]</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>普通快递：14.00 元，2–3 天
+<div class="code"><pre><code>普通快递：14.00 元，2–3 天
 同城急送：33.00 元，2 小时内
 到店自提：0.00 元，今天可取</code></pre></div>
 <p>两个页面的运费一定一致，因为它们调用的是同一个对象的同一个方法。一个 25 公里外的订单，报价页自动不显示同城急送，结算页如果被选了同城急送，会明确拒绝（测试 <code>test_free_shipping_and_availability</code>）。</p>
 <h3 id="策略对象可以带配置">策略对象可以带配置<a class="anchor" href="#策略对象可以带配置" aria-label="本节链接">#</a></h3>
 <p>会员日普通快递满 59 元包邮？不需要新的类，也不需要改 <code>Express</code>，创建一个不同配置的对象就行：</p>
-<div class="code" data-lang="输出"><pre><code>member_day = Express(free_over=5900)</code></pre></div>
+<div class="code"><pre><code>member_day = Express(free_over=5900)</code></pre></div>
 <p>默认的 <code>Express()</code> 不受影响（测试 <code>test_configured_strategy</code>）。这是把策略写成“带字段的对象”的好处：<strong>同一种算法、不同的参数</strong>，也能当作不同的策略来替换。</p>
 <h3 id="新增一种方式-不碰任何页面">新增一种方式，不碰任何页面<a class="anchor" href="#新增一种方式-不碰任何页面" aria-label="本节链接">#</a></h3>
 <p>要加“快递柜自提”，写一个提供 <code>name</code>、<code>available</code>、<code>fee</code>、<code>eta</code> 的类，登记进 <code>METHODS</code>。结算页、报价页、订单管理页都不用改（测试 <code>test_new_method_needs_no_change_elsewhere</code>）。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>策略（Strategy）</td><td><code>ShippingMethod</code> 协议</td><td>所有配送方式共同的接口</td></tr><tr><td>具体策略（ConcreteStrategy）</td><td><code>Express</code>、<code>SameCity</code>、<code>Pickup</code></td><td>各自的规则</td></tr><tr><td>上下文（Context）</td><td><code>checkout_fee</code>、<code>quote_all</code> 等</td><td>持有或接收一个策略，通过接口使用它</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">策略（Strategy）</td><td data-label="本例"><code>ShippingMethod</code> 协议</td><td data-label="职责">所有配送方式共同的接口</td></tr><tr><td data-label="GoF 角色">具体策略（ConcreteStrategy）</td><td data-label="本例"><code>Express</code>、<code>SameCity</code>、<code>Pickup</code></td><td data-label="职责">各自的规则</td></tr><tr><td data-label="GoF 角色">上下文（Context）</td><td data-label="本例"><code>checkout_fee</code>、<code>quote_all</code> 等</td><td data-label="职责">持有或接收一个策略，通过接口使用它</td></tr></tbody></table></div>
 <p>GoF 原书里，上下文通常是一个对象，把策略保存为字段。本例的上下文是两个函数，策略作为参数传入，这在 Python 里更常见，意思是一样的。</p>
 <h3 id="选择-去哪了">“选择”去哪了<a class="anchor" href="#选择-去哪了" aria-label="本节链接">#</a></h3>
 <p><a href="../part-01/04-choosing-a-pattern.html">第 04 章</a>强调过：用了策略，“根据情况选哪一个”的判断并没有消失，只是换了位置。本例中它变成了一次字典查找 <code>METHODS[key]</code>，发生在请求进来的地方（顾客提交的配送方式是一个字符串）。好处是这个选择<strong>只发生一次</strong>，之后的代码拿到的就是一个对象，不用再关心它是哪一种。</p>

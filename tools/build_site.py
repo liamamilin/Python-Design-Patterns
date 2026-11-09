@@ -226,8 +226,9 @@ def render(md: str, page: Page) -> str:
                 out.append(f'<figure class="diagram"><pre class="mermaid">{html.escape(code, quote=False)}</pre></figure>')
             else:
                 body = highlight_python(code) if lang == "python" else html.escape(code, quote=False)
-                label = {"python": "Python", "text": "输出"}.get(lang, lang)
-                out.append(f'<div class="code" data-lang="{label}"><pre><code>{body}</code></pre></div>')
+                # text 块里有输出、数据、命令，也有伪代码，所以不加标签
+                label = f' data-lang="{ {"python": "Python"}.get(lang, lang)}"' if lang and lang != "text" else ""
+                out.append(f'<div class="code"{label}><pre><code>{body}</code></pre></div>')
                 section[2].append(code if lang == "python" else "")
             i = j + 1
             continue
@@ -269,7 +270,13 @@ def render(md: str, page: Page) -> str:
                 rows.append(split_row(lines[i]))
                 i += 1
             thead = "".join(f"<th>{inline(c, page)}</th>" for c in head)
-            tbody = "".join("<tr>" + "".join(f"<td>{inline(c, page)}</td>" for c in r) + "</tr>" for r in rows)
+            labels = [html.escape(plain(h)) for h in head]
+            tbody = "".join(
+                "<tr>"
+                + "".join(f'<td data-label="{labels[k] if k < len(labels) else ""}">{inline(c, page)}</td>' for k, c in enumerate(r))
+                + "</tr>"
+                for r in rows
+            )
             for r in [head, *rows]:
                 note(" ".join(r))
             out.append(f'<div class="table"><table><thead><tr>{thead}</tr></thead><tbody>{tbody}</tbody></table></div>')

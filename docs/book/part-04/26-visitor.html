@@ -122,7 +122,7 @@
     T-&gt;&gt;W: visit_table(self)
     Note over W: 第二次分派：按访问者类型选中 WordCounter.visit_table</pre></figure>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>访问者（Visitor）</td><td><code>Visitor</code></td><td>为每种元素声明一个访问方法</td></tr><tr><td>具体访问者（ConcreteVisitor）</td><td><code>WordCounter</code>、<code>AltChecker</code></td><td>实现一种操作，可以在访问过程中积累结果</td></tr><tr><td>元素（Element）</td><td>有 <code>accept</code> 方法的内容块</td><td>接受访问者，调用对应的访问方法</td></tr><tr><td>对象结构（ObjectStructure）</td><td>文章（内容块列表）、<code>run</code></td><td>让访问者逐个访问其中的元素</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">访问者（Visitor）</td><td data-label="本例"><code>Visitor</code></td><td data-label="职责">为每种元素声明一个访问方法</td></tr><tr><td data-label="GoF 角色">具体访问者（ConcreteVisitor）</td><td data-label="本例"><code>WordCounter</code>、<code>AltChecker</code></td><td data-label="职责">实现一种操作，可以在访问过程中积累结果</td></tr><tr><td data-label="GoF 角色">元素（Element）</td><td data-label="本例">有 <code>accept</code> 方法的内容块</td><td data-label="职责">接受访问者，调用对应的访问方法</td></tr><tr><td data-label="GoF 角色">对象结构（ObjectStructure）</td><td data-label="本例">文章（内容块列表）、<code>run</code></td><td data-label="职责">让访问者逐个访问其中的元素</td></tr></tbody></table></div>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <p>访问者的取舍非常鲜明，GoF 原书也明确指出了这一点：</p>
 <ul><li><strong>加一种操作很容易</strong>：写一个新的访问者类，不用改任何内容块。</li><li><strong>加一种内容块很困难</strong>：要在 <code>Visitor</code> 上加一个 <code>visit_video</code>，然后修改<strong>每一个</strong>已有的访问者。</li></ul>

@@ -112,7 +112,7 @@
             lesson = PaidLesson(lesson, enrolled, user)
         lessons.append(lesson)
     <span class="k">return</span> lessons</code></pre></div>
-<div class="code" data-lang="输出"><pre><code>['01-第1课', '02-第2课', '03-第3课', '04-第4课', '05-第5课'] 读了 0 个文件
+<div class="code"><pre><code>['01-第1课', '02-第2课', '03-第3课', '04-第4课', '05-第5课'] 读了 0 个文件
 第 1 课的讲义…… 读了 1 个文件
 小周 还没有报名，不能观看《02-第2课》</code></pre></div>
 <p>顺序在这里也有意义：保护代理在外面，没报名的人被拒绝时，里面的虚代理根本不会被调用，文件也就不会被读（测试 <code>test_free_trial_and_paid_lessons</code>）。如果反过来，先读文件再检查权限，就白白读了一个大文件。</p>
@@ -124,12 +124,12 @@
     paid --&gt;|"是"| lazy["LazyLesson：读过文件了吗？"]
     lazy --&gt;|"第一次才创建"| real["RealLesson：读文件"]</pre></figure>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>主题（Subject）</td><td><code>Lesson</code> 协议</td><td>真实对象和代理共同的接口</td></tr><tr><td>真实主题（RealSubject）</td><td><code>RealLesson</code></td><td>真正持有讲义内容</td></tr><tr><td>代理（Proxy）</td><td><code>LazyLesson</code>、<code>PaidLesson</code></td><td>持有（或知道如何得到）真实对象，控制对它的访问</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">主题（Subject）</td><td data-label="本例"><code>Lesson</code> 协议</td><td data-label="职责">真实对象和代理共同的接口</td></tr><tr><td data-label="GoF 角色">真实主题（RealSubject）</td><td data-label="本例"><code>RealLesson</code></td><td data-label="职责">真正持有讲义内容</td></tr><tr><td data-label="GoF 角色">代理（Proxy）</td><td data-label="本例"><code>LazyLesson</code>、<code>PaidLesson</code></td><td data-label="职责">持有（或知道如何得到）真实对象，控制对它的访问</td></tr></tbody></table></div>
 <p>GoF 列出了几种常见的代理，本章演示了前两种：</p>
 <ul><li><strong>虚代理</strong>：延迟创建昂贵的对象；</li><li><strong>保护代理</strong>：检查调用方是否有权限；</li><li><strong>远程代理</strong>：在本地代表一个位于其他进程或机器上的对象，调用它的方法会变成一次网络请求；</li><li><strong>智能引用</strong>：访问对象时顺带做一些管理工作，比如计数、加锁。缓存代理也常被归入这一类。</li></ul>
 <h3 id="和装饰器的区别">和装饰器的区别<a class="anchor" href="#和装饰器的区别" aria-label="本节链接">#</a></h3>
 <p>代理和装饰器的代码结构几乎一样：同样的接口，持有另一个对象，转交请求。区别在于<strong>意图</strong>：</p>
-<div class="table"><table><thead><tr><th></th><th>装饰器</th><th>代理</th></tr></thead><tbody><tr><td>目的</td><td>给对象增加职责（打码、截断、计数）</td><td>控制对对象的访问（何时创建、谁能用、是否走缓存）</td></tr><tr><td>和真实对象的关系</td><td>通常由外部传入一个已经存在的对象</td><td>常常自己负责创建或找到真实对象（如 <code>LazyLesson</code>）</td></tr><tr><td>叠加</td><td>常常叠很多层，每层一项职责</td><td>通常一两层</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th></th><th>装饰器</th><th>代理</th></tr></thead><tbody><tr><td data-label="">目的</td><td data-label="装饰器">给对象增加职责（打码、截断、计数）</td><td data-label="代理">控制对对象的访问（何时创建、谁能用、是否走缓存）</td></tr><tr><td data-label="">和真实对象的关系</td><td data-label="装饰器">通常由外部传入一个已经存在的对象</td><td data-label="代理">常常自己负责创建或找到真实对象（如 <code>LazyLesson</code>）</td></tr><tr><td data-label="">叠加</td><td data-label="装饰器">常常叠很多层，每层一项职责</td><td data-label="代理">通常一两层</td></tr></tbody></table></div>
 <p>一个实用的判断方法：如果去掉这一层，功能还完整，只是少了点“附加”的东西，那多半是装饰器；如果去掉这一层，就失去了对“何时、谁、怎样接触真实对象”的控制，那多半是代理。不过，两者的边界并不总是清楚，比如缓存既可以说是“加了一项职责”，也可以说是“控制了访问”。叫什么名字不重要，重要的是这一层在做什么，以及为什么放在这里。</p>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>延迟不等于消除。</strong> 虚代理把读文件的时间从“打开目录时”挪到了“第一次点开时”。如果学员点开的那一刻读文件很慢，他依然要等。而且读文件可能出错（文件被删除了），错误也被推迟到了点开的那一刻。</li><li><strong>代理和真实对象的行为可能悄悄不同。</strong> <code>PaidLesson.content()</code> 可能抛出 <code>PermissionError</code>，而 <code>RealLesson.content()</code> 从不抛出。调用方以为自己面对的是同一个接口，却要处理一种原本不存在的异常。这一点要在接口文档里写清楚。</li><li><strong>保护代理不是安全边界的全部。</strong> 任何能拿到里面那个 <code>LazyLesson</code> 或 <code>RealLesson</code> 的代码，都可以绕过检查。真正的权限控制，还要保证未授权的代码根本拿不到真实对象（比如服务器只把代理对象交给处理用户请求的代码），以及在数据源头（文件权限、数据库权限）上也有控制。</li><li><strong>对象的身份变了。</strong> 代理不是真实对象，<code>isinstance(lesson, RealLesson)</code> 不成立，依赖具体类型的代码会出错。</li></ul>

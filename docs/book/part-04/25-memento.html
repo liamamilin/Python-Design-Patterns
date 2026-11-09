@@ -56,7 +56,7 @@
 <p>看起来很合理，也很短。</p>
 <h2 id="问题-存档会自己变">问题：存档会自己变<a class="anchor" href="#问题-存档会自己变" aria-label="本节链接">#</a></h2>
 <p>玩家种了 3 棵萝卜，存档；又种了 2 棵，过了一天，觉得不划算，读档。读档之后：</p>
-<div class="code" data-lang="输出"><pre><code>第 1 天，金币 70，萝卜×5</code></pre></div>
+<div class="code"><pre><code>第 1 天，金币 70，萝卜×5</code></pre></div>
 <p>天数和金币都回去了，萝卜却是 5 棵（测试 <code>test_saved_game_changes_after_saving</code>）。</p>
 <p>原因在注释里已经写了：<code>save</code> 返回的元组里，<code>self.crops</code> 是农场正在使用的<strong>同一个字典</strong>。存档之后再种萝卜，改的就是这个字典，存档里的“萝卜×3”也就跟着变成了“萝卜×5”。天数和金币是整数，整数不可变，<code>self.day += 1</code> 会让 <code>self.day</code> 指向一个新的整数，存档里的旧值不受影响。</p>
 <p>这和<a href="../part-02/08-prototype.html">第 08 章</a>的浅拷贝是同一个问题：<strong>保存的不是状态的副本，而是对状态的引用。</strong></p>
@@ -97,13 +97,13 @@
         farm.restore(<span class="b">self</span>._slots[name])</code></pre></div>
 <p>现在，存档、继续玩、读档，农场回到的正是存档时的样子：第 1 天，金币 70，萝卜×3（测试 <code>test_restore_brings_back_the_exact_state</code>）。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>原发器（Originator）</td><td><code>Farm</code></td><td>创建快照，从快照恢复自己</td></tr><tr><td>备忘录（Memento）</td><td><code>FarmMemento</code></td><td>保存原发器的内部状态；对其他对象不透明</td></tr><tr><td>负责人（Caretaker）</td><td><code>SaveSlots</code></td><td>保管快照，但从不查看或修改其内容</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">原发器（Originator）</td><td data-label="本例"><code>Farm</code></td><td data-label="职责">创建快照，从快照恢复自己</td></tr><tr><td data-label="GoF 角色">备忘录（Memento）</td><td data-label="本例"><code>FarmMemento</code></td><td data-label="职责">保存原发器的内部状态；对其他对象不透明</td></tr><tr><td data-label="GoF 角色">负责人（Caretaker）</td><td data-label="本例"><code>SaveSlots</code></td><td data-label="职责">保管快照，但从不查看或修改其内容</td></tr></tbody></table></div>
 <h3 id="python-里的-不透明">Python 里的“不透明”<a class="anchor" href="#python-里的-不透明" aria-label="本节链接">#</a></h3>
 <p>GoF 原书用 C++ 的 <code>friend</code> 机制，让备忘录对原发器提供“宽接口”（可以读写全部状态），对其他对象只提供“窄接口”（什么都看不到）。Python 没有这样的访问控制。<code>FarmMemento._coins</code> 前面的下划线只是一个<strong>约定</strong>：它告诉其他程序员“这不是给你用的”，但并不能阻止任何人读取它。</p>
 <p>在 Python 里，备忘录的“封装”主要靠两点：<strong>不可变</strong>（冻结的数据类，没人能改），加上<strong>约定</strong>（下划线前缀，没人应该读）。对一个游戏存档来说，这已经足够。</p>
 <h3 id="和命令的撤销比较">和命令的撤销比较<a class="anchor" href="#和命令的撤销比较" aria-label="本节链接">#</a></h3>
 <p><a href="19-command.html">第 19 章</a>用命令实现撤销：每条命令知道怎样抵消自己。备忘录则是在某个时刻把整个状态存下来。两种方式各有长处：</p>
-<div class="table"><table><thead><tr><th></th><th>命令的撤销</th><th>备忘录</th></tr></thead><tbody><tr><td>保存什么</td><td>每一步的操作，以及撤销它所需的少量信息</td><td>某一时刻的完整状态</td></tr><tr><td>占用空间</td><td>和操作的步数成正比，每步通常很小</td><td>和状态的大小成正比，每个快照都是完整的一份</td></tr><tr><td>实现难度</td><td>每种操作都要写正确的撤销</td><td>只需要一对 <code>save</code>/<code>restore</code></td></tr><tr><td>适合</td><td>逐步撤销、重做；操作日志</td><td>存档点、“回到某个时刻”、出错时整体回滚</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th></th><th>命令的撤销</th><th>备忘录</th></tr></thead><tbody><tr><td data-label="">保存什么</td><td data-label="命令的撤销">每一步的操作，以及撤销它所需的少量信息</td><td data-label="备忘录">某一时刻的完整状态</td></tr><tr><td data-label="">占用空间</td><td data-label="命令的撤销">和操作的步数成正比，每步通常很小</td><td data-label="备忘录">和状态的大小成正比，每个快照都是完整的一份</td></tr><tr><td data-label="">实现难度</td><td data-label="命令的撤销">每种操作都要写正确的撤销</td><td data-label="备忘录">只需要一对 <code>save</code>/<code>restore</code></td></tr><tr><td data-label="">适合</td><td data-label="命令的撤销">逐步撤销、重做；操作日志</td><td data-label="备忘录">存档点、“回到某个时刻”、出错时整体回滚</td></tr></tbody></table></div>
 <p>两者也可以结合：命令执行前，先用备忘录记下受影响部分的状态，撤销时直接恢复它，就不必为每种命令写反向操作了。</p>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>快照可能很大。</strong> 每个快照都是完整状态的一份副本。农场只有几个字段，无所谓；如果状态里有一张很大的地图，频繁存档就会占用大量内存。这时要考虑只保存变化的部分，或者限制快照的数量。</li><li><strong>复制必须彻底。</strong> 本章开头的错误说明，只要状态里有任何可变的部分被共享，快照就不再可靠。每给原发器加一个可变字段，都要检查 <code>save</code> 和 <code>restore</code> 是否正确地复制了它。</li><li><strong>状态的结构变了，旧快照怎么办。</strong> 游戏更新后，农场多了一个“天气”字段，旧存档里没有它。读旧存档时要给出合理的默认值，或者明确拒绝。下一节会看到，存档写到文件里时，这个问题更加突出。</li><li><strong>不是所有状态都能或都应该保存。</strong> 打开的网络连接、正在播放的音乐，这些是外部资源，不属于“可以存下来再恢复”的状态。</li></ul>

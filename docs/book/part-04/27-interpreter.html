@@ -39,7 +39,7 @@
 <p>这是 GoF 23 种模式的最后一个。解释器模式是为一门<strong>语言</strong>中的每一条语法规则写一个类，再用这些类组成的树来计算结果。听起来像在写编译器，但它要解决的问题很日常：<strong>让规则变成数据</strong>，由使用者自己填写，而不是每次都找程序员改代码。</p>
 <h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
 <p>一所大学的学生活动平台，每个活动都有报名资格。比如天文观测营：</p>
-<div class="code" data-lang="输出"><pre><code>年级 &gt;= 2 and (学院 == "物理" or 社团 == "天文社")</code></pre></div>
+<div class="code"><pre><code>年级 &gt;= 2 and (学院 == "物理" or 社团 == "天文社")</code></pre></div>
 <p>活动由各学院的老师在后台发布，资格规则也由老师自己填写。每个活动的规则都不一样，不可能每次都让程序员改代码。</p>
 <h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
 <p>规则看起来就是一个 Python 表达式，学生信息是一个字典。最省事的写法是：</p>
@@ -47,7 +47,7 @@
     <span class="k">return</span> <span class="b">bool</span>(eval(rule, {}, student))  <span class="c"># 危险：rule 里的任何 Python 代码都会被执行</span></code></pre></div>
 <p>它确实能工作，三位学生里，周晴（物理学院、二年级）和高远（三年级、天文社）有资格。</p>
 <p><strong>这是一个严重的安全漏洞。</strong> <code>eval</code> 会执行字符串中的<strong>任何</strong> Python 代码。老师（或者盗用了老师账号的人）可以填写：</p>
-<div class="code" data-lang="输出"><pre><code>__import__("os").getpid() &gt; 0</code></pre></div>
+<div class="code"><pre><code>__import__("os").getpid() &gt; 0</code></pre></div>
 <p><code>eval</code> 会照做：导入 <code>os</code> 模块，调用其中的函数，返回 <code>True</code>（测试 <code>test_eval_runs_arbitrary_code</code>）。示例只调用了一个无害的函数，但同样的方式可以读取服务器上的文件、删除数据、执行系统命令。</p>
 <p>常见的“补救”是把 <code>eval</code> 的第二个参数设成 <code>{"__builtins__": {}}</code>，以为这样就禁掉了危险的函数。<strong>这不安全。</strong> 通过对象的属性链（比如 <code>().__class__.__bases__</code>）一步步找到危险的函数，是众所周知的绕过手法。Python 官方文档也明确表示，不应该用 <code>eval</code> 处理不可信的输入。</p>
 <p><strong>规则：不可信的输入，永远不要交给 <code>eval</code> 或 <code>exec</code>。</strong> 这里的“不可信”包括一切不是你自己写死在代码里的字符串：用户输入、数据库里的配置、文件内容、网络请求。</p>
@@ -58,7 +58,7 @@
 <h2 id="解释器-为语法的每条规则写一个类">解释器：为语法的每条规则写一个类<a class="anchor" href="#解释器-为语法的每条规则写一个类" aria-label="本节链接">#</a></h2>
 <p>GoF 对解释器的描述是：<strong>给定一个语言，定义它的文法的一种表示，并定义一个解释器，这个解释器使用该表示来解释语言中的句子。</strong></p>
 <p>先写出这门语言的语法（文法）。从上到下，优先级从低到高：</p>
-<div class="code" data-lang="输出"><pre><code>expr := and ("or" and)*
+<div class="code"><pre><code>expr := and ("or" and)*
 and  := not ("and" not)*
 not  := "not" not | cmp
 cmp  := atom (比较符 atom)?
@@ -94,7 +94,7 @@ atom := 数字 | "字符串" | 字段名 | "(" expr ")"</code></pre></div>
     <span class="k">def</span> <span class="f">evaluate</span>(<span class="b">self</span>, ctx: <span class="b">dict</span>[<span class="b">str</span>, Value]) -&gt; <span class="b">bool</span>:
         <span class="k">return</span> <span class="b">bool</span>(<span class="b">self</span>.left.evaluate(ctx)) <span class="k">and</span> <span class="b">bool</span>(<span class="b">self</span>.right.evaluate(ctx))</code></pre></div>
 <p><code>Or</code>、<code>Not</code>、<code>Literal</code> 也都只有几行。一条规则就是由这些对象组成的一棵树。天文观测营的规则，解析后是这样的：</p>
-<div class="code" data-lang="输出"><pre><code>And(
+<div class="code"><pre><code>And(
   Compare('&gt;=', Field('年级'), Literal(2)),
   Or(
     Compare('==', Field('学院'), Literal('物理')),
@@ -114,7 +114,7 @@ atom := 数字 | "字符串" | 字段名 | "(" expr ")"</code></pre></div>
 <p><code>__import__("os").getpid() &gt; 0</code> 这样的规则在切分记号时就被拒绝了，因为语言里没有 <code>.</code> 这个符号；即使去掉点号，<code>__import__("os")</code> 也会因为“字段名后面跟着括号”不符合语法而被拒绝。即使有人设法让 <code>__import__</code> 作为一个字段名通过了解析，<code>Field.evaluate</code> 做的也只是在学生信息字典里查找这个名字，<strong>这门语言里根本没有“调用”这个动作</strong>（测试 <code>test_hostile_rules_are_rejected</code>）。</p>
 <p>错误信息也是给老师看的：“这里应该是 )，实际是 结尾”“没有这个字段：专业”“不能比较 2 和 '二' 的大小”（测试 <code>test_friendly_errors</code>）。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>抽象表达式（AbstractExpression）</td><td><code>Expr</code> 协议</td><td>声明 <code>evaluate</code></td></tr><tr><td>终结符表达式（TerminalExpression）</td><td><code>Literal</code>、<code>Field</code></td><td>语法中不能再分解的部分</td></tr><tr><td>非终结符表达式（NonterminalExpression）</td><td><code>Compare</code>、<code>And</code>、<code>Or</code>、<code>Not</code></td><td>由其他表达式组成，递归求值</td></tr><tr><td>上下文（Context）</td><td>学生信息字典</td><td>求值时需要的外部数据</td></tr><tr><td>客户（Client）</td><td><code>compile_rule</code> 及调用方</td><td>构造（解析出）表达式树并求值</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">抽象表达式（AbstractExpression）</td><td data-label="本例"><code>Expr</code> 协议</td><td data-label="职责">声明 <code>evaluate</code></td></tr><tr><td data-label="GoF 角色">终结符表达式（TerminalExpression）</td><td data-label="本例"><code>Literal</code>、<code>Field</code></td><td data-label="职责">语法中不能再分解的部分</td></tr><tr><td data-label="GoF 角色">非终结符表达式（NonterminalExpression）</td><td data-label="本例"><code>Compare</code>、<code>And</code>、<code>Or</code>、<code>Not</code></td><td data-label="职责">由其他表达式组成，递归求值</td></tr><tr><td data-label="GoF 角色">上下文（Context）</td><td data-label="本例">学生信息字典</td><td data-label="职责">求值时需要的外部数据</td></tr><tr><td data-label="GoF 角色">客户（Client）</td><td data-label="本例"><code>compile_rule</code> 及调用方</td><td data-label="职责">构造（解析出）表达式树并求值</td></tr></tbody></table></div>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>你在设计一门语言。</strong> 语法、优先级、错误信息、类型规则，全都要自己定义、自己测试。老师会问：“能不能写 <code>年级 在 [2, 3] 中</code>？”“能不能不区分大小写？”每一个“能不能”都是一次语言设计。</li><li><strong>语法一复杂，类和解析器都会膨胀。</strong> GoF 原书也指出，解释器模式适合<strong>简单的</strong>文法。如果规则语言需要变量、函数、循环，就应该使用专门的解析工具，或者换一种方案。</li><li><strong>性能一般。</strong> 每次求值都要遍历整棵树。对报名资格这样的规则，完全够用；对每秒要计算几百万次的规则，可能需要别的做法。</li><li><strong>安全来自语言本身的“小”。</strong> 解释器之所以安全，是因为语言里没有危险的操作。每给语言加一个功能，都要重新想一想它会不会被滥用，比如“允许调用几个函数”就要限定是哪几个、参数是什么。</li></ul>
 <p><strong>什么时候不该用</strong>：规则的种类是固定的几种，只是参数不同。比如资格永远是“年级不低于 N，并且属于这几个学院之一”，那就做一个表单：一个年级下拉框，一组学院复选框。表单比任何语言都更容易使用，也更不容易出错。只有当规则的<strong>结构</strong>本身需要由使用者自由组合时，才需要一门语言。</p>

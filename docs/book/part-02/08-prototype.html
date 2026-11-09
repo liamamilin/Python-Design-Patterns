@@ -75,7 +75,7 @@
     chen.days[<span class="s">"周一"</span>][<span class="n">0</span>].sets = <span class="n">4</span>  <span class="c"># 只想给小陈的深蹲加到 4 组</span>
     <span class="k">return</span> template, chen, wang</code></pre></div>
 <p>运行结果：</p>
-<div class="code" data-lang="输出"><pre><code>小王： Exercise(name='深蹲', sets=4, reps=10)
+<div class="code"><pre><code>小王： Exercise(name='深蹲', sets=4, reps=10)
 模板： Exercise(name='深蹲', sets=4, reps=10)
 同一个字典吗？ True</code></pre></div>
 <p>只改了小陈，小王的计划和模板也一起变成了 4 组。</p>
@@ -129,7 +129,7 @@
         <span class="k">return</span> <span class="b">self</span>._templates[name].clone(title)</code></pre></div>
 <p>注意 <code>save</code> 里也复制了一次。教练保存模板之后，往往还会继续在同一份草稿上改；如果直接把草稿对象存进去，已经保存的模板会跟着草稿一起变。<strong>复制发生在两个地方：存进来的时候，取出去的时候。</strong> 测试 <code>test_shelf_keeps_its_own_copy</code> 验证了这一点。</p>
 <h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
-<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>原型（Prototype）</td><td>有 <code>clone</code> 方法的 <code>Plan</code></td><td>声明复制自己的接口</td></tr><tr><td>具体原型（ConcretePrototype）</td><td>教练编辑出的各个模板对象</td><td>实现复制，决定哪些部分独立、哪些共享</td></tr><tr><td>客户（Client）</td><td>给学员生成计划的代码</td><td>让原型复制自己来得到新对象</td></tr><tr><td>原型管理器</td><td><code>TemplateShelf</code></td><td>按名字保存和取出原型</td></tr></tbody></table></div>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td data-label="GoF 角色">原型（Prototype）</td><td data-label="本例">有 <code>clone</code> 方法的 <code>Plan</code></td><td data-label="职责">声明复制自己的接口</td></tr><tr><td data-label="GoF 角色">具体原型（ConcretePrototype）</td><td data-label="本例">教练编辑出的各个模板对象</td><td data-label="职责">实现复制，决定哪些部分独立、哪些共享</td></tr><tr><td data-label="GoF 角色">客户（Client）</td><td data-label="本例">给学员生成计划的代码</td><td data-label="职责">让原型复制自己来得到新对象</td></tr><tr><td data-label="GoF 角色">原型管理器</td><td data-label="本例"><code>TemplateShelf</code></td><td data-label="职责">按名字保存和取出原型</td></tr></tbody></table></div>
 <p>在 C++ 里，原型模式还有一层意义：代码不用写出具体类名就能创建对象。在 Python 里这一层不重要，因为类本身就能当参数传递（见<a href="05-factory-method.html">第 05 章</a>）。Python 里原型模式留下的价值，主要就是本章的这一层：<strong>新对象的内容由一个运行时的对象决定，而复制的规则由这个对象的类负责</strong>。</p>
 <h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
 <ul><li><strong>深拷贝的成本和对象的大小成正比。</strong> 对象引用得越多、越深，复制要做的事就越多。本例的计划很小，无所谓；如果模板里挂着大量数据，就要掂量一下。这里不给具体数字，因为它完全取决于对象的结构，需要时请用 <code>timeit</code> 实测。</li><li><strong>深拷贝不知道哪些东西不该复制，除非你告诉它。</strong> 打开的文件、数据库连接、线程锁，深拷贝时会直接抛出 <code>TypeError</code>；本例的动作库条目则相反，能复制，却不该复制。每加一个这种字段，都要想一想它在复制时应该怎样处理。</li><li><strong>共享是一个需要写下来的决定。</strong> <code>Movement.__deepcopy__</code> 返回 <code>self</code>，意味着任何人修改动作库条目都会影响所有计划。这正是本例想要的，但对读代码的人来说并不显眼，所以要加注释、写测试。</li><li><strong>循环引用是安全的。</strong> <code>deepcopy</code> 用 <code>memo</code> 字典记住已经复制过的对象，所以对象之间互相引用也不会无限复制下去。这一点不用自己处理。</li></ul>
