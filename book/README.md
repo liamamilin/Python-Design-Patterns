@@ -58,7 +58,7 @@ python -m examples.ch05_factory_method
 - [17 策略 Strategy](part-04/17-strategy.md)
 - [18 观察者 Observer](part-04/18-observer.md)
 - [19 命令 Command](part-04/19-command.md)
-- 20 状态 State（写作中）
+- [20 状态 State](part-04/20-state.md)
 - 21 模板方法 Template Method（写作中）
 - 22 责任链 Chain of Responsibility（写作中）
 - 23 迭代器 Iterator（写作中）
