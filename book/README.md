@@ -26,6 +26,8 @@ python -m unittest discover -s tests -v
 python -m examples.ch05_factory_method
 ```
 
+书中的示意图用 Mermaid 编写，在 GitHub 上会直接显示为图；在不支持 Mermaid 的阅读器里，会显示为图的源代码。
+
 书中的每段 Python 代码都原样摘自 `examples/` 目录下对应的文件。`python tools/check_book_code.py` 会检查这一点，它也包含在上面的测试里。
 
 ## 目录

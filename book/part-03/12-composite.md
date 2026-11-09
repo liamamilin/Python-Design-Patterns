@@ -129,6 +129,21 @@ def new_home() -> Group:
 
 再加一层嵌套、再加一个房间，都不需要修改任何遍历代码。
 
+整棵预算树的结构如下。每个节点都能回答 `cost()`，调用方不必知道它是项目还是组：
+
+```mermaid
+flowchart TD
+    home["Group 新房装修 36,000"] --> fee["Item 设计费 5,000"]
+    home --> living["Group 客厅 14,500"]
+    home --> kitchen["Group 厨房 16,500"]
+    living --> floor["Item 地板 8,000"]
+    living --> sofa["Item 沙发 6,500"]
+    kitchen --> cab["Item 橱柜 12,000"]
+    kitchen --> app["Group 电器（9 折）4,500"]
+    app --> hood["Item 油烟机 3,000"]
+    app --> stove["Item 灶具 2,000"]
+```
+
 ### 防止环
 
 树有一个隐含的要求：不能有环。如果不小心把“厨房”放进了它自己的子组“电器”里，`cost()` 会无限递归下去，最终抛出 `RecursionError`。`Group.add` 在加入子节点前检查这一点，发现会形成环就立即报错（测试 `test_no_cycles`）：

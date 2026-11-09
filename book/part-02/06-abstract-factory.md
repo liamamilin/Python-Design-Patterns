@@ -178,6 +178,28 @@ def services_for(mode: str, folder: Path) -> ReminderServices:
 
 两者并不冲突：简单工厂决定**用哪个家族**，抽象工厂负责**把这个家族的部件一件件交出来**。
 
+下图概括了三个家族：发送函数只认工厂，换一个工厂就换了一整套部件。
+
+```mermaid
+flowchart TB
+    client["send_reminders：只认工厂"]
+    subgraph live["LiveServices 正式家族"]
+        a1["FileSender"]
+        a2["FileSentLog"]
+    end
+    subgraph dry["DryRunServices 演练家族"]
+        b1["PrintSender"]
+        b2["ReadOnlySentLog"]
+    end
+    subgraph mem["MemoryServices 测试家族"]
+        c1["MemorySender"]
+        c2["MemorySentLog"]
+    end
+    client --> live
+    client -.-> dry
+    client -.-> mem
+```
+
 ### 角色对照
 
 | GoF 角色 | 本例 | 职责 |

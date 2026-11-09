@@ -184,6 +184,34 @@ class ReleaseNotes(Document):
 * 接入短信验证码
 ```
 
+下图是本例的结构：`Document` 固定流程，子类各自决定创建哪种渲染器。
+
+```mermaid
+classDiagram
+    class Document {
+        +build(items)
+        +select(items)
+        +create_renderer()*
+    }
+    class WeeklyNotes {
+        +create_renderer()
+    }
+    class ClientReport {
+        +create_renderer()
+    }
+    class Renderer {
+        <<protocol>>
+        +title(text)
+        +item(task)
+    }
+    Document <|-- WeeklyNotes
+    Document <|-- ClientReport
+    WeeklyNotes ..> MarkdownRenderer : 创建
+    ClientReport ..> HtmlRenderer : 创建
+    Renderer <|.. MarkdownRenderer
+    Renderer <|.. HtmlRenderer
+```
+
 ### 角色对照
 
 GoF 用四个角色描述这个模式，对应到代码里：

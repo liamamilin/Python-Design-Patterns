@@ -155,6 +155,18 @@ class Sink(Protocol):
         sink.write(result)
 ```
 
+重构之后，数据在工具里的流动如下：
+
+```mermaid
+flowchart LR
+    csv["CSV 文件"] -->|"read_csv_rows"| raw["RawRow：统一的中间形态"]
+    json["JSON 文件"] -->|"read_json_rows"| raw
+    raw --> v["validate：RULES 加 sku 重复检查"]
+    v --> res["Result"]
+    res --> rep["JsonReport"]
+    res --> db["SqliteSink"]
+```
+
 ## 没有用的模式
 
 这次重构用到了适配器的思想（读取函数）、简单工厂（`READERS` 字典）、策略（规则函数列表），全部是函数和字典，只有输出用了一个 `Protocol` 和两个小类。同样值得说清楚的，是**没有用**哪些模式，以及为什么：

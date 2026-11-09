@@ -124,6 +124,23 @@ class CheckedIn(State):
 - **一个状态的全部规则在一个类里。** “已确认的预订能做什么”，读 `Confirmed` 就够了。
 - **默认从“允许”变成了“拒绝”。** 以后加一个“暂停”状态，即使什么都不写，它也会拒绝所有操作，而不是悄悄放行（测试 `test_new_state_refuses_everything_by_default`）。忘了写，结果是用户看到一个“不允许”的提示，而不是会议室被错误释放。
 
+下图是预订的完整状态转换。图上没有画出的箭头，就是不允许的操作：
+
+```mermaid
+stateDiagram-v2
+    state "待审批" as Pending
+    state "已确认" as Confirmed
+    state "已签到" as CheckedIn
+    state "已取消" as Cancelled
+    state "已释放" as Released
+    [*] --> Pending
+    Pending --> Confirmed: approve
+    Pending --> Cancelled: cancel
+    Confirmed --> Cancelled: cancel
+    Confirmed --> CheckedIn: check_in（签到时间内）
+    Confirmed --> Released: expire（超过宽限期）
+```
+
 ### 角色对照
 
 | GoF 角色 | 本例 | 职责 |

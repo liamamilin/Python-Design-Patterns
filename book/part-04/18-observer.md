@@ -139,6 +139,22 @@ class Greenhouse:
 
 还有一点要说明：在“按订阅顺序通知”这条约定下，订阅者不应该**依赖**这个顺序。如果“风扇必须在湿帘之前打开”，这个先后关系就不该靠订阅的先后来保证，而应该由一个专门的对象（比如一个“降温控制器”）统一安排。订阅顺序只是为了让行为可预测、可测试。
 
+下图是读到 36℃ 时的一次通知，对照约定看快照的作用：
+
+```mermaid
+sequenceDiagram
+    participant S as 传感器循环
+    participant G as Greenhouse
+    participant A as FirstHeatAlert
+    participant L as DataLog
+    S->>G: record(36)
+    Note over G: 先给订阅者列表做快照
+    G->>A: update(36)
+    A-->>G: detach(self)，改的是原列表
+    G->>L: update(36)，快照里仍然有它
+    Note over G: 最后把收集到的错误用 ExceptionGroup 抛出
+```
+
 ### 角色对照
 
 | GoF 角色 | 本例 | 职责 |
