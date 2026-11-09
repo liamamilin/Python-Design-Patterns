@@ -70,7 +70,7 @@ python -m examples.ch05_factory_method
 ### 第五部分 · 回到 Python
 
 - [28 函数就是一种设计工具](part-05/28-functions-as-design-tools.md)
-- 29 类型与接口的轻量表达（写作中）
+- [29 类型与接口的轻量表达](part-05/29-types-and-interfaces.md)
 - 30 Python 装饰器、上下文管理器和生成器（写作中）
 - 31 简单代码与模式代码的取舍（写作中）
 
