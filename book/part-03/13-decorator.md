@@ -169,7 +169,7 @@ Python 的文件读写就是一个现成的例子。`open("chat.txt", "w", encod
 
 - **对象变多，调试要一层层剥开。** 出错时调用栈里是 `Masking.write → Truncating.write → ListWriter.write`，要知道哪一层出了问题，得一层一层地看。
 - **顺序很重要，而且类型系统检查不出来。** `Masking(Truncating(...))` 和 `Truncating(Masking(...))` 的类型完全一样，都是合法的 `Writer`。正确的顺序只能靠测试和集中的组装函数来保证。
-- **被包起来之后，内层对象特有的东西就看不见了。** 外面拿到的是一个 `Masking` 对象，它只有 `write`。想看 `Counting` 的 `count`，必须在组装时自己保留对那一层的引用，就像测试 `test_layers_stack_freely` 里的 `counter` 那样。
+- **被包起来之后，内层对象特有的东西就看不见了。** 外面拿到的是一个 `Masking` 对象，它对外承诺的只有 `write`。想看 `Counting` 的 `count`，必须在组装时自己保留对那一层的引用，就像测试 `test_layers_stack_freely` 里的 `counter` 那样。
 - **对象的身份变了。** 包装之后的对象不再是原来那个对象，`is` 比较和 `isinstance` 检查都可能不再成立。
 
 **什么时候不该用**：处理的组合是固定的，而且只有一两种。如果工单系统永远是“打码加截断”，一个按正确顺序写好的普通函数比三个装饰器类加一个组装函数简单得多。装饰器适用于**组合需要在运行时、按配置变化**的情况。
