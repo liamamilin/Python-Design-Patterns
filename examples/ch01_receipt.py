@@ -39,7 +39,7 @@ class MemberCard:
 
 
 def print_receipt(lines: list[dict], now: datetime, out: TextIO) -> None:
-    """副作用：把小票写到 out。时间和输出位置都由调用者传入。"""
+    """副作用：把小票写到 out。时间和输出位置都由调用方传入。"""
     out.write(f"时间：{now:%Y-%m-%d %H:%M}\n")
     for line in lines:
         subtotal = line["price"] * line["qty"]

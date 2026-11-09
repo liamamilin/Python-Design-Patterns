@@ -75,7 +75,7 @@ class MemberCard:
 
 ```python
 def print_receipt(lines: list[dict], now: datetime, out: TextIO) -> None:
-    """副作用：把小票写到 out。时间和输出位置都由调用者传入。"""
+    """副作用：把小票写到 out。时间和输出位置都由调用方传入。"""
     out.write(f"时间：{now:%Y-%m-%d %H:%M}\n")
     for line in lines:
         subtotal = line["price"] * line["qty"]
@@ -85,7 +85,7 @@ def print_receipt(lines: list[dict], now: datetime, out: TextIO) -> None:
 
 这个函数不返回任何结果，它的全部意义在于**对外部世界产生影响**：往屏幕、文件或打印机写字。这种影响叫作**副作用**。“当前时间”也是来自外部的数据，每次运行都不一样。
 
-这里有一个小小的设计选择：时间 `now` 和输出位置 `out` 都由调用者传进来，而不是在函数里直接调用 `datetime.now()`、直接 `print`。好处在测试时最明显：测试可以传入一个固定时间和一个内存里的 `io.StringIO`，然后逐字检查打印内容。如果函数自己去取当前时间、自己打印到屏幕，测试就很难写。
+这里有一个小小的设计选择：时间 `now` 和输出位置 `out` 都由调用方传进来，而不是在函数里直接调用 `datetime.now()`、直接 `print`。好处在测试时最明显：测试可以传入一个固定时间和一个内存里的 `io.StringIO`，然后逐字检查打印内容。如果函数自己去取当前时间、自己打印到屏幕，测试就很难写。
 
 > 把“会变的外部因素”变成参数，是一个比任何设计模式都更基础、也更常用的手法。后面你会反复看到它。
 

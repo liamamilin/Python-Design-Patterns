@@ -2,7 +2,7 @@
 
 - 及格规则只写一次，两个功能共用；
 - 姓名和分数放在同一个字典里，不再靠两个列表的位置对应；
-- 求中位数不再修改调用者的数据。
+- 求中位数不再修改调用方的数据。
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ def passed(subject: str, score: int) -> bool:
 
 
 def median(values: list[int]) -> float:
-    ordered = sorted(values)  # 返回新列表，不碰调用者的数据
+    ordered = sorted(values)  # 返回新列表，不碰调用方的数据
     middle = len(ordered) // 2
     if len(ordered) % 2 == 1:
         return float(ordered[middle])
