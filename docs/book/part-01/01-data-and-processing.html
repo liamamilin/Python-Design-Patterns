@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 01 章 从数据与处理理解程序 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：真实需求如何变成可以表达的数据与操作？“输入 → 处理 → 结果”什么时候不足以描述状态和副作用？ 在谈任何设计之前，我们先练一个基本功：看到一个需求，能说出程序里有哪些数据、谁在处理它们。后面所有章节讨论的“变化”和“组织”，">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part" open><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html" aria-current="page"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第一部分 · 为什么需要设计</p>
+<h1>第 01 章　从数据与处理理解程序</h1>
+<blockquote><p>本章要回答：真实需求如何变成可以表达的数据与操作？“输入 → 处理 → 结果”什么时候不足以描述状态和副作用？</p></blockquote>
+<p>在谈任何设计之前，我们先练一个基本功：看到一个需求，能说出程序里<strong>有哪些数据</strong>、<strong>谁在处理它们</strong>。后面所有章节讨论的“变化”和“组织”，都建立在这个基本功上。</p>
+<h2 id="一张小票">一张小票<a class="anchor" href="#一张小票" aria-label="本节链接">#</a></h2>
+<p>街角的咖啡店想让收银程序打印小票。一位顾客点了两杯拿铁、一个可颂。小票上要有每样东西的小计和总价。</p>
+<p>先别急着写代码。这个场景里，现实中的东西是“订单”：它由几行组成，每行有商品名、单价和数量。用 Python 最直接的表示是一个列表，列表里每一项是一个字典：</p>
+<div class="code" data-lang="Python"><pre><code><span class="c"># 数据：一张订单由若干行组成，每行记录商品名、单价（单位：分）和数量</span>
+order = [
+    {<span class="s">"name"</span>: <span class="s">"拿铁"</span>, <span class="s">"price"</span>: <span class="n">2800</span>, <span class="s">"qty"</span>: <span class="n">2</span>},
+    {<span class="s">"name"</span>: <span class="s">"可颂"</span>, <span class="s">"price"</span>: <span class="n">1500</span>, <span class="s">"qty"</span>: <span class="n">1</span>},
+]</code></pre></div>
+<p>注意单价写的是 <code>2800</code>，单位是<strong>分</strong>，不是 <code>28.0</code> 元。原因很现实：计算机里的小数大多不能精确表示，<code>0.1 + 0.2</code> 在 Python 里并不等于 <code>0.3</code>。收银程序算错一分钱也是错，所以金额用整数“分”来存，只在显示时换算成元。这是一个关于“数据怎么表示”的决定，它会影响后面所有的处理。</p>
+<h2 id="处理-从输入得到结果">处理：从输入得到结果<a class="anchor" href="#处理-从输入得到结果" aria-label="本节链接">#</a></h2>
+<p>有了数据，第一个处理是算总价：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">order_total</span>(lines: <span class="b">list</span>[<span class="b">dict</span>]) -&gt; <span class="b">int</span>:
+    <span class="s">"""处理：输入订单，输出总价（分）。不修改订单，也不依赖外部状态。"""</span>
+    <span class="k">return</span> <span class="b">sum</span>(line[<span class="s">"price"</span>] * line[<span class="s">"qty"</span>] <span class="k">for</span> line <span class="k">in</span> lines)
+
+
+<span class="k">def</span> <span class="f">format_yuan</span>(cents: <span class="b">int</span>) -&gt; <span class="b">str</span>:
+    <span class="k">return</span> <span class="s">f"¥{cents / 100:.2f}"</span></code></pre></div>
+<p><code>order_total(order)</code> 得到 <code>7100</code>，<code>format_yuan(7100)</code> 得到 <code>"¥71.00"</code>。</p>
+<p>这两个函数有一个很好的性质：<strong>只看输入，只给输出</strong>。同样的订单传进去，无论调用多少次、在什么时候调用，结果都一样；它们也不会偷偷修改传进来的列表。这类函数最容易理解，也最容易测试，只要比较输入和输出即可。</p>
+<p>这就是最朴素的程序模型：</p>
+<div class="code" data-lang="输出"><pre><code>输入（订单） → 处理（求和、格式化） → 结果（¥71.00）</code></pre></div>
+<p>很多小程序到这里就足够了。但只要再往前走一步，这个模型就开始不够用。</p>
+<h2 id="当-输入-处理-结果-不够用">当“输入 → 处理 → 结果”不够用<a class="anchor" href="#当-输入-处理-结果-不够用" aria-label="本节链接">#</a></h2>
+<h3 id="状态-结果取决于过去">状态：结果取决于过去<a class="anchor" href="#状态-结果取决于过去" aria-label="本节链接">#</a></h3>
+<p>咖啡店推出会员卡：每消费满 10 元积 1 分，积分会累计。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">MemberCard</span>:
+    <span class="s">"""会员卡记住累计积分：同样的调用，结果取决于之前发生过什么。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.points = <span class="n">0</span>
+
+    <span class="k">def</span> <span class="f">add_purchase</span>(<span class="b">self</span>, cents: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+        earned = cents // <span class="n">1000</span>  <span class="c"># 每满 10 元积 1 分</span>
+        <span class="b">self</span>.points += earned
+        <span class="k">return</span> <span class="b">self</span>.points</code></pre></div>
+<p>同一张卡，用同样的金额 <code>7100</code> 调用两次 <code>add_purchase</code>，第一次返回 <code>7</code>，第二次返回 <code>14</code>。输入完全一样，结果却不同，因为卡<strong>记住了</strong>之前发生的事。这份被记住的数据叫作<strong>状态</strong>。</p>
+<p>有状态并不是坏事，会员积分本来就需要累计。但它改变了我们读代码的方式：要知道一次调用的结果，不能只看参数，还要知道对象此刻处于什么状态、之前被谁改过。后面讲到状态模式（<a href="../part-04/20-state.html">第 20 章</a>）、备忘录（<a href="../part-04/25-memento.html">第 25 章</a>）时，我们处理的都是这类问题。</p>
+<h3 id="副作用与时间-程序碰到了外部世界">副作用与时间：程序碰到了外部世界<a class="anchor" href="#副作用与时间-程序碰到了外部世界" aria-label="本节链接">#</a></h3>
+<p>小票最终要打印出来，上面还要印下单时间：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">print_receipt</span>(lines: <span class="b">list</span>[<span class="b">dict</span>], now: datetime, out: TextIO) -&gt; <span class="k">None</span>:
+    <span class="s">"""副作用：把小票写到 out。时间和输出位置都由调用方传入。"""</span>
+    out.write(<span class="s">f"时间：{now:%Y-%m-%d %H:%M}\n"</span>)
+    <span class="k">for</span> line <span class="k">in</span> lines:
+        subtotal = line[<span class="s">"price"</span>] * line[<span class="s">"qty"</span>]
+        out.write(<span class="s">f"{line['name']} x{line['qty']}  {format_yuan(subtotal)}\n"</span>)
+    out.write(<span class="s">f"合计：{format_yuan(order_total(lines))}\n"</span>)</code></pre></div>
+<p>这个函数不返回任何结果，它的全部意义在于<strong>对外部世界产生影响</strong>：往屏幕、文件或打印机写字。这种影响叫作<strong>副作用</strong>。“当前时间”也是来自外部的数据，每次运行都不一样。</p>
+<p>这里有一个小小的设计选择：时间 <code>now</code> 和输出位置 <code>out</code> 都由调用方传进来，而不是在函数里直接调用 <code>datetime.now()</code>、直接 <code>print</code>。好处在测试时最明显：测试可以传入一个固定时间和一个内存里的 <code>io.StringIO</code>，然后逐字检查打印内容。如果函数自己去取当前时间、自己打印到屏幕，测试就很难写。</p>
+<blockquote><p>把“会变的外部因素”变成参数，是一个比任何设计模式都更基础、也更常用的手法。后面你会反复看到它。</p></blockquote>
+<h2 id="换一种数据表示">换一种数据表示<a class="anchor" href="#换一种数据表示" aria-label="本节链接">#</a></h2>
+<p>用字典表示订单行很方便，但有一个隐患：如果某处把 <code>"price"</code> 拼成了 <code>"prcie"</code>，程序直到真正去读这个键时才会报 <code>KeyError</code>，可能已经离写错的地方很远了。</p>
+<p>Python 的 <code>dataclass</code> 可以把“一行订单长什么样”写成明确的结构：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">OrderLine</span>:
+    name: <span class="b">str</span>
+    price: <span class="b">int</span>  <span class="c"># 单位：分</span>
+    qty: <span class="b">int</span>
+
+<span class="d">    @property</span>
+    <span class="k">def</span> <span class="f">subtotal</span>(<span class="b">self</span>) -&gt; <span class="b">int</span>:
+        <span class="k">return</span> <span class="b">self</span>.price * <span class="b">self</span>.qty
+
+
+<span class="k">def</span> <span class="f">total_of</span>(lines: <span class="b">list</span>[OrderLine]) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> <span class="b">sum</span>(line.subtotal <span class="k">for</span> line <span class="k">in</span> lines)</code></pre></div>
+<p>现在字段名写错会在创建对象时立刻报错；<code>frozen=True</code> 让订单行创建后不能被修改，读代码的人不用担心它在别处被悄悄改掉。“小计”这个计算也挪到了数据旁边。</p>
+<p>这是不是比字典“更好”？不一定。字典适合快速试验、数据来自 JSON 的场合；<code>dataclass</code> 适合结构稳定、会在很多地方传递的数据。<strong>数据的表示方式本身就是设计的一部分</strong>，它决定了哪些错误能早点被发现、哪些操作写起来顺手。<a href="03-python-building-blocks.html">第 03 章</a>会更系统地比较这些工具。</p>
+<h2 id="用五个问题读这段代码">用五个问题读这段代码<a class="anchor" href="#用五个问题读这段代码" aria-label="本节链接">#</a></h2>
+<p>全书反复使用五个诊断问题。拿小票程序试一遍：</p>
+<ol><li><strong>被表示的现实对象是什么？用什么数据表示？</strong> 订单和订单行；用字典列表或 <code>OrderLine</code> 列表，金额用整数分。</li><li><strong>哪些操作产生结果？会修改什么、输出什么？</strong> <code>order_total</code> 只计算不修改；<code>MemberCard.add_purchase</code> 修改积分；<code>print_receipt</code> 向外输出。</li><li><strong>什么可能变化？什么不应随之改变？</strong> 小票格式、积分规则可能变；总价的算法不应该因为换了打印格式而改变。</li><li><strong>最简单的方案在哪里遇到困难？有证据吗？</strong> 目前没有。这几段代码都短小清楚，没有理由引入任何模式。</li><li><strong>新方案把变化集中到了哪里？</strong> 还不需要新方案。</li></ol>
+<p>第 4 个问题的答案很重要：<strong>看出了数据和处理，不等于要马上加抽象</strong>。现在的代码就是好代码。</p>
+<h2 id="这和设计模式有什么关系">这和设计模式有什么关系<a class="anchor" href="#这和设计模式有什么关系" aria-label="本节链接">#</a></h2>
+<p>设计模式讨论的是：当需求变化时，数据、处理、状态和副作用应该怎样组织，才不至于每次改动都牵一发而动全身。如果连“这段代码里有什么数据、谁在处理、哪里有状态、哪里碰到外部世界”都说不清，就没法判断变化会落在哪里，也就谈不上选择模式。</p>
+<p>所以本书把“数据与处理”当作出发点。但它只是起点：真实程序还要面对时间、状态、副作用、外部系统、错误、性能和并发。我们会在具体章节里逐一遇到它们，而不是假装两个标签能解释一切。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>先识别数据：现实中的东西用什么结构表示，单位和精度怎么定。</li><li>再识别处理：哪些操作只是从输入算出结果，哪些会修改状态，哪些会碰到外部世界。</li><li>只看输入、只给输出的函数最容易理解和测试；有状态和副作用时，要额外知道“之前发生过什么”和“外部发生了什么”。</li><li>把时间、输出位置这类外部因素变成参数，是最基础的设计手法。</li><li>看清结构之后，如果没有出现真实困难，就保持简单。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>咖啡店想加一条规则：周三会员消费积分翻倍。</p>
+<ol><li>这条规则涉及哪些数据？“今天是不是周三”从哪里来？</li><li>你会把“是否周三”放进 <code>MemberCard</code> 里自己判断，还是作为参数传给 <code>add_purchase</code>？两种写法分别怎样测试？</li><li>这个改动需要引入新的类或设计模式吗？</li></ol>
+<p><strong>思路提示</strong>：如果让 <code>MemberCard</code> 自己调用 <code>datetime.now()</code>，测试就得等到周三，或者想办法伪造系统时间；把日期或倍率作为参数传入，测试只需要多传一个值。对这样一条规则，一个参数就够了，不需要任何模式。只有当积分规则变得很多、而且经常增减时，才值得考虑把“积分规则”单独组织起来（参见<a href="../part-04/17-strategy.html">第 17 章</a>“策略”）。</p>
+<p>完整代码：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch01_receipt.py" target="_blank" rel="noopener"><code>examples/ch01_receipt.py</code></a>，测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch01_receipt.py" target="_blank" rel="noopener"><code>tests/test_ch01_receipt.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../preface.html"><small>上一篇</small>前言</a><a class="next" href="../part-01/02-when-simple-code-resists-change.html"><small>下一篇</small>02 当简单代码开始难以改变</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-01/01-data-and-processing.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#一张小票">一张小票</a></li><li><a href="#处理-从输入得到结果">处理：从输入得到结果</a></li><li><a href="#当-输入-处理-结果-不够用">当“输入 → 处理 → 结果”不够用</a></li><li><a href="#换一种数据表示">换一种数据表示</a></li><li><a href="#用五个问题读这段代码">用五个问题读这段代码</a></li><li><a href="#这和设计模式有什么关系">这和设计模式有什么关系</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

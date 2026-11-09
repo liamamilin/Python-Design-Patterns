@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 02 章 当简单代码开始难以改变 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：重复的判断、共享的变化、意外的影响和复制粘贴，是怎样一步步出现的？ 很少有代码是一开始就写坏的。更常见的情况是：第一版简洁清楚，之后每次需求变化，开发者都做了“在当时看来最合理”的小改动。几轮之后，代码里出现了错误，而且没有哪一">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part" open><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html" aria-current="page"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第一部分 · 为什么需要设计</p>
+<h1>第 02 章　当简单代码开始难以改变</h1>
+<blockquote><p>本章要回答：重复的判断、共享的变化、意外的影响和复制粘贴，是怎样一步步出现的？</p></blockquote>
+<p>很少有代码是一开始就写坏的。更常见的情况是：第一版简洁清楚，之后每次需求变化，开发者都做了“在当时看来最合理”的小改动。几轮之后，代码里出现了错误，而且没有哪一步改动明显是错的。</p>
+<p>这一章跟踪一个真实感很强的小程序，看困难究竟是怎样长出来的。我们要练的是<strong>指出具体哪几行代码让修改变难</strong>，而不是笼统地说“耦合太高”“扩展性差”。</p>
+<h2 id="第一版-一份数学成绩单">第一版：一份数学成绩单<a class="anchor" href="#第一版-一份数学成绩单" aria-label="本节链接">#</a></h2>
+<p>班主任想把数学成绩整理成一份名单，标出每个人是否及格。及格线 60 分。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">class_report</span>(names: <span class="b">list</span>[<span class="b">str</span>], scores: <span class="b">list</span>[<span class="b">int</span>]) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    lines = []
+    <span class="k">for</span> name, score <span class="k">in</span> <span class="b">zip</span>(names, scores):
+        result = <span class="s">"及格"</span> <span class="k">if</span> score &gt;= <span class="n">60</span> <span class="k">else</span> <span class="s">"不及格"</span>
+        lines.append(<span class="s">f"{name} {score} {result}"</span>)
+    <span class="k">return</span> lines</code></pre></div>
+<p><code>class_report(["小林", "小周"], [72, 48])</code> 得到 <code>["小林 72 及格", "小周 48 不及格"]</code>。数据是两份列表：姓名和分数，按位置一一对应；处理是逐个判断是否及格。</p>
+<p>这段代码没有任何问题。接下来的四次变化，每一次都很普通。</p>
+<h2 id="四次普通的变化">四次普通的变化<a class="anchor" href="#四次普通的变化" aria-label="本节链接">#</a></h2>
+<p><strong>变化一：给家长发通知。</strong> 学校要求给每位学生的家长发一句成绩通知。开发者小王打开 <code>class_report</code>，把及格判断复制出来，写了 <code>parent_notice</code>。复制粘贴是最快的办法，而且两处代码现在完全一致。</p>
+<p><strong>变化二：物理及格线是 55 分。</strong> 成绩单要支持多个科目，物理的及格线比较低。小王在 <code>class_report</code> 里加了一个 <code>if subject == "物理"</code>，然后想起家长通知里也有一份同样的判断，于是也改了。改一条规则要动两个地方，但他都记得。</p>
+<p><strong>变化三：化学及格线是 50 分。</strong> 一个月后，化学也调整了及格线。这次是同事小李改的。他找到了 <code>class_report</code>，加上了化学的分支。他不知道家长通知里还有一份复制品。</p>
+<p><strong>变化四：成绩单开头显示中位数。</strong> 小李又写了一个求中位数的函数，在成绩单第一行显示出来。</p>
+<p>四次改动之后，代码是这样的：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">class_report</span>(subject: <span class="b">str</span>, names: <span class="b">list</span>[<span class="b">str</span>], scores: <span class="b">list</span>[<span class="b">int</span>]) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    lines = [<span class="s">f"{subject} 中位数：{median(scores)}"</span>]
+    <span class="k">for</span> name, score <span class="k">in</span> <span class="b">zip</span>(names, scores):
+        <span class="k">if</span> subject == <span class="s">"化学"</span>:
+            passed = score &gt;= <span class="n">50</span>
+        <span class="k">elif</span> subject == <span class="s">"物理"</span>:
+            passed = score &gt;= <span class="n">55</span>
+        <span class="k">else</span>:
+            passed = score &gt;= <span class="n">60</span>
+        lines.append(<span class="s">f"{name} {score} {'及格' if passed else '不及格'}"</span>)
+    <span class="k">return</span> lines
+
+
+<span class="k">def</span> <span class="f">parent_notice</span>(subject: <span class="b">str</span>, name: <span class="b">str</span>, score: <span class="b">int</span>) -&gt; <span class="b">str</span>:
+    <span class="c"># 这段及格判断是从 class_report 复制过来的</span>
+    <span class="k">if</span> subject == <span class="s">"物理"</span>:
+        passed = score &gt;= <span class="n">55</span>
+    <span class="k">else</span>:
+        passed = score &gt;= <span class="n">60</span>
+    result = <span class="s">"已及格"</span> <span class="k">if</span> passed <span class="k">else</span> <span class="s">"未及格，请留意"</span>
+    <span class="k">return</span> <span class="s">f"{name} 家长：本次{subject} {score} 分，{result}。"</span></code></pre></div>
+<p>每一处单独看都说得过去。但这份代码里已经藏着两个真实的错误。</p>
+<h2 id="错误一-两处结论相反">错误一：两处结论相反<a class="anchor" href="#错误一-两处结论相反" aria-label="本节链接">#</a></h2>
+<p>小周化学考了 52 分。成绩单上写着：</p>
+<div class="code" data-lang="输出"><pre><code>小周 52 及格</code></pre></div>
+<p>发给家长的通知却是：</p>
+<div class="code" data-lang="输出"><pre><code>小周 家长：本次化学 52 分，未及格，请留意。</code></pre></div>
+<p>原因一眼就能看到：“及格线是多少”这条规则写在两个地方，变化三只改了其中一个。这就是<strong>共享的变化</strong>：同一条业务规则被两个功能使用，规则一变，两处都得跟着变；而代码里没有任何东西提醒你“这里还有一份”。</p>
+<p>复制粘贴本身不是罪过。问题在于被复制的东西是<strong>会变的规则</strong>。如果复制的是一段永远不会变的格式代码，影响就小得多。</p>
+<h2 id="错误二-姓名和分数对不上">错误二：姓名和分数对不上<a class="anchor" href="#错误二-姓名和分数对不上" aria-label="本节链接">#</a></h2>
+<p>更隐蔽的是第二个错误。生成数学成绩单，实际输出是：</p>
+<div class="code" data-lang="输出"><pre><code>数学 中位数：68.5
+小林 48 不及格
+小周 65 及格
+小吴 72 及格
+小郑 91 及格</code></pre></div>
+<p>中位数是对的，但名单错了：小林考了 72，小周才是 48。罪魁祸首在 <code>median</code> 里：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">median</span>(values: <span class="b">list</span>[<span class="b">int</span>]) -&gt; <span class="b">float</span>:
+    values.sort()  <span class="c"># 就地排序：调用方手里的列表也被改了</span>
+    middle = <span class="b">len</span>(values) // <span class="n">2</span>
+    <span class="k">if</span> <span class="b">len</span>(values) % <span class="n">2</span> == <span class="n">1</span>:
+        <span class="k">return</span> <span class="b">float</span>(values[middle])
+    <span class="k">return</span> (values[middle - <span class="n">1</span>] + values[middle]) / <span class="n">2</span></code></pre></div>
+<p><code>list.sort()</code> 会<strong>就地</strong>修改列表。<code>class_report</code> 把自己的 <code>scores</code> 传给 <code>median</code>，回来时这份列表已经从小到大排好了，而 <code>names</code> 还是原来的顺序。两份靠位置对应的列表，就这样错开了。</p>
+<p>这是一种<strong>意外影响</strong>：一个看起来只是“算一个数”的函数，悄悄修改了别人的数据。它之所以造成这么大的伤害，还因为第一版选择了“两个列表按位置对应”来表示数据。这种表示方式本身就很脆弱，任何一方被单独排序、插入或删除，对应关系就断了。</p>
+<h2 id="回头数一数-困难具体在哪里">回头数一数：困难具体在哪里<a class="anchor" href="#回头数一数-困难具体在哪里" aria-label="本节链接">#</a></h2>
+<p>把问题落实到代码上：</p>
+<div class="table"><table><thead><tr><th>困难</th><th>出现在哪里</th><th>后果</th></tr></thead><tbody><tr><td>判断重复</td><td><code>class_report</code> 和 <code>parent_notice</code> 各有一串 <code>if subject == ...</code></td><td>每加一科，要改两处</td></tr><tr><td>复制粘贴了会变的规则</td><td><code>parent_notice</code> 里的及格判断</td><td>变化三只改了一处，结论相反</td></tr><tr><td>意外影响</td><td><code>median</code> 里的 <code>values.sort()</code></td><td>调用方的列表被改，名单错位</td></tr><tr><td>脆弱的数据表示</td><td>姓名和分数分成两个列表</td><td>只要一方顺序变了，对应关系就断</td></tr></tbody></table></div>
+<p>注意这张表里没有“耦合太高”这种词。每一行都能指到具体的代码，也都能写成一个会失败的测试（见 <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch02_report.py" target="_blank" rel="noopener"><code>tests/test_ch02_report.py</code></a> 中的 <code>BeforeRefactorBugsTest</code>）。<strong>能写出失败测试的困难，才是值得动手解决的困难。</strong></p>
+<h2 id="修好它-只用最普通的手段">修好它：只用最普通的手段<a class="anchor" href="#修好它-只用最普通的手段" aria-label="本节链接">#</a></h2>
+<p>这些问题都不需要设计模式，用最基础的重构就够了：</p>
+<div class="code" data-lang="Python"><pre><code>PASS_MARKS = {<span class="s">"物理"</span>: <span class="n">55</span>, <span class="s">"化学"</span>: <span class="n">50</span>}
+DEFAULT_PASS_MARK = <span class="n">60</span>
+
+
+<span class="k">def</span> <span class="f">passed</span>(subject: <span class="b">str</span>, score: <span class="b">int</span>) -&gt; <span class="b">bool</span>:
+    <span class="k">return</span> score &gt;= PASS_MARKS.get(subject, DEFAULT_PASS_MARK)
+
+
+<span class="k">def</span> <span class="f">median</span>(values: <span class="b">list</span>[<span class="b">int</span>]) -&gt; <span class="b">float</span>:
+    ordered = <span class="b">sorted</span>(values)  <span class="c"># 返回新列表，不碰调用方的数据</span>
+    middle = <span class="b">len</span>(ordered) // <span class="n">2</span>
+    <span class="k">if</span> <span class="b">len</span>(ordered) % <span class="n">2</span> == <span class="n">1</span>:
+        <span class="k">return</span> <span class="b">float</span>(ordered[middle])
+    <span class="k">return</span> (ordered[middle - <span class="n">1</span>] + ordered[middle]) / <span class="n">2</span></code></pre></div>
+<p>三处改动各自对应一个困难：</p>
+<ol><li><strong>把规则放到一个地方。</strong> 各科及格线变成一个字典 <code>PASS_MARKS</code>，判断变成一个函数 <code>passed</code>。成绩单和家长通知都调用它。以后再加“生物 58 分”，只改字典里的一行。</li><li><strong>不修改别人的数据。</strong> <code>sorted(values)</code> 返回一个新列表，调用方的列表保持原样。</li><li><strong>换一种更稳的数据表示。</strong> 姓名和分数放进同一个字典，例如 <code>{"小林": 72, "小周": 48, ...}</code>，对应关系由数据结构本身保证，不再依赖“第几个”。</li></ol>
+<p>改完之后，两个功能变成这样：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">class_report</span>(subject: <span class="b">str</span>, scores: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">int</span>]) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    lines = [<span class="s">f"{subject} 中位数：{median(list(scores.values()))}"</span>]
+    <span class="k">for</span> name, score <span class="k">in</span> scores.items():
+        lines.append(<span class="s">f"{name} {score} {'及格' if passed(subject, score) else '不及格'}"</span>)
+    <span class="k">return</span> lines
+
+
+<span class="k">def</span> <span class="f">parent_notice</span>(subject: <span class="b">str</span>, name: <span class="b">str</span>, score: <span class="b">int</span>) -&gt; <span class="b">str</span>:
+    result = <span class="s">"已及格"</span> <span class="k">if</span> passed(subject, score) <span class="k">else</span> <span class="s">"未及格，请留意"</span>
+    <span class="k">return</span> <span class="s">f"{name} 家长：本次{subject} {score} 分，{result}。"</span></code></pre></div>
+<p>现在小周化学 52 分，两边都说“及格”；数学名单也恢复正确。</p>
+<h2 id="什么时候这些手段不够了">什么时候这些手段不够了<a class="anchor" href="#什么时候这些手段不够了" aria-label="本节链接">#</a></h2>
+<p>上面用的是函数、字典和不修改输入，这是日常维护中最常用、也最该先用的工具。大多数“代码开始难改”的问题，到这一步就解决了。</p>
+<p>设计模式通常出现在<strong>这些手段开始不够用</strong>的时候。比如：</p>
+<ul><li>及格规则不再只是一个分数线。体育只看“合格/不合格”，某些科目要算平时成绩加权，补考规则又不一样。规则从“一个数字”变成了“一段行为”，字典里放数字就不够了。这时值得考虑<a href="../part-04/17-strategy.html">第 17 章</a>的“策略”，或者先试试“字典里放函数”。</li><li>成绩单要输出成网页、表格、短信等多种格式，而且格式还在增加。这时要考虑“生成什么样的输出对象”应该由谁决定（<a href="../part-02/05-factory-method.html">第 05 章</a>“工厂方法”）。</li><li>成绩一录入，就有成绩单、家长通知、教务统计等好几个功能需要知道。这时可能需要<a href="../part-04/18-observer.html">第 18 章</a>的“观察者”。</li></ul>
+<p>但现在，这些需求都还没有出现。为它们提前准备抽象，只会让现在的代码更难读。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>代码变难改通常不是一次坏决定造成的，而是一连串合理的小改动累积出来的。</li><li>常见的困难有：重复的判断、复制了会变的规则、修改了别人数据的函数、依赖位置对应的脆弱数据结构。</li><li>描述困难时，要指到具体代码，最好能写出一个会失败的测试。</li><li>先用最普通的手段：提取函数、把规则集中成数据、不修改输入、换更稳的数据表示。</li><li>只有当规则从“数据”变成“行为”，或者变化的种类不断增加时，才轮到设计模式。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>班主任又提了一个需求：成绩单要按分数从高到低排列。</p>
+<ol><li>在修好的版本里，你会怎样实现？会不会再次碰到“修改了调用方数据”的问题？</li><li>现在有人提议：“为了将来支持各种排序方式，我们先写一个 <code>SortStrategy</code> 抽象类，再写 <code>ByScoreDesc</code>、<code>ByName</code> 两个子类。”你同意吗？</li></ol>
+<p><strong>思路提示</strong>：<code>sorted(scores.items(), key=lambda item: item[1], reverse=True)</code> 一行就能完成，而且返回新列表。目前只有一种排序需求，<code>key</code> 参数本身就是“可替换的排序规则”。为了“将来可能有”的需求提前建一套类，不划算。如果以后排序方式真的变多，而且要由用户在界面上选择，再把几个 <code>key</code> 函数放进一个字典也不迟。</p>
+<p>完整代码：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch02_report_v1.py" target="_blank" rel="noopener"><code>examples/ch02_report_v1.py</code></a>（第一版）、<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch02_report_before.py" target="_blank" rel="noopener"><code>examples/ch02_report_before.py</code></a>（四次变化之后）、<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch02_report_after.py" target="_blank" rel="noopener"><code>examples/ch02_report_after.py</code></a>（重构之后），测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch02_report.py" target="_blank" rel="noopener"><code>tests/test_ch02_report.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-01/01-data-and-processing.html"><small>上一篇</small>01 从数据与处理理解程序</a><a class="next" href="../part-01/03-python-building-blocks.html"><small>下一篇</small>03 Python 组织程序的基本工具</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-01/02-when-simple-code-resists-change.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#第一版-一份数学成绩单">第一版：一份数学成绩单</a></li><li><a href="#四次普通的变化">四次普通的变化</a></li><li><a href="#错误一-两处结论相反">错误一：两处结论相反</a></li><li><a href="#错误二-姓名和分数对不上">错误二：姓名和分数对不上</a></li><li><a href="#回头数一数-困难具体在哪里">回头数一数：困难具体在哪里</a></li><li><a href="#修好它-只用最普通的手段">修好它：只用最普通的手段</a></li><li><a href="#什么时候这些手段不够了">什么时候这些手段不够了</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

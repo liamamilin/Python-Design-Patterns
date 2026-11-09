@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 31 章 简单代码与模式代码的取舍 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：面对同一个需求，一个直白的函数和一套“灵活”的结构，怎样比较？比较的依据是什么，而不是什么？ 前面的每一章都在问“什么时候不该用”。这一章把这些零散的判断收拢起来：用一个小例子，把两种写法放在一起，从可读性、变化的位置、状态、副">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html" aria-current="page"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第五部分 · 回到 Python</p>
+<h1>第 31 章　简单代码与模式代码的取舍</h1>
+<blockquote><p>本章要回答：面对同一个需求，一个直白的函数和一套“灵活”的结构，怎样比较？比较的依据是什么，而不是什么？</p></blockquote>
+<p>前面的每一章都在问“什么时候不该用”。这一章把这些零散的判断收拢起来：用一个小例子，把两种写法放在一起，从可读性、变化的位置、状态、副作用、测试和团队维护几个角度逐一比较。目的不是得出“简单永远更好”或“模式永远更好”，而是练习<strong>怎样比较</strong>。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p><a href="../part-01/01-data-and-processing.html">第 01 章</a>的练习里说过：积分规则变得很多、而且经常增减时，才值得把它们单独组织起来。现在，一家连锁咖啡店的积分规则是这样的：</p>
+<ul><li>每消费 1 元得 1 分；</li><li>周三积分翻倍；</li><li>金卡会员积分 1.5 倍；</li><li>生日当月每笔订单额外送 100 分，不参与倍数。</li></ul>
+<h2 id="写法一-一个函数">写法一：一个函数<a class="anchor" href="#写法一-一个函数" aria-label="本节链接">#</a></h2>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">points_simple</span>(o: Order) -&gt; <span class="b">int</span>:
+    points = o.amount // <span class="n">100</span>  <span class="c"># 每消费 1 元得 1 分</span>
+    <span class="k">if</span> o.day.weekday() == <span class="n">2</span>:
+        points *= <span class="n">2</span>  <span class="c"># 周三双倍</span>
+    <span class="k">if</span> o.tier == <span class="s">"金卡"</span>:
+        points = points * <span class="n">3</span> // <span class="n">2</span>  <span class="c"># 金卡 1.5 倍</span>
+    <span class="k">if</span> o.day.month == o.birthday_month:
+        points += <span class="n">100</span>  <span class="c"># 生日月额外送 100 分，不参与倍数</span>
+    <span class="k">return</span> points</code></pre></div>
+<h2 id="写法二-一组规则">写法二：一组规则<a class="anchor" href="#写法二-一组规则" aria-label="本节链接">#</a></h2>
+<p>每条规则是一个函数，接收当前积分和订单，返回调整后的积分（<a href="../part-04/17-strategy.html">第 17 章</a>的策略、<a href="28-functions-as-design-tools.html">第 28 章</a>的函数写法）：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">wednesday_double</span>(points: <span class="b">int</span>, o: Order) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> points * <span class="n">2</span> <span class="k">if</span> o.day.weekday() == <span class="n">2</span> <span class="k">else</span> points
+
+
+<span class="k">def</span> <span class="f">gold_card</span>(points: <span class="b">int</span>, o: Order) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> points * <span class="n">3</span> // <span class="n">2</span> <span class="k">if</span> o.tier == <span class="s">"金卡"</span> <span class="k">else</span> points
+
+
+<span class="k">def</span> <span class="f">birthday_bonus</span>(points: <span class="b">int</span>, o: Order) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> points + <span class="n">100</span> <span class="k">if</span> o.day.month == o.birthday_month <span class="k">else</span> points
+
+
+RULES: <span class="b">list</span>[Rule] = [wednesday_double, gold_card, birthday_bonus]
+
+
+<span class="k">def</span> <span class="f">points_rules</span>(o: Order, rules: <span class="b">list</span>[Rule] = RULES) -&gt; <span class="b">int</span>:
+    points = o.amount // <span class="n">100</span>
+    <span class="k">for</span> rule <span class="k">in</span> rules:
+        points = rule(points, o)
+    <span class="k">return</span> points</code></pre></div>
+<p>对四个有代表性的订单，两种写法给出完全相同的积分（测试 <code>test_both_versions_agree</code>）。功能上没有区别。区别在别处。</p>
+<h2 id="逐项比较">逐项比较<a class="anchor" href="#逐项比较" aria-label="本节链接">#</a></h2>
+<h3 id="可读性">可读性<a class="anchor" href="#可读性" aria-label="本节链接">#</a></h3>
+<p>读写法一，从上到下十行，规则的全貌和<strong>它们之间的关系</strong>一目了然：先翻倍，再乘 1.5，最后加生日分。注释里那句“不参与倍数”，正是靠代码的先后顺序来实现的。</p>
+<p>读写法二，要先看 <code>points_rules</code> 的循环，再分别看三个规则函数，最后看 <code>RULES</code> 列表的顺序，才能拼出同样的全貌。每条规则单独看更清楚，整体反而要多跳几处。</p>
+<p><strong>判断依据</strong>：读者需要理解的是“每一条规则”，还是“所有规则合起来的结果”？</p>
+<h3 id="变化的位置">变化的位置<a class="anchor" href="#变化的位置" aria-label="本节链接">#</a></h3>
+<p>假设要加一条“新会员首单送 50 分”。</p>
+<ul><li>写法一：在函数里加一个 <code>if</code>，找到合适的位置。</li><li>写法二：写一个新函数，加进列表（测试 <code>test_adding_a_rule_is_one_line_in_the_list</code>）。</li></ul>
+<p>假设要在某次活动期间<strong>临时关掉</strong>“周三双倍”。</p>
+<ul><li>写法一：加一个开关参数，或者临时改代码，活动结束后再改回来。</li><li>写法二：传一个不含这条规则的列表即可，不需要改任何已有代码（测试 <code>test_turning_a_rule_off</code>）。</li></ul>
+<p><strong>判断依据</strong>：规则是偶尔由程序员修改，还是经常按活动、按门店、按时间段组合？如果是后者，写法二的“规则是数据”就很有价值，规则列表甚至可以从配置中读取。</p>
+<h3 id="隐藏的依赖-顺序">隐藏的依赖：顺序<a class="anchor" href="#隐藏的依赖-顺序" aria-label="本节链接">#</a></h3>
+<p>写法二有一个写法一没有的风险。规则之间存在<strong>顺序依赖</strong>：“生日分不参与倍数”要求 <code>birthday_bonus</code> 排在两条倍数规则之后。在写法一里，这个顺序就是代码本身，一眼可见；在写法二里，它变成了一个列表中元素的排列，而列表看起来像是“可以随意调整的配置”。</p>
+<p>如果有人觉得“生日优惠比较重要，放在最前面”，把列表改成 <code>[birthday_bonus, gold_card, wednesday_double]</code>，同一笔订单的积分从 484 变成了 684，没有任何错误提示。测试 <code>test_rule_order_changes_the_result</code> 穷举了三条规则的六种排列，得到了<strong>四种不同的积分</strong>。</p>
+<p>这是“灵活”的典型代价：<strong>结构变得可以自由组合之后，组合本身就成了一个可能出错的地方。</strong> 解决办法有几种：在列表旁边写清楚顺序约束，并用测试固定；把规则分成“倍数类”和“加分类”两组，结构上保证加分在最后；或者干脆承认规则之间的关系比较紧，回到写法一。</p>
+<p><strong>判断依据</strong>：规则之间是互相独立，还是彼此有先后、有交互？越独立，越适合拆开；越纠缠，越适合写在一起。</p>
+<h3 id="状态和副作用">状态和副作用<a class="anchor" href="#状态和副作用" aria-label="本节链接">#</a></h3>
+<p>两种写法都是纯计算：输入订单，输出积分，不修改任何东西，不依赖当前时间（日期是订单的一部分）。在这个维度上它们没有差别，也都很容易测试。</p>
+<p>如果规则开始依赖外部状态，比如“本月已经送过生日分的会员不再送”，就需要查询历史记录。这时写法一的函数会多出一个参数或者一次数据库查询；写法二的规则函数签名要扩展，所有规则都要跟着改。<strong>副作用和外部状态的出现，往往比规则数量的增加更能改变设计的选择。</strong></p>
+<h3 id="测试">测试<a class="anchor" href="#测试" aria-label="本节链接">#</a></h3>
+<p>两种写法都容易测试。差别在于测试的<strong>粒度</strong>：写法二可以单独测试每一条规则，也可以测试任意规则组合；写法一只能通过构造不同的订单，间接覆盖每一个分支。规则很多、组合复杂时，写法二的测试更有针对性。</p>
+<h3 id="团队维护">团队维护<a class="anchor" href="#团队维护" aria-label="本节链接">#</a></h3>
+<p>谁会修改积分规则？</p>
+<ul><li>如果是同一个开发者，偶尔调整：写法一更直接，改一处，看一处。</li><li>如果是多个团队分别负责不同的活动规则，或者运营人员通过后台配置：写法二让每条规则可以独立开发、独立上线，也更容易对接配置界面（更进一步，就是<a href="../part-04/27-interpreter.html">第 27 章</a>的规则语言）。</li></ul>
+<h2 id="汇总">汇总<a class="anchor" href="#汇总" aria-label="本节链接">#</a></h2>
+<div class="table"><table><thead><tr><th>维度</th><th>写法一：一个函数</th><th>写法二：一组规则</th><th>本例的判断依据</th></tr></thead><tbody><tr><td>可读性</td><td>全貌和关系一眼可见</td><td>单条规则清楚，全貌要拼</td><td>读者关心整体还是单条</td></tr><tr><td>增加规则</td><td>改函数</td><td>加函数、加一项</td><td>差不多</td></tr><tr><td>按场合组合、开关规则</td><td>要加参数或改代码</td><td>换一个列表即可</td><td>组合是否频繁</td></tr><tr><td>规则间的顺序</td><td>写在代码里，显式</td><td>藏在列表顺序里，容易被误改</td><td>规则是否互相独立</td></tr><tr><td>测试</td><td>按订单间接覆盖</td><td>可以单测每条规则和组合</td><td>规则多少、组合多少</td></tr><tr><td>团队协作</td><td>适合一个人维护</td><td>适合多人、多团队、配置化</td><td>谁在改，多频繁</td></tr></tbody></table></div>
+<p>对<strong>本例当前的需求</strong>（四条规则，由一个开发者维护，很少变化，规则之间有顺序关系），<strong>写法一更合适</strong>。如果下个季度市场部门要求“每个门店可以自己选择参加哪些活动”，结论就会改变。</p>
+<h2 id="几个不该用的比较依据">几个不该用的比较依据<a class="anchor" href="#几个不该用的比较依据" aria-label="本节链接">#</a></h2>
+<ul><li><strong>“这样更面向对象”或“这是设计模式”。</strong> 名字不是理由。要说出它解决了哪个具体的困难。</li><li><strong>“以后可能会需要”。</strong> 为想象中的需求付出现在的复杂度，往往不划算。等变化真的出现时再重构，那时你也更清楚变化的方向（<a href="../part-01/04-choosing-a-pattern.html">第 04 章</a>的检查清单里也有这一条）。</li><li><strong>代码行数。</strong> 写法二多几行，不说明它更差；写法一更短，也不说明它更好。要看的是理解和修改它需要付出的代价。</li><li><strong>“别人都这么写”。</strong> 别人的项目有别人的变化方向。</li></ul>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>比较两种写法，不看名字和行数，看它们在可读性、变化的位置、规则之间的关系、状态与副作用、测试粒度和团队协作上的差异。</li><li>“灵活”的结构会引入新的出错方式，比如顺序依赖被藏进了配置；越灵活，越需要测试和说明来约束组合。</li><li>规则互相独立、需要频繁组合、由多人维护时，把它们拆开更好；规则之间关系紧密、由一人维护、很少变化时，写在一起更好。</li><li>结论取决于当前的需求。需求变了，结论可以变；重构的前提是有测试保证行为不变。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>市场部提出三个新需求：</p>
+<ol><li>每个门店可以自己决定参加哪些积分活动；</li><li>新增“雨天积分加倍”，需要查询当天的天气；</li><li>积分规则的修改要有记录，出了问题能查到“某天某笔订单是按哪些规则算的”。</li></ol>
+<p>对每一个需求，分别回答：它更有利于写法一还是写法二？为什么？三个需求加在一起之后，你会怎样设计？</p>
+<p><strong>思路提示</strong>：需求 1 是“按场合组合规则”，明显有利于写法二：每个门店有自己的规则列表，可以存在配置里。需求 2 引入了外部数据（天气），两种写法都要把天气作为输入传进来（不要让规则函数自己去查网络，参见<a href="../part-01/01-data-and-processing.html">第 01 章</a>把外部输入推到最外层的做法）；写法二需要给所有规则函数加一个参数，或者把天气放进订单数据。需求 3 有利于写法二：每条规则有名字，计算时可以把“依次应用了哪些规则、每一步的积分”记录下来，写法一很难做到这一点。三个需求加在一起，写法二的收益已经超过了它的代价，但要同时解决顺序依赖的问题，比如把规则分成“倍数”和“加分”两个阶段。这正是“需求变了，结论也会变”的例子。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch31_points.py" target="_blank" rel="noopener"><code>examples/ch31_points.py</code></a>：两种写法</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch31_tradeoffs.py" target="_blank" rel="noopener"><code>tests/test_ch31_tradeoffs.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-05/30-decorators-context-managers-generators.html"><small>上一篇</small>30 Python 装饰器、上下文管理器和生成器</a><a class="next" href="../part-06/32-first-version.html"><small>下一篇</small>32 第一次实现：不使用模式</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-05/31-simple-versus-pattern-code.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#写法一-一个函数">写法一：一个函数</a></li><li><a href="#写法二-一组规则">写法二：一组规则</a></li><li><a href="#逐项比较">逐项比较</a></li><li><a href="#汇总">汇总</a></li><li><a href="#几个不该用的比较依据">几个不该用的比较依据</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

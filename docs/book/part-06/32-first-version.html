@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 32 章 第一次实现：不使用模式 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：面对一个真实的小工具，怎样先让最简单的版本正确地运行，并用测试把它固定下来？哪些地方现在就值得认真对待，哪些可以等一等？ 最后一部分用一个贯穿三章的案例，把前面的选择放回真实项目里。这一章故意不使用任何模式：先把一种格式的导入做">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html" aria-current="page"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第六部分 · 把选择放回真实项目</p>
+<h1>第 32 章　第一次实现：不使用模式</h1>
+<blockquote><p>本章要回答：面对一个真实的小工具，怎样先让最简单的版本正确地运行，并用测试把它固定下来？哪些地方现在就值得认真对待，哪些可以等一等？</p></blockquote>
+<p>最后一部分用一个贯穿三章的案例，把前面的选择放回真实项目里。这一章故意<strong>不使用任何模式</strong>：先把一种格式的导入做对，写好测试。下一章再根据真实出现的变化，有选择地重构。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一家卖茶叶的小网店，每周从供应商那里收到一份价目表，是 Excel 导出的 CSV 文件：</p>
+<div class="code" data-lang="输出"><pre><code>sku,name,price,stock
+TE-1001,西湖龙井 250g,128.00,40
+TE-1002,碧螺春 250g,96.5,25
+TE-1003,白毫银针 100g,-3,10</code></pre></div>
+<p>店主想要一个命令行小工具：读入这份文件，检查每一行是否合理，把合格的商品整理出来，并给出一份报告：导入了几个、拒绝了几个、合格商品的库存总值是多少、每个被拒绝的行错在哪里。</p>
+<p>“合理”的标准是：</p>
+<ul><li><code>sku</code> 和 <code>name</code> 不能为空；同一个 <code>sku</code> 不能出现两次；</li><li>价格必须是大于 0 的数字，最多两位小数；</li><li>库存必须是非负整数。</li></ul>
+<h2 id="先定数据的样子">先定数据的样子<a class="anchor" href="#先定数据的样子" aria-label="本节链接">#</a></h2>
+<p><a href="../part-01/01-data-and-processing.html">第 01 章</a>的建议：先想清楚数据长什么样，再写处理。导入的结果有三种数据：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Product</span>:
+    sku: <span class="b">str</span>
+    name: <span class="b">str</span>
+    price_cents: <span class="b">int</span>
+    stock: <span class="b">int</span>
+
+
+<span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Problem</span>:
+    line: <span class="b">int</span>
+    message: <span class="b">str</span></code></pre></div>
+<p>价格存成<strong>分</strong>，用整数，这一点和<a href="../part-01/01-data-and-processing.html">第 01 章</a>的小票一样。<code>Problem</code> 记下行号，因为店主要回到 Excel 里去改那一行。</p>
+<h2 id="现在就值得认真的地方">现在就值得认真的地方<a class="anchor" href="#现在就值得认真的地方" aria-label="本节链接">#</a></h2>
+<p>“不用模式”不等于“随便写”。有几处细节，现在不处理好，以后会以更隐蔽的方式出错。</p>
+<h3 id="价格-不要用浮点数">价格：不要用浮点数<a class="anchor" href="#价格-不要用浮点数" aria-label="本节链接">#</a></h3>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">parse_price</span>(text: <span class="b">str</span>) -&gt; <span class="b">int</span>:
+    <span class="s">"""把“12.5”这样的价格转换成分。用 Decimal，避免二进制浮点数的误差。"""</span>
+    <span class="k">try</span>:
+        value = Decimal(text.strip())
+    <span class="k">except</span> InvalidOperation:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"价格不是数字：{text!r}"</span>) <span class="k">from</span> <span class="k">None</span>
+    <span class="k">if</span> <span class="k">not</span> value.is_finite():
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"价格不是有限的数字：{text!r}"</span>)
+    <span class="k">if</span> value &lt;= <span class="n">0</span>:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"价格必须大于 0：{text}"</span>)
+    <span class="k">if</span> value &gt;= <span class="n">1_000_000</span>:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"价格超出合理范围：{text}"</span>)
+    <span class="k">if</span> value != value.quantize(Decimal(<span class="s">"0.01"</span>)):
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"价格最多两位小数：{text}"</span>)
+    <span class="k">return</span> <span class="b">int</span>(value * <span class="n">100</span>)</code></pre></div>
+<p>如果写成 <code>int(float(text) * 100)</code>，价格 <code>0.29</code> 会变成 28 分，因为 <code>0.29 * 100</code> 在二进制浮点数里是 <code>28.999999999999996</code>，<code>int</code> 会直接截断（测试 <code>test_no_float_rounding_error</code>）。标准库的 <code>decimal.Decimal</code> 按十进制精确表示，适合金额。</p>
+<p>几个边界情况也在这里一并处理：<code>Decimal</code> 能解析 <code>"NaN"</code> 和 <code>"Infinity"</code>，必须拒绝；<code>1e30</code> 这样的科学计数法也能被解析，它是一个有限的正数，但在检查小数位时，<code>quantize</code> 会因为位数超出 <code>Decimal</code> 的默认精度而抛出 <code>InvalidOperation</code>，而它不是 <code>ValueError</code>，会让整个导入中断。所以先用一条业务规则（单价低于一百万元）把不合理的数值挡在前面；<code>210.125</code> 这种三位小数，与其悄悄四舍五入，不如让店主确认。所有问题都转换成 <code>ValueError</code> 和一句店主看得懂的中文。</p>
+<h3 id="excel-的-bom">Excel 的 BOM<a class="anchor" href="#excel-的-bom" aria-label="本节链接">#</a></h3>
+<p>Excel 在保存 UTF-8 格式的 CSV 时，常常会在文件开头写入三个看不见的字节（<code>EF BB BF</code>），叫 BOM。如果用普通的 <code>utf-8</code> 读取，第一个列名会变成 <code>"﻿sku"</code> 而不是 <code>"sku"</code>，程序就会报告“缺少列：sku”，而用户在 Excel 里明明看到了这一列（测试 <code>test_bom_without_utf8_sig_breaks_the_header</code>）。</p>
+<p>解决办法是读取时使用 <code>utf-8-sig</code> 编码，它会自动去掉开头的 BOM：</p>
+<div class="code" data-lang="Python"><pre><code>    text = Path(argv[<span class="n">0</span>]).read_text(encoding=<span class="s">"utf-8-sig"</span>)  <span class="c"># utf-8-sig：去掉 Excel 写入的 BOM</span></code></pre></div>
+<h3 id="逐行报告-而不是遇错即停">逐行报告，而不是遇错即停<a class="anchor" href="#逐行报告-而不是遇错即停" aria-label="本节链接">#</a></h3>
+<p>一份价目表有几百行，第 4 行错了就停下来，店主改好之后再运行，又在第 5 行停下来……所以每一行的错误都被收集起来，继续处理下一行，最后一起报告：</p>
+<div class="code" data-lang="Python"><pre><code>    seen: <span class="b">set</span>[<span class="b">str</span>] = <span class="b">set</span>()
+    <span class="k">for</span> line, raw <span class="k">in</span> <span class="b">enumerate</span>(reader, start=<span class="n">2</span>):  <span class="c"># 第 1 行是表头</span>
+        row = {k: raw[k] <span class="k">or</span> <span class="s">""</span> <span class="k">for</span> k <span class="k">in</span> REQUIRED}  <span class="c"># 列数不足的行，缺的字段是 None</span>
+        <span class="k">try</span>:
+            sku, name = row[<span class="s">"sku"</span>].strip(), row[<span class="s">"name"</span>].strip()
+            <span class="k">if</span> <span class="k">not</span> sku <span class="k">or</span> <span class="k">not</span> name:
+                <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">"sku 和 name 不能为空"</span>)
+            <span class="k">if</span> sku <span class="k">in</span> seen:
+                <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"sku 重复：{sku}"</span>)
+            product = Product(sku, name, parse_price(row[<span class="s">"price"</span>]), parse_stock(row[<span class="s">"stock"</span>]))
+        <span class="k">except</span> <span class="b">ValueError</span> <span class="k">as</span> e:
+            result.problems.append(Problem(line, <span class="b">str</span>(e)))
+            <span class="k">continue</span>
+        seen.add(sku)
+        result.products.append(product)</code></pre></div>
+<p>行号从 2 开始，因为第 1 行是表头，这样报告里的行号和 Excel 里看到的一致。循环的第一行处理另一个现实中的问题：某一行少了最后几列（比如 <code>TE-1008,茶,38</code>，连逗号都没有），<code>csv.DictReader</code> 会把缺少的字段填成 <code>None</code> 而不是空字符串，后面的 <code>.strip()</code> 就会抛出 <code>AttributeError</code>，同样让导入中断。统一换成空字符串之后，它会像其他错误一样被报告出来（测试 <code>test_short_row_is_reported_not_crashing</code>）。缺少必要的列是另一种错误：整个文件都无法处理，只报告一次，行号是 1（测试 <code>test_missing_column</code>）。</p>
+<h3 id="退出码">退出码<a class="anchor" href="#退出码" aria-label="本节链接">#</a></h3>
+<p>命令行工具有一个容易被忽视的“输出”：退出码。有被拒绝的行时返回 1，全部成功返回 0，用法错误返回 2。这样店主以后可以把它放进自动化脚本里，脚本能知道这次导入是否完全成功（测试 <code>test_exit_code_and_output</code>）。</p>
+<h2 id="运行结果">运行结果<a class="anchor" href="#运行结果" aria-label="本节链接">#</a></h2>
+<p>对示例文件运行：</p>
+<div class="code" data-lang="输出"><pre><code>python -m examples.ch32_import_v1 examples/data/supplier_a.csv</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>{
+  "imported": 2,
+  "rejected": 6,
+  "stock_value_yuan": "7532.50",
+  "problems": [
+    "第 4 行：价格必须大于 0：-3",
+    "第 5 行：价格不是数字：'abc'",
+    "第 6 行：sku 重复：TE-1002",
+    "第 7 行：sku 和 name 不能为空",
+    "第 8 行：价格最多两位小数：210.125",
+    "第 9 行：库存必须是非负整数：''"
+  ]
+}</code></pre></div>
+<p>示例文件故意包含了各种问题。每一种都对应一个测试。</p>
+<h2 id="现在可以等一等的地方">现在可以等一等的地方<a class="anchor" href="#现在可以等一等的地方" aria-label="本节链接">#</a></h2>
+<p>整个工具是一个文件、几个函数，没有类层次，没有接口，没有注册表。下面这些问题，现在<strong>有意不去解决</strong>：</p>
+<ul><li><strong>只支持 CSV。</strong> 将来可能有别的格式，但现在只有一家供应商，只有这一种格式。</li><li><strong>校验规则写在一个循环里。</strong> 现在只有五条规则，读起来很清楚。</li><li><strong>只输出一份报告。</strong> 不写数据库，不调用网店的接口。</li><li><strong>整个文件一次读进内存。</strong> 价目表只有几百行。</li></ul>
+<p>对照<a href="../part-01/04-choosing-a-pattern.html">第 04 章</a>的检查清单：这些变化<strong>还没有发生，也没有明确的计划</strong>。现在为它们设计扩展点，只会让代码更难读，而且很可能猜错扩展的方向。</p>
+<p>但是，<strong>有一件事现在就要做</strong>：测试。下一章要重构这个工具，重构的前提是“行为不变”，而能证明行为不变的只有测试。本章的测试覆盖了价格解析的各种边界、每一种被拒绝的行、缺少列、BOM、退出码。它们是下一章的安全网。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>第一个版本只解决眼前的一种格式，但要把它做对：用 <code>Decimal</code> 处理金额，用 <code>utf-8-sig</code> 处理 Excel 的 BOM，逐行收集错误并报告行号，用退出码表达结果。</li><li>先定数据的样子（<code>Product</code>、<code>Problem</code>），再写处理。</li><li>还没有发生的变化，先不为它设计扩展点。</li><li>测试是现在就要做的投资：它们固定了行为，是下一章重构的安全网。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>店主反馈：有时候供应商的价格写成 <code>"¥128.00"</code> 或者 <code>"1,280.00"</code>。</p>
+<ol><li>这算“格式的变化”，还是“校验规则的变化”，还是“数据清洗”？应该改在哪里？</li><li>应该自动接受这些写法，还是报错让供应商改？各有什么风险？</li><li>写出你会为这个修改增加的测试用例。</li></ol>
+<p><strong>思路提示</strong>：这是对价格<strong>文本</strong>的清洗，最合适的位置是 <code>parse_price</code> 开头：去掉货币符号和千位分隔符，再交给 <code>Decimal</code>。是否自动接受，要看风险：<code>¥</code> 符号基本没有歧义，可以去掉；而 <code>1,280.00</code> 在一些国家的写法里，逗号是小数点，<code>1,280</code> 可能表示 1.28，自动处理就有可能出错。比较稳妥的做法是只接受“逗号后面正好三位数字”的千位分隔写法，其他情况报错。测试至少要包括 <code>"¥128.00"</code>、<code>"1,280.00"</code>，以及一个应该被拒绝的模糊写法，比如 <code>"1,28"</code>。这个练习说明，“小改动”也需要先想清楚含义，并用测试把决定固定下来。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch32_import_v1.py" target="_blank" rel="noopener"><code>examples/ch32_import_v1.py</code></a>：第一版导入工具</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/data/supplier_a.csv" target="_blank" rel="noopener"><code>examples/data/supplier_a.csv</code></a>：示例价目表</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch32_import_v1.py" target="_blank" rel="noopener"><code>tests/test_ch32_import_v1.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-05/31-simple-versus-pattern-code.html"><small>上一篇</small>31 简单代码与模式代码的取舍</a><a class="next" href="../part-06/33-selective-refactoring.html"><small>下一篇</small>33 需求改变：有选择地重构</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-06/32-first-version.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#先定数据的样子">先定数据的样子</a></li><li><a href="#现在就值得认真的地方">现在就值得认真的地方</a></li><li><a href="#运行结果">运行结果</a></li><li><a href="#现在可以等一等的地方">现在可以等一等的地方</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

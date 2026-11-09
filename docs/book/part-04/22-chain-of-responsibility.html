@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 22 章 责任链 Chain of Responsibility · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：一个请求可能由好几个处理者中的某一个来处理，而由谁处理要依次试过才知道时，怎样避免一个越写越长、顺序越来越脆弱的 if/elif？">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html" aria-current="page"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第四部分 · 协调处理（GoF 行为型）</p>
+<h1>第 22 章　责任链 Chain of Responsibility</h1>
+<blockquote><p>本章要回答：一个请求可能由好几个处理者中的某一个来处理，而由谁处理要依次试过才知道时，怎样避免一个越写越长、顺序越来越脆弱的 <code>if/elif</code>？</p></blockquote>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一家小公司做智能音箱。用户说一句话，音箱把它转成文字，程序决定怎样回应：设闹钟、报天气、放音乐、购物……</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>按关键词依次判断，第一个匹配上的就回应：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">respond</span>(text: <span class="b">str</span>, child_mode: <span class="b">bool</span> = <span class="k">False</span>) -&gt; <span class="b">str</span>:
+    <span class="k">if</span> <span class="s">"闹钟"</span> <span class="k">in</span> text:
+        <span class="k">return</span> <span class="s">"好的，闹钟已设好"</span>
+    <span class="k">elif</span> <span class="s">"天气"</span> <span class="k">in</span> text:
+        <span class="k">return</span> <span class="s">"今天晴，18 到 26 度"</span>
+    <span class="k">elif</span> <span class="s">"外卖"</span> <span class="k">in</span> text:  <span class="c"># 新加的功能，插在了购物前面</span>
+        <span class="k">return</span> <span class="s">"已为你下单外卖"</span>
+    <span class="k">elif</span> <span class="s">"买"</span> <span class="k">in</span> text:
+        <span class="k">if</span> child_mode:
+            <span class="k">return</span> <span class="s">"儿童模式下不能购物"</span>
+        <span class="k">return</span> <span class="s">"已加入购物车"</span>
+    <span class="k">elif</span> <span class="s">"播放"</span> <span class="k">in</span> text:
+        <span class="k">return</span> <span class="s">"开始播放"</span>
+    <span class="k">return</span> <span class="s">"抱歉，我没听懂"</span></code></pre></div>
+<p>“外卖”分支加进来之前，<strong>这是好代码</strong>。</p>
+<h2 id="变化-新功能绕过了儿童锁">变化：新功能绕过了儿童锁<a class="anchor" href="#变化-新功能绕过了儿童锁" aria-label="本节链接">#</a></h2>
+<p>公司推出了一款儿童音箱，开启了“儿童模式”：不能购物。写购物功能的同事把这个检查放在了购物分支里面。</p>
+<p>后来另一位同事加了“点外卖”。他把新分支插在了购物前面（因为“帮我买个外卖”里也有“买”字，必须先匹配“外卖”）。他没有注意到，儿童模式的检查只在购物分支里。于是，儿童音箱不能买彩笔，却能点外卖（测试 <code>test_new_branch_bypasses_the_child_check</code>）。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<ol><li><strong>一条横跨多个功能的规则，被写在了某一个功能的分支里。</strong> “儿童模式下不能花钱”不属于购物，也不属于外卖，它应该在所有花钱的功能<strong>之前</strong>生效。</li><li><strong>顺序是隐含的。</strong> 哪个分支在前，决定了谁先有机会处理。这个顺序散落在一长串 <code>elif</code> 中，加一个分支，要理解它和前后每个分支的关系。</li><li><strong>不同产品要不同的组合。</strong> 厨房音箱没有儿童锁，儿童音箱有；以后车载音箱可能不要购物、要导航。一个函数加越来越多的开关，组合会越来越难管。</li></ol>
+<h2 id="责任链-一个接一个地问">责任链：一个接一个地问<a class="anchor" href="#责任链-一个接一个地问" aria-label="本节链接">#</a></h2>
+<p>GoF 对责任链的描述是：<strong>使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止。</strong></p>
+<p>每个处理者只做一件事：看看这个请求自己能不能处理；能，就给出回应；不能，就交给链上的下一个。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Handler</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.<span class="b">next</span>: Handler | <span class="k">None</span> = <span class="k">None</span>
+
+    <span class="k">def</span> <span class="f">handle</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">str</span>:
+        reply = <span class="b">self</span>.try_handle(text)
+        <span class="k">if</span> reply <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>:
+            <span class="k">return</span> reply
+        <span class="k">if</span> <span class="b">self</span>.<span class="b">next</span> <span class="k">is</span> <span class="k">None</span>:
+            <span class="k">return</span> <span class="s">"抱歉，我没听懂"</span>  <span class="c"># 链走到头也没人处理：明确地说出来</span>
+        <span class="k">return</span> <span class="b">self</span>.<span class="b">next</span>.handle(text)
+
+    <span class="k">def</span> <span class="f">try_handle</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">str</span> | <span class="k">None</span>:
+        <span class="k">return</span> <span class="k">None</span></code></pre></div>
+<p>普通功能是按关键词回应的处理者：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Keyword</span>(Handler):
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, word: <span class="b">str</span>, reply: <span class="b">str</span>) -&gt; <span class="k">None</span>:
+        <span class="b">super</span>().__init__()
+        <span class="b">self</span>.word, <span class="b">self</span>.reply = word, reply
+
+    <span class="k">def</span> <span class="f">try_handle</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">str</span> | <span class="k">None</span>:
+        <span class="k">return</span> <span class="b">self</span>.reply <span class="k">if</span> <span class="b">self</span>.word <span class="k">in</span> text <span class="k">else</span> <span class="k">None</span></code></pre></div>
+<p>儿童锁也是一个处理者。它“处理”请求的方式是<strong>拒绝</strong>，并且不再往后传：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">ChildLock</span>(Handler):
+    <span class="s">"""儿童模式：遇到涉及花钱的指令，直接拒绝，不再往后传。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, words: <span class="b">tuple</span>[<span class="b">str</span>, ...] = (<span class="s">"买"</span>, <span class="s">"外卖"</span>, <span class="s">"支付"</span>)) -&gt; <span class="k">None</span>:
+        <span class="b">super</span>().__init__()
+        <span class="b">self</span>.words = words
+
+    <span class="k">def</span> <span class="f">try_handle</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">str</span> | <span class="k">None</span>:
+        <span class="k">if</span> <span class="b">any</span>(w <span class="k">in</span> text <span class="k">for</span> w <span class="k">in</span> <span class="b">self</span>.words):
+            <span class="k">return</span> <span class="s">"儿童模式下不能消费"</span>
+        <span class="k">return</span> <span class="k">None</span></code></pre></div>
+<p>不同的产品，就是不同的链：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">kitchen_speaker</span>() -&gt; Handler:
+    <span class="k">return</span> chain(*common_handlers())
+
+
+<span class="k">def</span> <span class="f">kids_speaker</span>() -&gt; Handler:
+    <span class="k">return</span> chain(ChildLock(), *common_handlers())</code></pre></div>
+<p><code>chain</code> 只是把处理者按顺序连起来。儿童音箱把儿童锁放在<strong>最前面</strong>，于是任何涉及花钱的话，在到达购物、外卖之前就被拦住了：</p>
+<div class="code" data-lang="输出"><pre><code>帮我买一盒彩笔 → 儿童模式下不能消费
+帮我点个外卖 → 儿童模式下不能消费
+明早七点的闹钟 → 好的，闹钟已设好
+讲个笑话 → 抱歉，我没听懂</code></pre></div>
+<p>以后再加“充话费”功能，只要把“充值”“话费”这类关键词加进儿童锁的列表。新功能本身不需要知道儿童模式的存在。</p>
+<p>儿童音箱的链如下，请求从左往右依次被询问，第一个给出回应的处理者结束这次传递：</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    q["用户的话"] --&gt; lock["ChildLock"]
+    lock --&gt;|"不涉及消费"| alarm["闹钟"]
+    alarm --&gt;|"不是"| weather["天气"]
+    weather --&gt;|"不是"| food["外卖"]
+    food --&gt;|"不是"| buy["购物"]
+    buy --&gt;|"不是"| music["播放"]
+    music --&gt;|"不是"| none["抱歉，我没听懂"]
+    lock --&gt;|"涉及消费"| deny["儿童模式下不能消费"]</pre></figure>
+<h3 id="顺序依然重要">顺序依然重要<a class="anchor" href="#顺序依然重要" aria-label="本节链接">#</a></h3>
+<p>责任链没有消除顺序问题，而是把顺序<strong>集中到了组装链的地方</strong>。如果有人把儿童锁放到链的末尾，外卖处理者先匹配上，儿童锁就形同虚设（测试 <code>test_order_matters</code>）。</p>
+<p>同样，“播放天气预报”这句话既有“播放”又有“天气”，谁先匹配谁回应（测试 <code>test_first_match_wins</code>）。在本例的链里，天气在播放之前，所以音箱会报天气。这是不是想要的行为，要由设计链的人决定，并写进测试。</p>
+<p>这和<a href="../part-03/13-decorator.html">第 13 章</a>装饰器的叠加顺序、<a href="../part-03/16-proxy.html">第 16 章</a>代理的“权限检查放在缓存外面”是同一类问题：<strong>一串对象依次处理请求时，起把关作用的那一个必须排在它要保护的对象前面。</strong></p>
+<h3 id="没人处理怎么办">没人处理怎么办<a class="anchor" href="#没人处理怎么办" aria-label="本节链接">#</a></h3>
+<p>请求可能走完整条链也没有人处理。这是责任链的固有特点，必须明确决定怎么办。本例在链的末端返回“抱歉，我没听懂”（测试 <code>test_unhandled_request_is_explicit</code>）。另一些系统会抛出异常，或者记录日志。最不好的做法是什么都不返回，让调用方拿到一个 <code>None</code>。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>处理者（Handler）</td><td><code>Handler</code></td><td>定义处理请求的接口，持有下一个处理者</td></tr><tr><td>具体处理者（ConcreteHandler）</td><td><code>Keyword</code>、<code>ChildLock</code></td><td>处理自己负责的请求，否则转发</td></tr><tr><td>客户（Client）</td><td>音箱程序</td><td>把请求交给链的第一个处理者</td></tr></tbody></table></div>
+<p>GoF 原书中的责任链，一个请求只由一个处理者处理。实践中还有一种常见的变体：每个处理者都处理一下，再交给下一个，比如 Web 框架的中间件，每一层都可能修改请求或响应。那更接近一串装饰器。本章讨论的是 GoF 原意：<strong>找到第一个能处理的，就停下来。</strong></p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>请求的去向不直观。</strong> 读 <code>kids.handle(text)</code> 这一行，看不出会被谁处理，要沿着链一个个看。调试时，可以让每个处理者在处理时记一笔日志。</li><li><strong>不保证一定被处理。</strong> 链的末尾必须有明确的兜底行为。</li><li><strong>链的组装容易出错，而且检查不出来。</strong> 顺序错了、漏了一环，类型系统都发现不了，只能靠测试。</li><li><strong>链接是对象上的状态。</strong> <code>chain()</code> 会修改每个处理者的 <code>next</code> 字段，所以同一个处理者对象不能同时出现在两条链上。本例每次都调用 <code>common_handlers()</code> 创建新的处理者，避开了这个问题。</li><li><strong>性能和链的长度成正比。</strong> 每个请求最坏要问遍所有处理者。对音箱的几十个功能无所谓；如果有上千个规则，就要考虑按关键词建索引，直接找到候选的处理者。</li></ul>
+<p><strong>什么时候不该用</strong>：处理者很少，顺序固定，不需要按产品组合不同的链。开头那串 <code>if/elif</code> 只要把儿童锁的检查移到最前面，也能修好这个问题。责任链的价值，在于<strong>处理者需要灵活地增减、重新排列</strong>的时候。</p>
+<h2 id="python-角度-链就是一个列表">Python 角度：链就是一个列表<a class="anchor" href="#python-角度-链就是一个列表" aria-label="本节链接">#</a></h2>
+<p>GoF 的责任链是一个链表：每个处理者持有下一个。在 Python 里，更直接的写法是把处理者放进一个<strong>列表</strong>，用循环依次询问：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">respond</span>(text: <span class="b">str</span>, rules: <span class="b">list</span>[Rule]) -&gt; <span class="b">str</span>:
+    <span class="k">for</span> rule <span class="k">in</span> rules:
+        reply = rule(text)
+        <span class="k">if</span> reply <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>:
+            <span class="k">return</span> reply
+    <span class="k">return</span> <span class="s">"抱歉，我没听懂"</span></code></pre></div>
+<p>处理者也不必是类，一个返回“回应或 <code>None</code>”的函数就够了：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">keyword</span>(word: <span class="b">str</span>, reply: <span class="b">str</span>) -&gt; Rule:
+    <span class="k">return</span> <span class="k">lambda</span> text: reply <span class="k">if</span> word <span class="k">in</span> text <span class="k">else</span> <span class="k">None</span>
+
+
+<span class="k">def</span> <span class="f">child_lock</span>(*words: <span class="b">str</span>) -&gt; Rule:
+    <span class="k">return</span> <span class="k">lambda</span> text: <span class="s">"儿童模式下不能消费"</span> <span class="k">if</span> <span class="b">any</span>(w <span class="k">in</span> text <span class="k">for</span> w <span class="k">in</span> words) <span class="k">else</span> <span class="k">None</span></code></pre></div>
+<p>两款音箱就是两个列表：</p>
+<div class="code" data-lang="Python"><pre><code>KIDS: <span class="b">list</span>[Rule] = [child_lock(<span class="s">"买"</span>, <span class="s">"外卖"</span>, <span class="s">"支付"</span>), *COMMON]</code></pre></div>
+<p>对所有测试用的句子，这个版本和链表版本的回应完全相同（测试 <code>test_same_answers_as_the_linked_chain</code>）。</p>
+<p>列表的写法有几个好处：</p>
+<ul><li><strong>顺序一眼可见</strong>：链的全部顺序就是列表的顺序，不用沿着 <code>next</code> 一个个找。</li><li><strong>处理者不需要知道彼此</strong>：没有 <code>next</code> 字段，同一个处理者可以出现在多个列表里。</li><li><strong>没人处理的情况集中在一处</strong>：循环结束后的那一行。</li></ul>
+<p>链表的写法在一种情况下更合适：处理者需要<strong>自己决定</strong>是否以及怎样把请求传下去，比如在传给下一个之前修改请求，或者根据结果再做一些事。这时每个处理者都要能控制“下一步”，<code>next</code> 字段就有了用处。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当一个请求可能由多个处理者中的某一个处理，而要依次尝试才知道由谁处理时，责任链把处理者连成一条链，请求沿链传递，直到有人处理。</li><li>责任链没有消除顺序问题，而是把顺序集中到组装链的地方。起把关作用的处理者必须排在它要保护的处理者前面。</li><li>必须明确规定没有人处理时的行为。</li><li>在 Python 里，链常常就是一个处理函数的列表加一个循环，顺序更直观，处理者之间也不需要互相引用。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>音箱要支持“家长口令”：家长说出“口令 芝麻开门，帮我点个外卖”时，即使在儿童模式下也允许消费。</p>
+<ol><li>这个功能应该怎样加入链里？是修改 <code>ChildLock</code>，还是新增一个处理者？</li><li>如果新增一个处理者，它应该排在儿童锁的前面还是后面？它处理完之后，请求应该停下来，还是继续往后传？</li><li>在“处理者是函数、链是列表”的写法里，这个需求会遇到什么困难？</li></ol>
+<p><strong>思路提示</strong>：口令处理者需要在儿童锁之前识别口令，然后让请求（去掉口令部分之后）<strong>跳过儿童锁</strong>，继续交给后面的处理者。这超出了“找到一个就停”的简单责任链：处理者需要修改请求，并且决定从链的哪个位置继续。一种简单的做法是修改 <code>ChildLock</code>，让它在发现正确口令时不拦截，返回 <code>None</code>。这样不改变链的结构，但儿童锁要知道口令。在函数列表的写法里，函数只能返回“回应或 <code>None</code>”，无法表达“修改请求后继续”，需要改变规则的签名（比如返回一个修改后的请求）。这个练习显示了简单责任链的边界：一旦处理者之间需要传递修改后的请求，就更接近中间件或装饰器的结构了。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch22_speaker_v1.py" target="_blank" rel="noopener"><code>examples/ch22_speaker_v1.py</code></a>：一串 <code>if/elif</code>（含错误）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch22_chain.py" target="_blank" rel="noopener"><code>examples/ch22_chain.py</code></a>：处理者链与两种音箱</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch22_pythonic.py" target="_blank" rel="noopener"><code>examples/ch22_pythonic.py</code></a>：函数列表</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch22_chain.py" target="_blank" rel="noopener"><code>tests/test_ch22_chain.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-04/21-template-method.html"><small>上一篇</small>21 模板方法 Template Method</a><a class="next" href="../part-04/23-iterator.html"><small>下一篇</small>23 迭代器 Iterator</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-04/22-chain-of-responsibility.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-新功能绕过了儿童锁">变化：新功能绕过了儿童锁</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#责任链-一个接一个地问">责任链：一个接一个地问</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-链就是一个列表">Python 角度：链就是一个列表</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

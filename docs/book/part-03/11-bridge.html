@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 11 章 桥接 Bridge · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：当一个东西同时沿着两个方向变化时，怎样避免为每一种组合写一个类？ 第 05 章的练习留下了一个问题：文档类型和输出格式是两个独立变化的维度，工厂方法把它们绑在同一个子类上，于是每种组合都要一个子类。当时的答案是“把格式改成参数”">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html" aria-current="page"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第三部分 · 组合对象（GoF 结构型）</p>
+<h1>第 11 章　桥接 Bridge</h1>
+<blockquote><p>本章要回答：当一个东西同时沿着两个方向变化时，怎样避免为每一种组合写一个类？</p></blockquote>
+<p><a href="../part-02/05-factory-method.html">第 05 章</a>的练习留下了一个问题：文档类型和输出格式是两个独立变化的维度，工厂方法把它们绑在同一个子类上，于是每种组合都要一个子类。当时的答案是“把格式改成参数”。这一章换一个例子，把这个问题和它的模式名称完整地讲清楚。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个气象爱好者小组每月整理本地的降雨量，想在终端里快速看一眼：</p>
+<div class="code" data-lang="Python"><pre><code>rainfall = {<span class="s">"1月"</span>: <span class="n">12</span>, <span class="s">"2月"</span>: <span class="n">30</span>, <span class="s">"3月"</span>: <span class="n">0</span>, <span class="s">"4月"</span>: <span class="n">45</span>}</code></pre></div>
+<p>画成横向条形图，最长的一条占满可用宽度，其他按比例缩短：</p>
+<div class="code" data-lang="输出"><pre><code>1月 █████
+2月 █████████████
+3月
+4月 ████████████████████</code></pre></div>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>一个类，一个方法：算出标签宽度，按最大值缩放，每行拼一条：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">TextBarChart</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, width: <span class="b">int</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.width = width
+
+    <span class="k">def</span> <span class="f">draw</span>(<span class="b">self</span>, data: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">int</span>]) -&gt; <span class="b">str</span>:
+        label_w = <span class="b">max</span>(<span class="b">len</span>(k) <span class="k">for</span> k <span class="k">in</span> data) + <span class="n">1</span>
+        room = <span class="b">self</span>.width - label_w
+        top = <span class="b">max</span>(data.values()) <span class="k">or</span> <span class="n">1</span>  <span class="c"># 全为 0 时避免除以 0（后来修的）</span>
+        lines = []
+        <span class="k">for</span> label, value <span class="k">in</span> data.items():
+            bar = <span class="s">"█"</span> * <span class="b">round</span>(value / top * room)
+            lines.append(<span class="s">f"{label:&lt;{label_w}}{bar}"</span>.rstrip())
+        <span class="k">return</span> <span class="s">"\n"</span>.join(lines)</code></pre></div>
+<p>（<code>or 1</code> 那一处，是有一次只画旱季几个月、数据全部为 0 时，程序因为除以 0 崩溃之后加上的。）</p>
+<p><strong>这是好代码。</strong> 只有一种图、一种输出方式时，这就够了。</p>
+<h2 id="变化-两个方向同时增长">变化：两个方向同时增长<a class="anchor" href="#变化-两个方向同时增长" aria-label="本节链接">#</a></h2>
+<p>小组要把图表放到网站上，网页要的是 SVG 图形。于是有了 <code>SvgBarChart</code>，复制了 <code>TextBarChart</code> 的布局计算，把输出换成 <code>&lt;rect&gt;</code> 和 <code>&lt;text&gt;</code> 元素。</p>
+<p>又过了一阵，有人想看纵向的柱状图，比较各月份的高低更直观。于是又要有 <code>TextColumnChart</code> 和 <code>SvgColumnChart</code>。</p>
+<div class="table"><table><thead><tr><th></th><th>终端文本</th><th>SVG</th></tr></thead><tbody><tr><td>横向条形图</td><td><code>TextBarChart</code></td><td><code>SvgBarChart</code></td></tr><tr><td>纵向柱状图</td><td><code>TextColumnChart</code></td><td><code>SvgColumnChart</code></td></tr></tbody></table></div>
+<p>两种图、两种输出，四个类。再加一种折线图，就是六个；再加一种输出方式（比如给打印机用的 PostScript），就是九个。<strong>类的数量是两个维度的乘积。</strong></p>
+<p>数量还不是最糟的。同一种图在不同输出方式下的布局计算是重复的，修一处就要记得修所有副本。全为 0 的那个修复只加到了 <code>TextBarChart</code> 里：</p>
+<div class="code" data-lang="Python"><pre><code>        top = <span class="b">max</span>(data.values())  <span class="c"># 这里忘了同样的修复</span></code></pre></div>
+<p>于是同样的数据，终端版能画，网页版直接崩溃（测试 <code>test_fix_landed_in_only_one_combination</code>）。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<p>每个类其实回答了两个问题：</p>
+<ol><li><strong>画什么</strong>：横的还是竖的，标签放在哪里，每个类别占多大地方。这是图表的<strong>布局</strong>。</li><li><strong>怎么画出来</strong>：用字符填格子，还是生成 SVG 元素。这是<strong>输出方式</strong>。</li></ol>
+<p>这两个问题彼此独立。横向条形图的布局，和最后输出成字符还是 SVG 毫无关系；SVG 怎么画一个矩形，也和这个矩形属于条形图还是柱状图毫无关系。把两个独立的问题塞进同一个类，才导致了乘法。</p>
+<h2 id="桥接-两个维度各自成为一个层次">桥接：两个维度各自成为一个层次<a class="anchor" href="#桥接-两个维度各自成为一个层次" aria-label="本节链接">#</a></h2>
+<p>GoF 对桥接的描述是：<strong>将抽象部分与它的实现部分分离，使它们都可以独立地变化。</strong></p>
+<p>这里的“抽象”和“实现”不是抽象类和具体类的意思，而是指两个层次：</p>
+<ul><li><strong>抽象</strong>（Abstraction）一侧：图表。它知道布局，但不知道怎么画出来。</li><li><strong>实现</strong>（Implementor）一侧：画布。它只会最基本的绘图操作，不知道自己在画什么图。</li></ul>
+<p>两侧之间的“桥”，是图表<strong>持有</strong>一个画布对象。</p>
+<p>先定义画布要提供的基本操作。只有三个：在某处写字、填满一个矩形、输出结果：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Canvas</span>(Protocol):
+    width: <span class="b">int</span>
+    height: <span class="b">int</span>
+
+    <span class="k">def</span> <span class="f">text</span>(<span class="b">self</span>, x: <span class="b">int</span>, y: <span class="b">int</span>, s: <span class="b">str</span>) -&gt; <span class="k">None</span>: ...
+    <span class="k">def</span> <span class="f">fill</span>(<span class="b">self</span>, x: <span class="b">int</span>, y: <span class="b">int</span>, w: <span class="b">int</span>, h: <span class="b">int</span>) -&gt; <span class="k">None</span>: ...
+    <span class="k">def</span> <span class="f">render</span>(<span class="b">self</span>) -&gt; <span class="b">str</span>: ...</code></pre></div>
+<p>文本画布把格子填成字符：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">fill</span>(<span class="b">self</span>, x: <span class="b">int</span>, y: <span class="b">int</span>, w: <span class="b">int</span>, h: <span class="b">int</span>) -&gt; <span class="k">None</span>:
+        <span class="k">for</span> row <span class="k">in</span> <span class="b">range</span>(y, y + h):
+            <span class="k">for</span> col <span class="k">in</span> <span class="b">range</span>(x, x + w):
+                <span class="b">self</span>.grid[row][col] = <span class="s">"█"</span></code></pre></div>
+<p>SVG 画布把同样的操作翻译成 SVG 元素，每个格子放大成 10 像素：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">fill</span>(<span class="b">self</span>, x: <span class="b">int</span>, y: <span class="b">int</span>, w: <span class="b">int</span>, h: <span class="b">int</span>) -&gt; <span class="k">None</span>:
+        u = <span class="b">self</span>.UNIT
+        <span class="b">self</span>.parts.append(<span class="s">f'&lt;rect x="{x * u}" y="{y * u}" width="{w * u}" height="{h * u}"/&gt;'</span>)</code></pre></div>
+<p>图表一侧，基类保存画布，并且提供共用的缩放计算。全为 0 的情况在这里<strong>只处理一次</strong>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Chart</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, canvas: Canvas) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.canvas = canvas
+
+<span class="d">    @staticmethod</span>
+    <span class="k">def</span> <span class="f">scale</span>(value: <span class="b">int</span>, top: <span class="b">int</span>, room: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+        <span class="k">return</span> <span class="b">round</span>(value / top * room) <span class="k">if</span> top <span class="k">else</span> <span class="n">0</span></code></pre></div>
+<p>横向条形图只用画布的基本操作来描述布局：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">BarChart</span>(Chart):
+    <span class="s">"""横向条形图：每行一个类别。"""</span>
+
+    <span class="k">def</span> <span class="f">draw</span>(<span class="b">self</span>, data: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">int</span>]) -&gt; <span class="b">str</span>:
+        label_w = <span class="b">max</span>(<span class="b">len</span>(k) <span class="k">for</span> k <span class="k">in</span> data) + <span class="n">1</span>
+        room = <span class="b">self</span>.canvas.width - label_w
+        top = <span class="b">max</span>(data.values())
+        <span class="k">for</span> row, (label, value) <span class="k">in</span> <span class="b">enumerate</span>(data.items()):
+            <span class="b">self</span>.canvas.text(<span class="n">0</span>, row, label)
+            length = <span class="b">self</span>.scale(value, top, room)
+            <span class="k">if</span> length:
+                <span class="b">self</span>.canvas.fill(label_w, row, length, <span class="n">1</span>)
+        <span class="k">return</span> <span class="b">self</span>.canvas.render()</code></pre></div>
+<p>纵向柱状图 <code>ColumnChart</code> 也一样，只是把条形竖了起来，标签放到最下面一行。</p>
+<p>现在任意组合都是“一个图表 + 一块画布”：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="b">print</span>(BarChart(TextCanvas(<span class="n">23</span>, <span class="n">4</span>)).draw(rainfall))
+    <span class="b">print</span>(ColumnChart(TextCanvas(<span class="n">12</span>, <span class="n">6</span>)).draw(rainfall))
+    <span class="b">print</span>(BarChart(SvgCanvas(<span class="n">23</span>, <span class="n">4</span>)).draw(rainfall))</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>         ██
+         ██
+   ██    ██
+   ██    ██
+██ ██    ██
+1月 2月 3月 4月</code></pre></div>
+<p>同一个 <code>BarChart</code> 放在 <code>SvgCanvas</code> 上，生成的 SVG 里矩形的位置和长度，正好是文本版的 10 倍（测试 <code>test_bar_chart_on_svg_has_same_layout</code>）。布局只写了一次，两种输出自然一致。全为 0 的数据，四种组合全都能画（测试 <code>test_zero_data_works_for_every_combination</code>）。</p>
+<p>再加一种折线图，写一个 <code>Chart</code> 子类；再加一种输出方式，写一个画布类。<strong>类的数量从乘积变成了加法。</strong></p>
+<p>下图是两个层次之间的“桥”：图表一侧和画布一侧各自扩展，中间只靠 <code>Canvas</code> 的三个操作相连。</p>
+<figure class="diagram"><pre class="mermaid">classDiagram
+    class Chart {
+        canvas
+        +draw(data)
+    }
+    class Canvas {
+        &lt;&lt;protocol&gt;&gt;
+        +text(x, y, s)
+        +fill(x, y, w, h)
+        +render()
+    }
+    Chart &lt;|-- BarChart
+    Chart &lt;|-- ColumnChart
+    Canvas &lt;|.. TextCanvas
+    Canvas &lt;|.. SvgCanvas
+    Chart o-- Canvas : 桥</pre></figure>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>抽象（Abstraction）</td><td><code>Chart</code></td><td>定义图表的接口，持有一个画布</td></tr><tr><td>扩充抽象（RefinedAbstraction）</td><td><code>BarChart</code>、<code>ColumnChart</code></td><td>用画布的基本操作实现各自的布局</td></tr><tr><td>实现者（Implementor）</td><td><code>Canvas</code> 协议</td><td>定义基本绘图操作</td></tr><tr><td>具体实现者（ConcreteImplementor）</td><td><code>TextCanvas</code>、<code>SvgCanvas</code></td><td>用具体技术完成基本操作</td></tr></tbody></table></div>
+<h3 id="和适配器的区别">和适配器的区别<a class="anchor" href="#和适配器的区别" aria-label="本节链接">#</a></h3>
+<p>桥接和<a href="10-adapter.html">第 10 章</a>的适配器都是“一个对象持有另一个对象，通过它完成工作”，结构上很像。区别在于<strong>时机和目的</strong>：</p>
+<ul><li>适配器是<strong>事后</strong>补救：两个已经存在的接口对不上，加一层翻译。</li><li>桥接是<strong>事先</strong>设计：一开始就预见到两个维度会独立变化，于是把它们分成两个层次，并约定好之间的接口（<code>Canvas</code> 的三个基本操作）。</li></ul>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>实现者的接口很难设计。</strong> <code>Canvas</code> 的三个操作是从现有的两种图里提炼出来的。如果将来要画折线图，需要“画一条斜线”，三个操作就不够了，要给 <code>Canvas</code> 加 <code>line</code> 方法，所有画布都得实现它。桥接让两侧独立变化，前提是它们之间的接口足够稳定。</li><li><strong>最低公共能力。</strong> 画布的接口只能包含所有画布都能做到的操作。SVG 能画渐变、圆角、半透明，但文本画布做不到，所以这些都不能进入 <code>Canvas</code>。想用 SVG 的特有能力，要么接受图表在文本画布上效果打折，要么在接口之外另开口子。</li><li><strong>本例的文本画布有一个已知的限制</strong>：它把一个汉字当作一个格子，而终端里一个汉字通常占两列宽。标签都是“某月”时，每行的偏差相同，图看起来仍然对齐；标签长短不一的汉字时就会错位。这是 <code>TextCanvas</code> 这一侧的问题，修它不需要动任何图表类，这也正是桥接的好处之一。</li><li><strong>一开始就分层可能是过度设计。</strong> 如果只有一种输出方式，<code>Canvas</code> 这一层就只是多出来的间接性。</li></ul>
+<p><strong>什么时候不该用</strong>：只有一个维度在变化。比如图表种类会越来越多，但永远只在终端里显示，那就让每种图直接输出字符，不需要画布这一层。等第二种输出方式真的出现了，再把布局和绘制分开，这时你也已经知道画布需要哪些基本操作了。</p>
+<h2 id="python-角度-桥就是一个参数">Python 角度：桥就是一个参数<a class="anchor" href="#python-角度-桥就是一个参数" aria-label="本节链接">#</a></h2>
+<p>在 Python 里，桥接经常简单到看不出是一个模式。如果图表本身没有需要保存的状态，抽象一侧根本不必是类，一个接收画布参数的函数就够了：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">draw_bars</span>(data: <span class="b">dict</span>[<span class="b">str</span>, <span class="b">int</span>], canvas: Canvas) -&gt; <span class="b">str</span>:
+    label_w = <span class="b">max</span>(<span class="b">len</span>(k) <span class="k">for</span> k <span class="k">in</span> data) + <span class="n">1</span>
+    room = canvas.width - label_w
+    top = <span class="b">max</span>(data.values())
+    <span class="k">for</span> row, (label, value) <span class="k">in</span> <span class="b">enumerate</span>(data.items()):
+        canvas.text(<span class="n">0</span>, row, label)
+        length = Chart.scale(value, top, room)
+        <span class="k">if</span> length:
+            canvas.fill(label_w, row, length, <span class="n">1</span>)
+    <span class="k">return</span> canvas.render()</code></pre></div>
+<p>它的输出和 <code>BarChart</code> 完全一样。两个维度依然是分开的：画什么由调用哪个函数决定，怎么画由传入哪个画布决定。</p>
+<p>回头看<a href="../part-02/05-factory-method.html">第 05 章</a>的 <code>build_document(title, items, make_renderer, keep)</code>：文档类型由调用哪个函数决定，格式由传入哪个渲染器决定。那其实就是同一种结构。所以<a href="../part-02/05-factory-method.html">第 05 章</a>练习的答案，用这一章的话来说就是：<strong>用桥接取代每种组合一个子类</strong>，而在 Python 里，它常常就是“把实现作为参数传进去”。</p>
+<p>另外，<code>Canvas</code> 用 <code>Protocol</code> 描述，具体画布不需要继承任何基类。实现者一侧本来就应该彼此独立，<code>Protocol</code> 正好表达了这一点。</p>
+<p>什么时候值得把图表写成类？当图表有自己的配置和状态时，比如标题、颜色方案、是否显示数值、图例位置等。这些设置跟着图表走，和用哪块画布无关，放在图表对象里比每次调用都传一长串参数更清楚。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当一个东西同时沿两个独立的方向变化，而每个方向都用继承来扩展时，类的数量会变成两个维度的乘积，而且重复的代码会在不同组合之间悄悄走样。</li><li>桥接把两个维度分成两个层次：抽象一侧（画什么）持有一个实现一侧（怎么画）的对象，两侧通过一个稳定的基本操作接口合作。类的数量变成两者之和。</li><li>桥接的难点是设计好两侧之间的接口；接口只能包含所有实现者都能做到的事。</li><li>在 Python 里，桥常常就是一个参数：把实现对象传进函数或构造函数。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>小组想加一张折线图：每个月一个点，相邻的点用线连起来。</p>
+<ol><li>现有的 <code>Canvas</code> 只有 <code>text</code> 和 <code>fill</code> 两种绘图操作。画折线图需要给它加什么操作？</li><li>给 <code>Canvas</code> 加了新操作之后，<code>TextCanvas</code> 和 <code>SvgCanvas</code> 各要做什么？文本画布画斜线，效果会怎样？</li><li>如果不想让每块画布都实现斜线，还有什么办法？</li></ol>
+<p><strong>思路提示</strong>：折线图需要一个 <code>line(x1, y1, x2, y2)</code> 操作。<code>SvgCanvas</code> 用 <code>&lt;line&gt;</code> 元素一行就能实现；<code>TextCanvas</code> 只能用字符近似，比如沿着线的路线把经过的格子标成 <code>•</code>，效果会很粗糙。这正是“实现者接口难设计”和“最低公共能力”的体现。第 3 问的一个办法是：在 <code>Chart</code> 一侧用多个 <code>fill(x, y, 1, 1)</code> 拼出斜线的近似，这样不需要改 <code>Canvas</code>，所有画布自动支持，代价是 SVG 版本也只能画出锯齿状的线。另一个办法是让 <code>Canvas</code> 提供 <code>line</code>，但在基类或一个辅助函数里给出“用 <code>fill</code> 拼”的默认实现，SVG 画布再用自己的原生能力覆盖它。选哪一种，取决于你更在意接口的简单，还是 SVG 的效果。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch11_charts_v1.py" target="_blank" rel="noopener"><code>examples/ch11_charts_v1.py</code></a>：每种组合一个类（含错误）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch11_bridge.py" target="_blank" rel="noopener"><code>examples/ch11_bridge.py</code></a>：图表与画布两个层次</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch11_pythonic.py" target="_blank" rel="noopener"><code>examples/ch11_pythonic.py</code></a>：接收画布参数的函数</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch11_bridge.py" target="_blank" rel="noopener"><code>tests/test_ch11_bridge.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-03/10-adapter.html"><small>上一篇</small>10 适配器 Adapter</a><a class="next" href="../part-03/12-composite.html"><small>下一篇</small>12 组合 Composite</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-03/11-bridge.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-两个方向同时增长">变化：两个方向同时增长</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#桥接-两个维度各自成为一个层次">桥接：两个维度各自成为一个层次</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-桥就是一个参数">Python 角度：桥就是一个参数</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

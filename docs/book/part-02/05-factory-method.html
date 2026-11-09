@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 05 章 工厂方法 Factory Method · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：当“创建哪种对象”的决定随具体情况而变时，这个决定应该放在哪里？简单工厂函数和 GoF 工厂方法有什么区别？ “工厂”是 Python 开发者最常听到的设计词汇之一，也是最常被用混的一个。这一章先从一个不需要任何模式的小程序开始">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html" aria-current="page"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第二部分 · 创建对象（GoF 创建型）</p>
+<h1>第 05 章　工厂方法 Factory Method</h1>
+<blockquote><p>本章要回答：当“创建哪种对象”的决定随具体情况而变时，这个决定应该放在哪里？简单工厂函数和 GoF 工厂方法有什么区别？</p></blockquote>
+<p>“工厂”是 Python 开发者最常听到的设计词汇之一，也是最常被用混的一个。这一章先从一个不需要任何模式的小程序开始，一步步走到真正需要工厂方法的地方，并且说清楚每一步叫什么、不叫什么。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个小团队用一份任务清单跟踪工作：</p>
+<div class="code" data-lang="Python"><pre><code>tasks = [
+    Task(<span class="s">"登录页改版"</span>, <span class="k">True</span>),
+    Task(<span class="s">"修复导出乱码"</span>, <span class="k">False</span>),
+    Task(<span class="s">"接入短信验证码"</span>, <span class="k">True</span>),
+]</code></pre></div>
+<p><code>Task</code> 是一个只有两个字段的数据类：任务名称 <code>name</code>，是否完成 <code>done</code>。团队想从这份清单自动生成文档。第一个需求是每周例会的 Markdown 纪要：</p>
+<div class="code" data-lang="输出"><pre><code># 周会纪要
+- [x] 登录页改版
+- [ ] 修复导出乱码
+- [x] 接入短信验证码</code></pre></div>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>后来客户也想看进度，但客户那边要 HTML，而且只看已完成的任务。加一个格式参数就能解决：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">render</span>(title: <span class="b">str</span>, items: <span class="b">list</span>[Task], fmt: <span class="b">str</span> = <span class="s">"markdown"</span>) -&gt; <span class="b">str</span>:
+    <span class="k">if</span> fmt == <span class="s">"markdown"</span>:
+        lines = [<span class="s">f"# {title}"</span>]
+        lines += [<span class="s">f"- [{'x' if t.done else ' '}] {t.name}"</span> <span class="k">for</span> t <span class="k">in</span> items]
+    <span class="k">elif</span> fmt == <span class="s">"html"</span>:
+        lines = [<span class="s">f"&lt;h1&gt;{html.escape(title)}&lt;/h1&gt;"</span>]
+        lines += [<span class="s">f"&lt;li&gt;{'✔' if t.done else '…'} {html.escape(t.name)}&lt;/li&gt;"</span> <span class="k">for</span> t <span class="k">in</span> items]
+    <span class="k">else</span>:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知格式: {fmt}"</span>)
+    <span class="k">return</span> <span class="s">"\n"</span>.join(lines)</code></pre></div>
+<p><code>render("项目进度", [t for t in tasks if t.done], "html")</code> 得到：</p>
+<div class="code" data-lang="输出"><pre><code>&lt;h1&gt;项目进度&lt;/h1&gt;
+&lt;li&gt;✔ 登录页改版&lt;/li&gt;
+&lt;li&gt;✔ 接入短信验证码&lt;/li&gt;</code></pre></div>
+<p>（<code>html.escape</code> 把 <code>&lt;</code>、<code>&amp;</code> 这类字符转义，避免任务名里的特殊字符破坏网页。）</p>
+<p><strong>这是好代码。</strong> 两种格式、一个函数、一个 <code>if</code>，读的人一眼就能看全。如果需求停在这里，就不该再改。</p>
+<h2 id="第一次变化-选择格式的代码出现在多处">第一次变化：选择格式的代码出现在多处<a class="anchor" href="#第一次变化-选择格式的代码出现在多处" aria-label="本节链接">#</a></h2>
+<p>几周后，这个工具有了两个入口：开发者在命令行里手动生成，服务器上的定时任务每周五自动生成。两个入口都要根据配置决定用哪种格式。与此同时，每种格式的写法也在不断被单独调整：HTML 要改标题样式，Markdown 要改勾选框的写法。两种格式的细节挤在同一个函数里，<code>if</code> 分支越来越长。</p>
+<p>这里有两个具体的困难：</p>
+<ol><li>每种格式“怎么写标题、怎么写条目”的代码混在一个函数里，改 HTML 时要小心别碰到 Markdown。</li><li>“根据字符串选择格式”这件事，两个入口各写了一遍。</li></ol>
+<p>第一个困难的解法是：<strong>把每种格式变成一个对象</strong>，各自负责自己的写法。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">MarkdownRenderer</span>:
+    <span class="k">def</span> <span class="f">title</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">str</span>:
+        <span class="k">return</span> <span class="s">f"# {text}"</span>
+
+    <span class="k">def</span> <span class="f">item</span>(<span class="b">self</span>, task: Task) -&gt; <span class="b">str</span>:
+        <span class="k">return</span> <span class="s">f"- [{'x' if task.done else ' '}] {task.name}"</span>
+
+
+<span class="k">class</span> <span class="f">HtmlRenderer</span>:
+    <span class="k">def</span> <span class="f">title</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">str</span>:
+        <span class="k">return</span> <span class="s">f"&lt;h1&gt;{html.escape(text)}&lt;/h1&gt;"</span>
+
+    <span class="k">def</span> <span class="f">item</span>(<span class="b">self</span>, task: Task) -&gt; <span class="b">str</span>:
+        <span class="k">return</span> <span class="s">f"&lt;li&gt;{'✔' if task.done else '…'} {html.escape(task.name)}&lt;/li&gt;"</span></code></pre></div>
+<p>第二个困难的解法是：<strong>把“选哪一个”集中到一个函数里</strong>，两个入口都调用它。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">make_renderer</span>(fmt: <span class="b">str</span>) -&gt; Renderer:
+    renderers = {<span class="s">"markdown"</span>: MarkdownRenderer, <span class="s">"html"</span>: HtmlRenderer}
+    <span class="k">try</span>:
+        <span class="k">return</span> renderers[fmt]()
+    <span class="k">except</span> <span class="b">KeyError</span>:
+        <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"未知格式: {fmt}"</span>) <span class="k">from</span> <span class="k">None</span></code></pre></div>
+<p><code>make_renderer</code> 是一个<strong>简单工厂函数</strong>：输入一个描述，返回一个新创建的对象。它把“创建什么”的决定集中到一处，以后加一种格式，只要在字典里加一行。</p>
+<p>需要说清楚的是：<strong>简单工厂函数不是 GoF 23 种模式之一。</strong> 它非常有用，Python 代码里随处可见，但它只是“把创建逻辑提取成函数”这一普通重构的结果。把它叫作“工厂方法模式”是常见的误用。</p>
+<h2 id="第二次变化-创建的决定随文档类型而变">第二次变化：创建的决定随文档类型而变<a class="anchor" href="#第二次变化-创建的决定随文档类型而变" aria-label="本节链接">#</a></h2>
+<p>工具越来越受欢迎，团队里不同的人开始往里加新的文档类型：</p>
+<ul><li><strong>周会纪要</strong>：列出全部任务，用 Markdown。</li><li><strong>客户进度报告</strong>：只列已完成的任务，用 HTML。</li><li>另一位同事想加一个<strong>发布说明</strong>：只列已完成的任务，用纯文本，贴到应用商店的更新说明里。</li></ul>
+<p>观察这三种文档，会发现它们有一个共同的流程：</p>
+<ol><li>写标题；</li><li>挑出要展示的任务；</li><li>每个任务写一行；</li><li>拼成一篇文档。</li></ol>
+<p>不同的只有三点：标题是什么、挑哪些任务、<strong>用哪种渲染器</strong>。而且“用哪种渲染器”不是由用户传进来的配置决定的，而是<strong>由文档类型本身决定的</strong>：客户报告就是 HTML，这是这种文档的一部分定义。</p>
+<p>更重要的是，新增文档类型的人（比如写发布说明的同事）不应该去修改共同流程的代码。他们只想说：“我的文档叫什么，挑哪些任务，用什么渲染器。”</p>
+<p>这正是 GoF 工厂方法要解决的问题。</p>
+<h2 id="工厂方法-让子类决定创建什么">工厂方法：让子类决定创建什么<a class="anchor" href="#工厂方法-让子类决定创建什么" aria-label="本节链接">#</a></h2>
+<p>GoF 对工厂方法的经典描述是：<strong>定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。</strong></p>
+<p>落到我们的例子上：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Document</span>(ABC):
+    title = <span class="s">"文档"</span>
+
+    <span class="k">def</span> <span class="f">build</span>(<span class="b">self</span>, items: <span class="b">list</span>[Task]) -&gt; <span class="b">str</span>:
+        renderer = <span class="b">self</span>.create_renderer()  <span class="c"># 工厂方法：由子类决定创建什么</span>
+        lines = [renderer.title(<span class="b">self</span>.title)]
+        lines += [renderer.item(t) <span class="k">for</span> t <span class="k">in</span> <span class="b">self</span>.select(items)]
+        <span class="k">return</span> <span class="s">"\n"</span>.join(lines)
+
+    <span class="k">def</span> <span class="f">select</span>(<span class="b">self</span>, items: <span class="b">list</span>[Task]) -&gt; <span class="b">list</span>[Task]:
+        <span class="k">return</span> items
+
+<span class="d">    @abstractmethod</span>
+    <span class="k">def</span> <span class="f">create_renderer</span>(<span class="b">self</span>) -&gt; Renderer:
+        <span class="s">"""返回这种文档使用的渲染器。"""</span></code></pre></div>
+<p><code>Document.build</code> 固定了共同流程。流程中需要一个渲染器，但 <code>Document</code> 自己不知道该用哪一种，于是它调用 <code>self.create_renderer()</code>，这就是<strong>工厂方法</strong>。它被声明为抽象方法，每个子类必须给出自己的答案：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">WeeklyNotes</span>(Document):
+    title = <span class="s">"周会纪要"</span>
+
+    <span class="k">def</span> <span class="f">create_renderer</span>(<span class="b">self</span>) -&gt; Renderer:
+        <span class="k">return</span> MarkdownRenderer()
+
+
+<span class="k">class</span> <span class="f">ClientReport</span>(Document):
+    title = <span class="s">"项目进度"</span>
+
+    <span class="k">def</span> <span class="f">select</span>(<span class="b">self</span>, items: <span class="b">list</span>[Task]) -&gt; <span class="b">list</span>[Task]:
+        <span class="k">return</span> [t <span class="k">for</span> t <span class="k">in</span> items <span class="k">if</span> t.done]
+
+    <span class="k">def</span> <span class="f">create_renderer</span>(<span class="b">self</span>) -&gt; Renderer:
+        <span class="k">return</span> HtmlRenderer()</code></pre></div>
+<p><code>WeeklyNotes().build(tasks)</code> 和 <code>ClientReport().build(tasks)</code> 分别生成和之前完全一样的 Markdown 纪要和 HTML 报告。</p>
+<p>现在写发布说明的同事可以在<strong>自己的模块里</strong>完成全部工作，不用碰 <code>Document</code>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">ReleaseNotes</span>(Document):
+    title = <span class="s">"发布说明"</span>
+
+    <span class="k">def</span> <span class="f">select</span>(<span class="b">self</span>, items: <span class="b">list</span>[Task]) -&gt; <span class="b">list</span>[Task]:
+        <span class="k">return</span> [t <span class="k">for</span> t <span class="k">in</span> items <span class="k">if</span> t.done]
+
+    <span class="k">def</span> <span class="f">create_renderer</span>(<span class="b">self</span>) -&gt; Renderer:
+        <span class="k">return</span> PlainTextRenderer()</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>发布说明
+========
+* 登录页改版
+* 接入短信验证码</code></pre></div>
+<p>下图是本例的结构：<code>Document</code> 固定流程，子类各自决定创建哪种渲染器。</p>
+<figure class="diagram"><pre class="mermaid">classDiagram
+    class Document {
+        +build(items)
+        +select(items)
+        +create_renderer()*
+    }
+    class WeeklyNotes {
+        +create_renderer()
+    }
+    class ClientReport {
+        +create_renderer()
+    }
+    class Renderer {
+        &lt;&lt;protocol&gt;&gt;
+        +title(text)
+        +item(task)
+    }
+    Document &lt;|-- WeeklyNotes
+    Document &lt;|-- ClientReport
+    WeeklyNotes ..&gt; MarkdownRenderer : 创建
+    ClientReport ..&gt; HtmlRenderer : 创建
+    Renderer &lt;|.. MarkdownRenderer
+    Renderer &lt;|.. HtmlRenderer</pre></figure>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<p>GoF 用四个角色描述这个模式，对应到代码里：</p>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>产品（Product）</td><td><code>Renderer</code> 协议</td><td>规定渲染器要提供 <code>title</code> 和 <code>item</code></td></tr><tr><td>具体产品（ConcreteProduct）</td><td><code>MarkdownRenderer</code>、<code>HtmlRenderer</code>、<code>PlainTextRenderer</code></td><td>各自的写法</td></tr><tr><td>创建者（Creator）</td><td><code>Document</code></td><td>定义共同流程，声明工厂方法 <code>create_renderer</code></td></tr><tr><td>具体创建者（ConcreteCreator）</td><td><code>WeeklyNotes</code>、<code>ClientReport</code>、<code>ReleaseNotes</code></td><td>实现工厂方法，决定创建哪种具体产品</td></tr></tbody></table></div>
+<p><code>Renderer</code> 在这里用 <code>typing.Protocol</code> 来写（见<a href="../part-01/03-python-building-blocks.html">第 03 章</a>），三个渲染器不需要继承任何基类，只要提供这两个方法即可。</p>
+<h3 id="和简单工厂-抽象工厂的区别">和简单工厂、抽象工厂的区别<a class="anchor" href="#和简单工厂-抽象工厂的区别" aria-label="本节链接">#</a></h3>
+<p>这三个名字常被混用，这里一次说清：</p>
+<ul><li><strong>简单工厂函数</strong>：一个普通函数根据参数决定创建什么，比如 <code>make_renderer("html")</code>。决定权在<strong>参数</strong>上。它不是 GoF 模式。</li><li><strong>工厂方法</strong>：父类的流程里调用一个可被子类重写的创建方法，比如 <code>self.create_renderer()</code>。决定权在<strong>子类</strong>上。创建通常只是更大流程中的一步。</li><li><strong>抽象工厂</strong>（<a href="06-abstract-factory.html">第 06 章</a>）：一个对象负责创建<strong>一整组</strong>彼此匹配的产品，比如一套主题里的按钮、输入框和对话框。关注的是“同一家族的产品要配套”。</li></ul>
+<p>一个简单的判断方法：如果你的“工厂”是一个独立的函数，它是简单工厂；如果它是父类流程中、留给子类重写的那个方法，它是工厂方法。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<p>工厂方法不是免费的：</p>
+<ul><li><strong>多了一层继承。</strong> 要知道 <code>ClientReport</code> 生成什么，得同时读 <code>ClientReport</code> 和 <code>Document</code>。流程在父类，细节在子类。</li><li><strong>每种文档一个子类。</strong> 只有两种文档时，这比一个带参数的函数重得多。</li><li><strong>子类和父类的流程绑在一起。</strong> 如果 <code>Document.build</code> 的流程改了（比如在标题后面加一个统计行），所有子类的输出都会跟着变。这有时正是你想要的，有时则是意外。</li><li><strong>两个维度纠缠时会出现组合爆炸。</strong> 如果客户报告也想要一份 Markdown 版本，你可能会写出 <code>ClientReportMarkdown</code>。文档类型和格式本来是两个独立的维度，工厂方法把它们绑在了同一个子类上（见本章练习）。</li></ul>
+<p><strong>什么时候不该用</strong>：只有一两种文档，格式通过参数就能选择，没有第三方需要在不改动你代码的情况下扩展。这时一个带参数的函数，加上前面的简单工厂，已经足够好。</p>
+<h2 id="python-角度-类本身就是工厂">Python 角度：类本身就是工厂<a class="anchor" href="#python-角度-类本身就是工厂" aria-label="本节链接">#</a></h2>
+<p>在 C++ 这类语言里，“创建一个对象”通常需要写 <code>new SomeClass()</code>，类名必须写死在代码里，所以要靠子类重写方法来改变创建的类型。</p>
+<p>Python 不一样：<strong>类本身就是一个可以调用的对象，调用它就会创建实例</strong>。<code>MarkdownRenderer</code> 和 <code>HtmlRenderer</code> 可以像函数一样被传来传去。于是，很多需要工厂方法的场合，可以直接把“怎么创建”作为参数传进去：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">build_document</span>(
+    title: <span class="b">str</span>,
+    items: <span class="b">list</span>[Task],
+    make_renderer: Callable[[], Renderer] = MarkdownRenderer,
+    keep: Callable[[Task], <span class="b">bool</span>] = <span class="k">lambda</span> task: <span class="k">True</span>,
+) -&gt; <span class="b">str</span>:
+    renderer = make_renderer()
+    lines = [renderer.title(title)]
+    lines += [renderer.item(t) <span class="k">for</span> t <span class="k">in</span> items <span class="k">if</span> keep(t)]
+    <span class="k">return</span> <span class="s">"\n"</span>.join(lines)
+
+
+<span class="k">def</span> <span class="f">weekly_notes</span>(items: <span class="b">list</span>[Task]) -&gt; <span class="b">str</span>:
+    <span class="k">return</span> build_document(<span class="s">"周会纪要"</span>, items)
+
+
+<span class="k">def</span> <span class="f">client_report</span>(items: <span class="b">list</span>[Task]) -&gt; <span class="b">str</span>:
+    <span class="k">return</span> build_document(<span class="s">"项目进度"</span>, items, HtmlRenderer, keep=<span class="k">lambda</span> t: t.done)</code></pre></div>
+<p>这两个函数的输出和 <code>WeeklyNotes</code>、<code>ClientReport</code> 完全一样，但没有任何子类。想要“Markdown 版的客户报告”，只要换一个参数，不需要新类。</p>
+<p>那么，什么时候还值得用经典的工厂方法？</p>
+<ul><li>共同流程比较长，子类除了“创建什么”，还要定制好几个步骤，而且这些步骤之间有约束。这时把它们组织在一个子类里，比传一长串参数更清楚。这其实已经和<a href="../part-04/21-template-method.html">第 21 章</a>的模板方法很接近，工厂方法常常就是模板方法中“负责创建”的那一步。</li><li>你在写一个框架或库，希望别人通过<strong>继承</strong>来扩展，而且这种扩展方式是使用者熟悉的约定。</li><li>产品的选择确实是这种类型的<strong>固有属性</strong>，而不是调用时的配置。</li></ul>
+<p>如果以上都不满足，先用“把类当参数传进去”的写法。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>创建什么对象的决定，最开始可以就是一个 <code>if</code>；在多处重复时，提取成一个简单工厂函数。简单工厂函数很有用，但它不是 GoF 模式。</li><li>GoF 工厂方法：父类定义流程并调用一个创建方法，子类重写这个方法来决定创建哪种产品。它适合“创建是流程中的一步，而创建的种类由子类决定”的情况。</li><li>工厂方法的代价是继承带来的间接性，以及当产品选择和子类类型是两个独立维度时的组合爆炸。</li><li>在 Python 里，类本身就是工厂，直接把类或函数当参数传递，往往比工厂方法更简单。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>客户提出：除了 HTML 网页，他们还希望每周收到一封纯文本邮件，内容和进度报告一样（只列已完成的任务）。</p>
+<ol><li>用工厂方法的写法，你需要新增什么？会不会出现 <code>ClientReportHtml</code>、<code>ClientReportText</code> 这样的类？</li><li>用 <code>build_document</code> 的写法，你需要新增什么？</li><li>如果将来格式有 4 种、文档类型有 5 种，两种写法分别需要多少个类或函数？</li></ol>
+<p><strong>思路提示</strong>：工厂方法把“文档类型”和“格式”绑在同一个子类上，格式一多就要为每种组合写一个子类。<code>build_document</code> 把格式作为参数，文档类型和格式可以自由搭配，5 种文档只需要 5 个小函数，格式在调用时选择。当两个维度都在独立增长时，应该让它们分开变化，这正是<a href="../part-03/11-bridge.html">第 11 章</a>“桥接”要讨论的问题。对本题来说，把格式改成参数是更好的选择；工厂方法更适合“格式是文档类型固有的一部分”的情况。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch05_factory_method_v1.py" target="_blank" rel="noopener"><code>examples/ch05_factory_method_v1.py</code></a>：第一版</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch05_simple_factory.py" target="_blank" rel="noopener"><code>examples/ch05_simple_factory.py</code></a>：渲染器对象与简单工厂</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch05_factory_method.py" target="_blank" rel="noopener"><code>examples/ch05_factory_method.py</code></a>：GoF 工厂方法</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch05_pythonic.py" target="_blank" rel="noopener"><code>examples/ch05_pythonic.py</code></a>：把类当参数传入</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch05_factory_method.py" target="_blank" rel="noopener"><code>tests/test_ch05_factory_method.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-01/04-choosing-a-pattern.html"><small>上一篇</small>04 从问题选择模式</a><a class="next" href="../part-02/06-abstract-factory.html"><small>下一篇</small>06 抽象工厂 Abstract Factory</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-02/05-factory-method.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#第一次变化-选择格式的代码出现在多处">第一次变化：选择格式的代码出现在多处</a></li><li><a href="#第二次变化-创建的决定随文档类型而变">第二次变化：创建的决定随文档类型而变</a></li><li><a href="#工厂方法-让子类决定创建什么">工厂方法：让子类决定创建什么</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-类本身就是工厂">Python 角度：类本身就是工厂</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 33 章 需求改变：有选择地重构 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：新格式、新校验规则、新的输出去处同时到来时，哪里真的痛？怎样只在痛的地方重构，而不是借机把 23 种模式都用一遍？ 第 32 章的导入工具只做一件事：读一种 CSV，检查，出报告。它用了一个多月，一切正常。然后，三个变化在同一周">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html" aria-current="page"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第六部分 · 把选择放回真实项目</p>
+<h1>第 33 章　需求改变：有选择地重构</h1>
+<blockquote><p>本章要回答：新格式、新校验规则、新的输出去处同时到来时，哪里真的痛？怎样只在痛的地方重构，而不是借机把 23 种模式都用一遍？</p></blockquote>
+<p><a href="32-first-version.html">第 32 章</a>的导入工具只做一件事：读一种 CSV，检查，出报告。它用了一个多月，一切正常。然后，三个变化在同一周到来。</p>
+<h2 id="三个变化">三个变化<a class="anchor" href="#三个变化" aria-label="本节链接">#</a></h2>
+<p><strong>一、第二家供应商。</strong> 网店开始卖云南的茶，新供应商“云岭茶业”只提供 JSON 格式的价目表，字段名也不一样：</p>
+<div class="code" data-lang="输出"><pre><code>{"code": "YN-2001", "title": "滇红金芽 200g", "price": 88.0, "qty": 30}</code></pre></div>
+<p><strong>二、新的校验规则。</strong> 网店后台要求 <code>sku</code> 必须是“两个大写字母、一个短横线、四位数字”，商品名不能超过 40 个字，否则在手机上显示不全。</p>
+<p><strong>三、写进数据库。</strong> 除了报告，合格的商品还要写进网店使用的 SQLite 数据库；同一个 <code>sku</code> 再次导入时，更新价格和库存。</p>
+<h2 id="先看哪里痛">先看哪里痛<a class="anchor" href="#先看哪里痛" aria-label="本节链接">#</a></h2>
+<p>在动手之前，先设想一下：如果直接在<a href="32-first-version.html">第 32 章</a>的代码上修改，会发生什么？</p>
+<p><strong>读取。</strong> <code>read_csv</code> 把“读 CSV”和“逐行校验”写在同一个循环里。要支持 JSON，要么在这个函数里加一个 <code>if 是 JSON</code>，两种格式的读取细节和校验逻辑搅在一起；要么复制一份 <code>read_json</code>，校验逻辑也跟着复制一份，以后加一条规则要改两处。这是<strong>真的痛</strong>。</p>
+<p>而且 JSON 有两处和 CSV 不同的细节，必须专门处理：</p>
+<ul><li>没有“行号”。报告里要说“第 3 条”，而不是“第 3 行”。</li><li>价格是 JSON 数字。<code>json.loads</code> 默认把 <code>88.0</code> 读成 <code>float</code>，<a href="32-first-version.html">第 32 章</a>刚刚说过金额不能经过 <code>float</code>。</li></ul>
+<p><strong>校验。</strong> 现在的五条检查写在循环里的一个 <code>try</code> 块中，再加两条还能接受。但它们是<strong>互相独立</strong>的：sku 的格式和价格是否合法毫无关系。互相独立、数量在增加，这是适合拆开的情况（对比<a href="../part-05/31-simple-versus-pattern-code.html">第 31 章</a>：那里的积分规则有先后依赖，所以不适合随意拆开）。这里<strong>有点痛，而且会越来越痛</strong>。</p>
+<p><strong>输出。</strong> 现在只有“打印一份 JSON 报告”。加上数据库，就是两个去处。以后可能还有第三个（比如直接调用网店的接口）。<code>main</code> 函数里加一段写数据库的代码就能解决，<strong>目前不算痛</strong>，但两种去处的接口如果统一，<code>main</code> 会更简单，测试也更容易。</p>
+<p>还有什么<strong>不痛</strong>？</p>
+<ul><li>金额的处理、<code>Product</code> 的结构、BOM 的处理、退出码，都不需要改。</li><li>文件只有几百行，一次读进内存没有问题。</li><li>只有一种“商品”，没有“家族”。</li></ul>
+<h2 id="重构之前-测试">重构之前：测试<a class="anchor" href="#重构之前-测试" aria-label="本节链接">#</a></h2>
+<p><a href="32-first-version.html">第 32 章</a>的测试固定了 CSV 导入的全部行为。重构后的工具读同一个 CSV 文件，必须得到<strong>完全相同</strong>的商品和错误信息。这条要求本身就写成了一个测试：</p>
+<div class="code" data-lang="输出"><pre><code>old = v1.read_csv(...)
+new = imp.import_file(...)
+assert new.products == old.products
+assert 新的错误信息 == 旧的错误信息</code></pre></div>
+<p>（测试 <code>test_refactoring_keeps_the_csv_results</code>。）有了它，重构过程中任何一步改坏了旧功能，都会立即知道。</p>
+<h2 id="读取-统一的中间形态">读取：统一的中间形态<a class="anchor" href="#读取-统一的中间形态" aria-label="本节链接">#</a></h2>
+<p>痛点是“每种格式的读取细节”和“校验”搅在了一起。解决办法是在两者之间定义一个<strong>统一的中间形态</strong>：不论来源是什么格式，都先转换成同样的样子，再交给同一套校验。</p>
+<div class="code" data-lang="Python"><pre><code>RawRow = <span class="b">dict</span>[<span class="b">str</span>, <span class="b">str</span>]  <span class="c"># 统一的中间形态：sku、name、price、stock 四个字段，都是字符串</span></code></pre></div>
+<p>每种格式一个读取函数，只负责把来源的样子翻译成 <code>RawRow</code>，并附上一个给人看的位置描述：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">read_json_rows</span>(text: <span class="b">str</span>) -&gt; <span class="b">list</span>[<span class="b">tuple</span>[<span class="b">str</span>, RawRow]]:
+    <span class="k">try</span>:
+        data = json.loads(text, parse_float=Decimal)  <span class="c"># 价格按十进制读入，不经过 float</span>
+    <span class="k">except</span> json.JSONDecodeError <span class="k">as</span> e:
+        <span class="k">raise</span> FormatError(<span class="s">f"不是合法的 JSON：第 {e.lineno} 行第 {e.colno} 列"</span>) <span class="k">from</span> <span class="k">None</span>
+    items = data.get(<span class="s">"items"</span>) <span class="k">if</span> <span class="b">isinstance</span>(data, <span class="b">dict</span>) <span class="k">else</span> <span class="k">None</span>
+    <span class="k">if</span> <span class="k">not</span> <span class="b">isinstance</span>(items, <span class="b">list</span>):
+        <span class="k">raise</span> FormatError(<span class="s">"缺少 items 列表"</span>)
+    rows = []
+    <span class="k">for</span> n, item <span class="k">in</span> <span class="b">enumerate</span>(items, start=<span class="n">1</span>):
+        <span class="k">if</span> <span class="k">not</span> <span class="b">isinstance</span>(item, <span class="b">dict</span>):
+            <span class="k">raise</span> FormatError(<span class="s">f"第 {n} 条不是一个对象"</span>)
+        rows.append((<span class="s">f"第 {n} 条"</span>, {
+            <span class="s">"sku"</span>: <span class="b">str</span>(item.get(<span class="s">"code"</span>, <span class="s">""</span>)),
+            <span class="s">"name"</span>: <span class="b">str</span>(item.get(<span class="s">"title"</span>, <span class="s">""</span>)),
+            <span class="s">"price"</span>: <span class="b">str</span>(item.get(<span class="s">"price"</span>, <span class="s">""</span>)),
+            <span class="s">"stock"</span>: <span class="b">str</span>(item.get(<span class="s">"qty"</span>, <span class="s">""</span>)),
+        }))
+    <span class="k">return</span> rows</code></pre></div>
+<p>文件本身不是合法的 JSON，或者 <code>items</code> 里混进了不是对象的东西，都属于“整个文件无法处理”，转换成 <code>FormatError</code>，<code>main</code> 会给出一句提示并返回退出码 2，而不是打印一大段异常信息（测试 <code>test_malformed_json_is_a_format_error</code>）。<code>parse_float=Decimal</code> 让 <code>json.loads</code> 把小数直接解析成 <code>Decimal</code>，于是 <code>0.29</code> 不会变成 28 分（测试 <code>test_json_prices_never_pass_through_float</code>）。字段名的对应（<code>code</code> → <code>sku</code>、<code>title</code> → <code>name</code>），以及“第几条”的说法，都只在这个函数里。</p>
+<p>这正是<a href="../part-03/10-adapter.html">第 10 章</a>“Python 角度”里说的：核心逻辑只认一种数据，外部的各种格式在<strong>边界</strong>上转换。这里的读取函数就是适配器，只不过它们是函数，适配的是数据。</p>
+<p>根据文件扩展名选择读取函数，用一个字典：</p>
+<div class="code" data-lang="Python"><pre><code>READERS: <span class="b">dict</span>[<span class="b">str</span>, Callable[[<span class="b">str</span>], <span class="b">list</span>[<span class="b">tuple</span>[<span class="b">str</span>, RawRow]]]] = {
+    <span class="s">".csv"</span>: read_csv_rows,
+    <span class="s">".json"</span>: read_json_rows,
+}</code></pre></div>
+<p>这是<a href="../part-02/05-factory-method.html">第 05 章</a>的简单工厂，用<a href="../part-05/28-functions-as-design-tools.html">第 28 章</a>的字典分派来写。没有工厂类，也没有工厂方法，因为“选哪个读取函数”只取决于扩展名，没有任何流程需要子类来定制。</p>
+<h2 id="校验-一条规则一个函数">校验：一条规则一个函数<a class="anchor" href="#校验-一条规则一个函数" aria-label="本节链接">#</a></h2>
+<p>每条规则是一个函数，接收一行，返回错误信息或 <code>None</code>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">sku_format</span>(row: RawRow) -&gt; <span class="b">str</span> | <span class="k">None</span>:
+    sku = row[<span class="s">"sku"</span>].strip()
+    <span class="k">if</span> sku <span class="k">and</span> <span class="k">not</span> re.fullmatch(<span class="s">r"[A-Z]{2}-\d{4}"</span>, sku):
+        <span class="k">return</span> <span class="s">f"sku 格式应为两个大写字母加四位数字：{sku}"</span>
+    <span class="k">return</span> <span class="k">None</span></code></pre></div>
+<p>所有规则放在一个列表里：</p>
+<div class="code" data-lang="Python"><pre><code>RULES: <span class="b">list</span>[Callable[[RawRow], <span class="b">str</span> | <span class="k">None</span>]] = [not_empty, sku_format, name_length, valid_price, valid_stock]</code></pre></div>
+<p>因为规则互相独立，现在可以把一行的<strong>所有</strong>问题一次报告出来，而不是只报告第一个：</p>
+<div class="code" data-lang="Python"><pre><code>        messages = [m <span class="k">for</span> rule <span class="k">in</span> rules <span class="k">if</span> (m := rule(row)) <span class="k">is</span> <span class="k">not</span> <span class="k">None</span>]
+        sku = row[<span class="s">"sku"</span>].strip()
+        <span class="k">if</span> <span class="k">not</span> messages <span class="k">and</span> sku <span class="k">in</span> seen:
+            messages.append(<span class="s">f"sku 重复：{sku}"</span>)  <span class="c"># 跨行的检查，不是单行规则</span></code></pre></div>
+<p>一行 sku 格式错误、价格又是负数，报告里会同时列出两个问题（测试 <code>test_independent_rules_report_together</code>），供应商一次就能改完。</p>
+<p>注意“sku 重复”<strong>没有</strong>写成规则函数。它需要记住前面出现过哪些 sku，是一个跨行的检查，和“只看一行”的规则性质不同。硬把它塞进 <code>RULES</code>，就得让规则函数带上状态，或者给所有规则加一个参数。把它留在循环里，保持两类检查的区别清楚可见。</p>
+<p>加一条新规则，就是写一个函数、在列表里加一项（测试 <code>test_a_new_rule_is_one_more_function</code>）。这是<a href="../part-04/17-strategy.html">第 17 章</a>的策略，用函数来写。</p>
+<h2 id="输出-同一个-write">输出：同一个 <code>write</code><a class="anchor" href="#输出-同一个-write" aria-label="本节链接">#</a></h2>
+<p>报告和数据库，都是“拿到导入结果，把它送到某个地方”。给它们一个共同的接口：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Sink</span>(Protocol):
+    <span class="k">def</span> <span class="f">write</span>(<span class="b">self</span>, result: Result) -&gt; <span class="k">None</span>: ...</code></pre></div>
+<p>数据库的写入用 SQLite 的 <code>ON CONFLICT ... DO UPDATE</code>，同一个 sku 再次导入时更新价格和库存（测试 <code>test_sqlite_upsert</code>）：</p>
+<div class="code" data-lang="Python"><pre><code>        <span class="k">with</span> closing(sqlite3.connect(<span class="b">self</span>.path)) <span class="k">as</span> conn, conn:  <span class="c"># closing 负责关闭，conn 负责提交或回滚</span>
+            conn.execute(</code></pre></div>
+<p>这一行有一个容易踩的坑：<code>with sqlite3.connect(...) as conn:</code> 只负责事务（成功提交、出错回滚），<strong>不会关闭连接</strong>。所以外面再套一层 <code>contextlib.closing</code>，保证连接被关闭（参见<a href="../part-05/30-decorators-context-managers-generators.html">第 30 章</a>的上下文管理器）。</p>
+<p><code>main</code> 根据命令行参数组装需要的去处，然后依次写入：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">for</span> sink <span class="k">in</span> sinks:
+        sink.write(result)</code></pre></div>
+<p>重构之后，数据在工具里的流动如下：</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    csv["CSV 文件"] --&gt;|"read_csv_rows"| raw["RawRow：统一的中间形态"]
+    json["JSON 文件"] --&gt;|"read_json_rows"| raw
+    raw --&gt; v["validate：RULES 加 sku 重复检查"]
+    v --&gt; res["Result"]
+    res --&gt; rep["JsonReport"]
+    res --&gt; db["SqliteSink"]</pre></figure>
+<h2 id="没有用的模式">没有用的模式<a class="anchor" href="#没有用的模式" aria-label="本节链接">#</a></h2>
+<p>这次重构用到了适配器的思想（读取函数）、简单工厂（<code>READERS</code> 字典）、策略（规则函数列表），全部是函数和字典，只有输出用了一个 <code>Protocol</code> 和两个小类。同样值得说清楚的，是<strong>没有用</strong>哪些模式，以及为什么：</p>
+<ul><li><strong>抽象工厂</strong>：读取、校验、输出之间没有“必须成套切换”的家族关系。CSV 文件可以写进数据库，JSON 文件也可以只出报告。</li><li><strong>模板方法</strong>：可以把“读取 → 校验 → 输出”写成父类的模板方法，让 <code>CsvImporter</code>、<code>JsonImporter</code> 子类覆盖“读取”这一步。但各格式之间只有读取不同，一个字典就够了。<a href="34-retrospective.html">第 34 章</a>会把这种写法实际做出来比较。</li><li><strong>观察者</strong>：输出的去处确实是“结果出来后通知多个对象”，但它们由 <code>main</code> 在启动时一次性确定，不会在运行中订阅、退订。一个列表加一个循环就够了。</li><li><strong>建造者、责任链、访问者</strong>：没有对应的困难。</li></ul>
+<p><a href="../part-01/04-choosing-a-pattern.html">第 04 章</a>的提醒在这里依然适用：<strong>模式是对困难的回应，不是需要凑齐的清单。</strong></p>
+<h2 id="运行结果">运行结果<a class="anchor" href="#运行结果" aria-label="本节链接">#</a></h2>
+<div class="code" data-lang="输出"><pre><code>python -m examples.ch33_importer examples/data/supplier_b.json --db 商品.db</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>{
+  "imported": 2,
+  "rejected": 3,
+  "stock_value_yuan": "4521.60",
+  "problems": [
+    "第 3 条：sku 格式应为两个大写字母加四位数字：yn2003",
+    "第 4 条：商品名超过 40 个字：50",
+    "第 5 条：价格最多两位小数：59.999"
+  ]
+}</code></pre></div>
+<p>两件合格的商品同时写进了 <code>商品.db</code>。对<a href="32-first-version.html">第 32 章</a>的 CSV 文件运行，报告和以前完全一样。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>需求变化时，先分别判断每个部分痛不痛：读取格式和校验搅在一起，痛；校验规则互相独立而且在增加，会痛；输出去处增加，暂时不痛但值得统一。金额处理、数据结构等没有变化的部分，不动。</li><li>重构前，先用测试固定旧的行为；重构后，旧格式的结果必须完全一样。</li><li>用一个统一的中间形态隔开“格式”和“校验”；用字典选择读取函数；用函数列表组织互相独立的规则；跨行的检查和单行规则分开。</li><li>说清楚没有用哪些模式、为什么没用，和说清楚用了什么同样重要。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>第三家供应商只能提供 Excel 文件（<code>.xlsx</code>）。标准库无法直接读取 <code>.xlsx</code>。</p>
+<ol><li>有哪些选择？（提示：让供应商导出 CSV；引入第三方库；写一个小的转换脚本。）各有什么代价？</li><li>如果决定引入第三方库，它应该出现在代码的哪里？怎样保证没有安装这个库的同事，仍然可以导入 CSV 和 JSON？</li><li>这个新需求会让哪些部分感到“痛”？会不会改变本章的设计？</li></ol>
+<p><strong>思路提示</strong>：最简单、最稳妥的往往是第一个选择：和供应商商量导出 CSV，代码一行都不用改。如果必须支持 <code>.xlsx</code>，第三方库只应该出现在一个新的读取函数里，在 <code>READERS</code> 里登记 <code>.xlsx</code>；导入那个库的语句放在读取函数内部（或者用 <code>try/except ImportError</code> 登记），这样没有安装它的环境依然可以使用其他格式。本章的设计正好能吸收这个变化：新增一种格式，只是新增一个读取函数，校验和输出都不用改。这说明重构的方向是对的：变化落在了预期的位置上。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch33_importer.py" target="_blank" rel="noopener"><code>examples/ch33_importer.py</code></a>：重构后的导入工具</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/data/supplier_b.json" target="_blank" rel="noopener"><code>examples/data/supplier_b.json</code></a>：第二家供应商的价目表</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch33_importer.py" target="_blank" rel="noopener"><code>tests/test_ch33_importer.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-06/32-first-version.html"><small>上一篇</small>32 第一次实现：不使用模式</a><a class="next" href="../part-06/34-retrospective.html"><small>下一篇</small>34 回顾：能解释自己为什么这样写</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-06/33-selective-refactoring.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#三个变化">三个变化</a></li><li><a href="#先看哪里痛">先看哪里痛</a></li><li><a href="#重构之前-测试">重构之前：测试</a></li><li><a href="#读取-统一的中间形态">读取：统一的中间形态</a></li><li><a href="#校验-一条规则一个函数">校验：一条规则一个函数</a></li><li><a href="#输出-同一个-write">输出：同一个 write</a></li><li><a href="#没有用的模式">没有用的模式</a></li><li><a href="#运行结果">运行结果</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

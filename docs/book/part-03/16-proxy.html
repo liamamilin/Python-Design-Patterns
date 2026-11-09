@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 16 章 代理 Proxy · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：怎样在不改变调用方式的前提下，在调用方和真实对象之间加一道关卡，用来延迟创建、检查权限或缓存结果？代理和装饰器长得那么像，区别在哪里？ 第 13 章的装饰器是“包一层、接口不变、加一项职责”。这一章的代理结构上几乎一样，但它要解">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html" aria-current="page"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第三部分 · 组合对象（GoF 结构型）</p>
+<h1>第 16 章　代理 Proxy</h1>
+<blockquote><p>本章要回答：怎样在不改变调用方式的前提下，在调用方和真实对象之间加一道关卡，用来延迟创建、检查权限或缓存结果？代理和装饰器长得那么像，区别在哪里？</p></blockquote>
+<p><a href="13-decorator.html">第 13 章</a>的装饰器是“包一层、接口不变、加一项职责”。这一章的代理结构上几乎一样，但它要解决的是另一类问题：不是给对象<strong>增加</strong>能力，而是<strong>控制</strong>别人怎样接触到这个对象。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一个在线课程网站，每门课程分成若干课，每一课有一份讲义。讲义存成文件，真实场景里它可能是几百 MB 的视频；示例里用文本文件代替。</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">RealLesson</span>:
+    loads = <span class="n">0</span>  <span class="c"># 仅用于演示：统计一共读了几次文件</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, title: <span class="b">str</span>, path: Path) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.title = title
+        <span class="b">self</span>._text = path.read_text(<span class="s">"utf-8"</span>)  <span class="c"># 真实场景里是一个很大的视频或讲义文件</span>
+        RealLesson.loads += <span class="n">1</span>
+
+    <span class="k">def</span> <span class="f">content</span>(<span class="b">self</span>) -&gt; <span class="b">str</span>:
+        <span class="k">return</span> <span class="b">self</span>._text</code></pre></div>
+<p>课程页面先列出目录，学员点开某一课再看讲义：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">outline</span>(lessons: <span class="b">list</span>) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    <span class="k">return</span> [lesson.title <span class="k">for</span> lesson <span class="k">in</span> lessons]</code></pre></div>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>打开课程时，为每个文件创建一个 <code>RealLesson</code>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">open_course</span>(folder: Path) -&gt; <span class="b">list</span>[RealLesson]:
+    <span class="k">return</span> [RealLesson(p.stem, p) <span class="k">for</span> p <span class="k">in</span> <span class="b">sorted</span>(folder.glob(<span class="s">"*.txt"</span>))]</code></pre></div>
+<p>功能都对。课程只有几课、讲义很小的时候，<strong>这是好代码</strong>。</p>
+<h2 id="变化-课程变大-而且开始收费">变化：课程变大，而且开始收费<a class="anchor" href="#变化-课程变大-而且开始收费" aria-label="本节链接">#</a></h2>
+<p>网站发展起来后，出现了两个问题。</p>
+<p><strong>第一，打开目录太慢。</strong> 一门课 40 课，每课一个大文件。学员只是想看一眼目录，程序却把 40 个文件全部读了一遍。在示例的 5 课里，仅仅显示目录，<code>RealLesson.loads</code> 就是 5（测试 <code>test_outline_reads_every_file_and_paid_lessons_are_open</code>）。</p>
+<p><strong>第二，开始收费。</strong> 每门课的第一课免费试看，其余要报名后才能看。可 <code>RealLesson.content()</code> 谁调用都会返回讲义，测试里没报名的人也看到了第 5 课。</p>
+<p>两个需求都可以直接写进 <code>RealLesson</code>：构造时不读文件，<code>content()</code> 里先判断有没有读过；再给它加一个“当前用户”的参数，判断有没有报名。但这样，一个“表示一课内容”的类，就要同时关心文件什么时候读、当前用户是谁、哪些课免费。而且网站上还有别的地方会用到 <code>RealLesson</code>，比如后台的讲义审核，那里既不需要延迟加载，也不需要检查报名。</p>
+<p>我们希望：课程页面和后续代码照旧调用 <code>lesson.title</code> 和 <code>lesson.content()</code>，<code>RealLesson</code> 本身也不用改；“什么时候读文件”和“谁能看”这两件事，由站在中间的对象负责。</p>
+<h2 id="代理-替真实对象把关">代理：替真实对象把关<a class="anchor" href="#代理-替真实对象把关" aria-label="本节链接">#</a></h2>
+<p>GoF 对代理的描述是：<strong>为其他对象提供一种代理以控制对这个对象的访问。</strong></p>
+<p>代理和真实对象实现同一个接口，调用方分不出自己拿到的是哪一个：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Lesson</span>(Protocol):
+    title: <span class="b">str</span>
+
+    <span class="k">def</span> <span class="f">content</span>(<span class="b">self</span>) -&gt; <span class="b">str</span>: ...</code></pre></div>
+<h3 id="虚代理-用到时才创建">虚代理：用到时才创建<a class="anchor" href="#虚代理-用到时才创建" aria-label="本节链接">#</a></h3>
+<p>第一个代理解决“太早读文件”。它手里只有标题和文件路径，真正的 <code>RealLesson</code> 等到第一次调用 <code>content()</code> 时才创建：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">LazyLesson</span>:
+    <span class="s">"""虚代理：标题马上就有，讲义等到第一次真正需要时才读。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, title: <span class="b">str</span>, path: Path) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.title = title
+        <span class="b">self</span>._path = path
+        <span class="b">self</span>._real: RealLesson | <span class="k">None</span> = <span class="k">None</span>
+
+    <span class="k">def</span> <span class="f">content</span>(<span class="b">self</span>) -&gt; <span class="b">str</span>:
+        <span class="k">if</span> <span class="b">self</span>._real <span class="k">is</span> <span class="k">None</span>:
+            <span class="b">self</span>._real = RealLesson(<span class="b">self</span>.title, <span class="b">self</span>._path)
+        <span class="k">return</span> <span class="b">self</span>._real.content()</code></pre></div>
+<p>GoF 把这种代理叫作<strong>虚代理</strong>（virtual proxy）：它代表一个“还没有真正存在”的昂贵对象。显示目录时一个文件都不读；点开某一课，只读这一个文件；再点一次，用已经创建好的那个（测试 <code>test_outline_reads_nothing</code> 和 <code>test_loads_once_on_first_use</code>）。</p>
+<h3 id="保护代理-先检查权限">保护代理：先检查权限<a class="anchor" href="#保护代理-先检查权限" aria-label="本节链接">#</a></h3>
+<p>第二个代理解决“谁都能看”。它包住另一个课程对象，在转交请求之前检查当前用户有没有报名：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">PaidLesson</span>:
+    <span class="s">"""保护代理：只有已报名的学员能看讲义，标题谁都能看。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, inner: Lesson, enrolled: <span class="b">set</span>[<span class="b">str</span>], user: <span class="b">str</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.inner = inner
+        <span class="b">self</span>.enrolled = enrolled
+        <span class="b">self</span>.user = user
+        <span class="b">self</span>.title = inner.title
+
+    <span class="k">def</span> <span class="f">content</span>(<span class="b">self</span>) -&gt; <span class="b">str</span>:
+        <span class="k">if</span> <span class="b">self</span>.user <span class="k">not</span> <span class="k">in</span> <span class="b">self</span>.enrolled:
+            <span class="k">raise</span> <span class="b">PermissionError</span>(<span class="s">f"{self.user} 还没有报名，不能观看《{self.title}》"</span>)
+        <span class="k">return</span> <span class="b">self</span>.inner.content()</code></pre></div>
+<p>这是<strong>保护代理</strong>（protection proxy）。注意它只拦住了 <code>content()</code>，标题照样可以看，因为未报名的学员也需要看到目录才会决定报名。</p>
+<h3 id="组装">组装<a class="anchor" href="#组装" aria-label="本节链接">#</a></h3>
+<p>两种代理可以叠在一起，保护代理在外，虚代理在里：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">open_course</span>(folder: Path, user: <span class="b">str</span>, enrolled: <span class="b">set</span>[<span class="b">str</span>], free: <span class="b">int</span> = <span class="n">1</span>) -&gt; <span class="b">list</span>[Lesson]:
+    <span class="s">"""前 free 课免费试看，其余需要报名。所有课都延迟加载。"""</span>
+    lessons: <span class="b">list</span>[Lesson] = []
+    <span class="k">for</span> i, path <span class="k">in</span> <span class="b">enumerate</span>(<span class="b">sorted</span>(folder.glob(<span class="s">"*.txt"</span>))):
+        lesson: Lesson = LazyLesson(path.stem, path)
+        <span class="k">if</span> i &gt;= free:
+            lesson = PaidLesson(lesson, enrolled, user)
+        lessons.append(lesson)
+    <span class="k">return</span> lessons</code></pre></div>
+<div class="code" data-lang="输出"><pre><code>['01-第1课', '02-第2课', '03-第3课', '04-第4课', '05-第5课'] 读了 0 个文件
+第 1 课的讲义…… 读了 1 个文件
+小周 还没有报名，不能观看《02-第2课》</code></pre></div>
+<p>顺序在这里也有意义：保护代理在外面，没报名的人被拒绝时，里面的虚代理根本不会被调用，文件也就不会被读（测试 <code>test_free_trial_and_paid_lessons</code>）。如果反过来，先读文件再检查权限，就白白读了一个大文件。</p>
+<p><code>outline</code> 函数、<code>RealLesson</code> 类，一行都没有改。后台审核讲义的代码继续直接用 <code>RealLesson</code>，不受任何影响。</p>
+<p>下图是一次 <code>content()</code> 调用经过两层代理的过程：</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    page["课程页面"] --&gt;|"content()"| paid["PaidLesson：已报名？"]
+    paid --&gt;|"否"| deny["PermissionError"]
+    paid --&gt;|"是"| lazy["LazyLesson：读过文件了吗？"]
+    lazy --&gt;|"第一次才创建"| real["RealLesson：读文件"]</pre></figure>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>主题（Subject）</td><td><code>Lesson</code> 协议</td><td>真实对象和代理共同的接口</td></tr><tr><td>真实主题（RealSubject）</td><td><code>RealLesson</code></td><td>真正持有讲义内容</td></tr><tr><td>代理（Proxy）</td><td><code>LazyLesson</code>、<code>PaidLesson</code></td><td>持有（或知道如何得到）真实对象，控制对它的访问</td></tr></tbody></table></div>
+<p>GoF 列出了几种常见的代理，本章演示了前两种：</p>
+<ul><li><strong>虚代理</strong>：延迟创建昂贵的对象；</li><li><strong>保护代理</strong>：检查调用方是否有权限；</li><li><strong>远程代理</strong>：在本地代表一个位于其他进程或机器上的对象，调用它的方法会变成一次网络请求；</li><li><strong>智能引用</strong>：访问对象时顺带做一些管理工作，比如计数、加锁。缓存代理也常被归入这一类。</li></ul>
+<h3 id="和装饰器的区别">和装饰器的区别<a class="anchor" href="#和装饰器的区别" aria-label="本节链接">#</a></h3>
+<p>代理和装饰器的代码结构几乎一样：同样的接口，持有另一个对象，转交请求。区别在于<strong>意图</strong>：</p>
+<div class="table"><table><thead><tr><th></th><th>装饰器</th><th>代理</th></tr></thead><tbody><tr><td>目的</td><td>给对象增加职责（打码、截断、计数）</td><td>控制对对象的访问（何时创建、谁能用、是否走缓存）</td></tr><tr><td>和真实对象的关系</td><td>通常由外部传入一个已经存在的对象</td><td>常常自己负责创建或找到真实对象（如 <code>LazyLesson</code>）</td></tr><tr><td>叠加</td><td>常常叠很多层，每层一项职责</td><td>通常一两层</td></tr></tbody></table></div>
+<p>一个实用的判断方法：如果去掉这一层，功能还完整，只是少了点“附加”的东西，那多半是装饰器；如果去掉这一层，就失去了对“何时、谁、怎样接触真实对象”的控制，那多半是代理。不过，两者的边界并不总是清楚，比如缓存既可以说是“加了一项职责”，也可以说是“控制了访问”。叫什么名字不重要，重要的是这一层在做什么，以及为什么放在这里。</p>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>延迟不等于消除。</strong> 虚代理把读文件的时间从“打开目录时”挪到了“第一次点开时”。如果学员点开的那一刻读文件很慢，他依然要等。而且读文件可能出错（文件被删除了），错误也被推迟到了点开的那一刻。</li><li><strong>代理和真实对象的行为可能悄悄不同。</strong> <code>PaidLesson.content()</code> 可能抛出 <code>PermissionError</code>，而 <code>RealLesson.content()</code> 从不抛出。调用方以为自己面对的是同一个接口，却要处理一种原本不存在的异常。这一点要在接口文档里写清楚。</li><li><strong>保护代理不是安全边界的全部。</strong> 任何能拿到里面那个 <code>LazyLesson</code> 或 <code>RealLesson</code> 的代码，都可以绕过检查。真正的权限控制，还要保证未授权的代码根本拿不到真实对象（比如服务器只把代理对象交给处理用户请求的代码），以及在数据源头（文件权限、数据库权限）上也有控制。</li><li><strong>对象的身份变了。</strong> 代理不是真实对象，<code>isinstance(lesson, RealLesson)</code> 不成立，依赖具体类型的代码会出错。</li></ul>
+<p><strong>什么时候不该用</strong>：对象创建很便宜，或者没有访问控制的需求。几 KB 的讲义一次全部读进来，比任何延迟加载都简单，也不会有“点开时出错”的意外。</p>
+<h2 id="python-角度-属性级别的延迟加载-以及通用代理的坑">Python 角度：属性级别的延迟加载，以及通用代理的坑<a class="anchor" href="#python-角度-属性级别的延迟加载-以及通用代理的坑" aria-label="本节链接">#</a></h2>
+<p>如果只是想延迟加载一个<strong>属性</strong>，Python 有现成的工具 <code>functools.cached_property</code>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Lesson</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, title: <span class="b">str</span>, path: Path) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>.title = title
+        <span class="b">self</span>.path = path
+
+<span class="d">    @cached_property</span>
+    <span class="k">def</span> <span class="f">text</span>(<span class="b">self</span>) -&gt; <span class="b">str</span>:
+        <span class="k">return</span> <span class="b">self</span>.path.read_text(<span class="s">"utf-8"</span>)  <span class="c"># 第一次访问时才读，之后直接用缓存的值</span></code></pre></div>
+<p>第一次访问 <code>lesson.text</code> 时执行函数，把结果存进实例的 <code>__dict__</code>；之后再访问就直接读存好的值。这不需要单独的代理类，适合“这个对象的某个字段很贵”的情况。它的缓存不会自动失效：文件后来被修改了，<code>lesson.text</code> 仍然是旧内容（测试 <code>test_cached_property_reads_once</code>），除非手动执行 <code>del lesson.text</code>，下次访问时才会重新读取。</p>
+<p>另一个常见的想法是写一个“通用代理”，用 <code>__getattr__</code> 把所有属性访问都转给真实对象，一个类代理所有东西：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">AnyProxy</span>:
+    <span class="s">"""把所有找不到的属性都转给被代理的对象。"""</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, target: <span class="b">object</span>) -&gt; <span class="k">None</span>:
+        <span class="b">self</span>._target = target
+
+    <span class="k">def</span> <span class="f">__getattr__</span>(<span class="b">self</span>, name: <span class="b">str</span>):
+        <span class="k">return</span> <span class="b">getattr</span>(<span class="b">self</span>._target, name)</code></pre></div>
+<p><code>proxy.content()</code> 能正常工作。但它有两个不太容易发现的坑（测试 <code>test_generic_proxy_pitfalls</code>）：</p>
+<ol><li><strong>特殊方法不经过 <code>__getattr__</code>。</strong> <code>str(x)</code>、<code>len(x)</code>、<code>x == y</code>、<code>for i in x</code> 这类操作，Python 会直接到对象的<strong>类型</strong>上去找 <code>__str__</code>、<code>__len__</code> 等方法，不会调用实例的 <code>__getattr__</code>。<code>RealLesson</code> 定义了 <code>__str__</code>，<code>str(real)</code> 是 <code>《入门》</code>；而 <code>str(proxy)</code> 得到的是 <code>AnyProxy</code> 从 <code>object</code> 继承来的默认表示，类似 <code>&lt;…AnyProxy object at 0x…&gt;</code>。不报错，只是结果悄悄地不对。</li><li><strong><code>isinstance</code> 检查失败。</strong> 代理不是 <code>RealLesson</code> 的实例。</li></ol>
+<p>所以，除非有充分的理由，<strong>优先写显式的代理类</strong>，只实现确实需要的那几个方法，就像本章的 <code>LazyLesson</code> 和 <code>PaidLesson</code>。它们的代码更多，但行为清清楚楚。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>代理和真实对象实现同一个接口，站在调用方和真实对象之间，控制访问：延迟创建（虚代理）、检查权限（保护代理）、代表远程对象（远程代理）、顺带做管理工作（智能引用）。</li><li>代理和装饰器结构相同，区别在意图：装饰器增加职责，代理控制访问。</li><li>代理会改变一些行为：延迟的开销和错误、新的异常、对象身份。这些都要在接口说明里讲清楚。保护代理不能代替数据源头的权限控制。</li><li>在 Python 里，属性级别的延迟加载可以用 <code>functools.cached_property</code>；用 <code>__getattr__</code> 写通用代理时，要注意特殊方法和 <code>isinstance</code> 都不会被转发。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>网站上线了视频的“倍速播放”功能。视频转码很慢，于是要求：同一课、同一倍速的转码结果，第一次生成之后要缓存起来，下次直接用。</p>
+<ol><li>你会把缓存写成一个新的代理，还是写进 <code>LazyLesson</code>？</li><li>缓存代理应该放在 <code>PaidLesson</code> 的里面还是外面？如果放在外面，会出现什么问题？</li><li>讲义文件更新后，缓存要怎样失效？</li></ol>
+<p><strong>思路提示</strong>：写成一个独立的 <code>CachedLesson</code> 代理更清楚，每一层只管一件事。它必须放在 <code>PaidLesson</code> <strong>里面</strong>：如果放在外面，一个已报名的学员看过之后，结果进了缓存，未报名的学员再请求时，缓存层直接返回了内容，权限检查被跳过了。这是代理叠加顺序中最需要警惕的一类错误，一定要写测试覆盖。第 3 问涉及缓存失效，这是缓存最难的部分：可以把文件的修改时间或内容哈希作为缓存键的一部分，文件一变，键就变了，旧的缓存自然不再命中。<code>cached_property</code> 只能靠手动 <code>del</code> 来失效，它不知道文件什么时候变了，所以更适合“值不会变”的场合。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch16_course_v1.py" target="_blank" rel="noopener"><code>examples/ch16_course_v1.py</code></a>：一次读完所有讲义，没有权限检查</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch16_proxy.py" target="_blank" rel="noopener"><code>examples/ch16_proxy.py</code></a>：虚代理、保护代理及组装</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch16_pythonic.py" target="_blank" rel="noopener"><code>examples/ch16_pythonic.py</code></a>：<code>cached_property</code> 与通用代理的坑</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch16_proxy.py" target="_blank" rel="noopener"><code>tests/test_ch16_proxy.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-03/15-flyweight.html"><small>上一篇</small>15 享元 Flyweight</a><a class="next" href="../part-04/17-strategy.html"><small>下一篇</small>17 策略 Strategy</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-03/16-proxy.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#变化-课程变大-而且开始收费">变化：课程变大，而且开始收费</a></li><li><a href="#代理-替真实对象把关">代理：替真实对象把关</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-属性级别的延迟加载-以及通用代理的坑">Python 角度：属性级别的延迟加载，以及通用代理的坑</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="../assets/diagrams.js"></script>
+</body>
+</html>

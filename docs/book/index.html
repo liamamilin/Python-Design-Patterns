@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python 设计模式：从问题到方案</title>
+<meta name="description" content="不从模式名称开始，而从它要解决的问题开始。 本目录是全书正文。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="index.html" aria-current="page"><span>目录与说明</span></a></li><li><a href="preface.html"><span>前言</span></a></li></ul><details class="toc-part" open><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<h1>《Python 设计模式：从问题到方案》正文</h1>
+<blockquote><p>不从模式名称开始，而从它要解决的问题开始。</p></blockquote>
+<p>本目录是全书正文。每章先讲一个具体的小问题和最简单的 Python 写法，再让需求发生明确的变化，看原写法在哪里变难，然后才讨论设计模式和更轻量的 Python 替代方案，最后说明代价和不该使用的情况。</p>
+<h2 id="如何阅读">如何阅读<a class="anchor" href="#如何阅读" aria-label="本节链接">#</a></h2>
+<ul><li>先读<a href="preface.html">前言</a>：本书为什么这样组织，每一章怎样展开。</li><li>遇到不熟悉的术语，查<a href="glossary.html">术语表</a>。</li><li>第一部分是全书的基础，建议按顺序读。</li><li>第二到第四部分的每个模式章都可以单独阅读；遇到前面讲过的概念，会给出章节链接。</li><li>第五部分回到 Python 语言本身，第六部分用一个贯穿案例把前面的选择放回真实项目。</li></ul>
+<h2 id="运行示例与测试">运行示例与测试<a class="anchor" href="#运行示例与测试" aria-label="本节链接">#</a></h2>
+<p>需要 Python 3.11 或更高版本，只用标准库，不需要网络或 API 密钥。在仓库根目录运行：</p>
+<div class="code" data-lang="输出"><pre><code>python -m unittest discover -s tests -v</code></pre></div>
+<p>单独运行某一章的示例，例如：</p>
+<div class="code" data-lang="输出"><pre><code>python -m examples.ch05_factory_method</code></pre></div>
+<p>书中的示意图用 Mermaid 编写，在 GitHub 上会直接显示为图；在不支持 Mermaid 的阅读器里，会显示为图的源代码。</p>
+<p>书中的每段 Python 代码都原样摘自 <code>examples/</code> 目录下对应的文件。<code>python tools/check_book_code.py</code> 会检查这一点，它也包含在上面的测试里。</p>
+<h2 id="目录">目录<a class="anchor" href="#目录" aria-label="本节链接">#</a></h2>
+<h3 id="第一部分-为什么需要设计">第一部分 · 为什么需要设计<a class="anchor" href="#第一部分-为什么需要设计" aria-label="本节链接">#</a></h3>
+<ul><li><a href="part-01/01-data-and-processing.html">01 从数据与处理理解程序</a></li><li><a href="part-01/02-when-simple-code-resists-change.html">02 当简单代码开始难以改变</a></li><li><a href="part-01/03-python-building-blocks.html">03 Python 组织程序的基本工具</a></li><li><a href="part-01/04-choosing-a-pattern.html">04 从问题选择模式</a></li></ul>
+<h3 id="第二部分-创建对象-gof-创建型">第二部分 · 创建对象（GoF 创建型）<a class="anchor" href="#第二部分-创建对象-gof-创建型" aria-label="本节链接">#</a></h3>
+<ul><li><a href="part-02/05-factory-method.html">05 工厂方法 Factory Method</a></li><li><a href="part-02/06-abstract-factory.html">06 抽象工厂 Abstract Factory</a></li><li><a href="part-02/07-builder.html">07 建造者 Builder</a></li><li><a href="part-02/08-prototype.html">08 原型 Prototype</a></li><li><a href="part-02/09-singleton.html">09 单例 Singleton</a></li></ul>
+<h3 id="第三部分-组合对象-gof-结构型">第三部分 · 组合对象（GoF 结构型）<a class="anchor" href="#第三部分-组合对象-gof-结构型" aria-label="本节链接">#</a></h3>
+<ul><li><a href="part-03/10-adapter.html">10 适配器 Adapter</a></li><li><a href="part-03/11-bridge.html">11 桥接 Bridge</a></li><li><a href="part-03/12-composite.html">12 组合 Composite</a></li><li><a href="part-03/13-decorator.html">13 装饰器 Decorator</a></li><li><a href="part-03/14-facade.html">14 外观 Facade</a></li><li><a href="part-03/15-flyweight.html">15 享元 Flyweight</a></li><li><a href="part-03/16-proxy.html">16 代理 Proxy</a></li></ul>
+<h3 id="第四部分-协调处理-gof-行为型">第四部分 · 协调处理（GoF 行为型）<a class="anchor" href="#第四部分-协调处理-gof-行为型" aria-label="本节链接">#</a></h3>
+<ul><li><a href="part-04/17-strategy.html">17 策略 Strategy</a></li><li><a href="part-04/18-observer.html">18 观察者 Observer</a></li><li><a href="part-04/19-command.html">19 命令 Command</a></li><li><a href="part-04/20-state.html">20 状态 State</a></li><li><a href="part-04/21-template-method.html">21 模板方法 Template Method</a></li><li><a href="part-04/22-chain-of-responsibility.html">22 责任链 Chain of Responsibility</a></li><li><a href="part-04/23-iterator.html">23 迭代器 Iterator</a></li><li><a href="part-04/24-mediator.html">24 中介者 Mediator</a></li><li><a href="part-04/25-memento.html">25 备忘录 Memento</a></li><li><a href="part-04/26-visitor.html">26 访问者 Visitor</a></li><li><a href="part-04/27-interpreter.html">27 解释器 Interpreter</a></li></ul>
+<h3 id="第五部分-回到-python">第五部分 · 回到 Python<a class="anchor" href="#第五部分-回到-python" aria-label="本节链接">#</a></h3>
+<ul><li><a href="part-05/28-functions-as-design-tools.html">28 函数就是一种设计工具</a></li><li><a href="part-05/29-types-and-interfaces.html">29 类型与接口的轻量表达</a></li><li><a href="part-05/30-decorators-context-managers-generators.html">30 Python 装饰器、上下文管理器和生成器</a></li><li><a href="part-05/31-simple-versus-pattern-code.html">31 简单代码与模式代码的取舍</a></li></ul>
+<h3 id="第六部分-把选择放回真实项目">第六部分 · 把选择放回真实项目<a class="anchor" href="#第六部分-把选择放回真实项目" aria-label="本节链接">#</a></h3>
+<ul><li><a href="part-06/32-first-version.html">32 第一次实现：不使用模式</a></li><li><a href="part-06/33-selective-refactoring.html">33 需求改变：有选择地重构</a></li><li><a href="part-06/34-retrospective.html">34 回顾：能解释自己为什么这样写</a></li></ul>
+    </article>
+<nav class="pager"><span></span><a class="next" href="preface.html"><small>开始阅读</small>前言</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/README.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#如何阅读">如何阅读</a></li><li><a href="#运行示例与测试">运行示例与测试</a></li><li><a href="#目录">目录</a></li></ul></nav>
+</div>
+<script src="assets/book.js"></script>
+</body>
+</html>

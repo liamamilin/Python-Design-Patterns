@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 27 章 解释器 Interpreter · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：当规则需要由不写程序的人来编写和修改时，怎样设计一门足够小、足够安全的规则语言？为什么绝不能把用户写的规则交给 eval？ 这是 GoF 23 种模式的最后一个。解释器模式是为一门语言中的每一条语法规则写一个类，再用这些类组成的">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html" aria-current="page"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第四部分 · 协调处理（GoF 行为型）</p>
+<h1>第 27 章　解释器 Interpreter</h1>
+<blockquote><p>本章要回答：当规则需要由不写程序的人来编写和修改时，怎样设计一门足够小、足够安全的规则语言？为什么绝不能把用户写的规则交给 <code>eval</code>？</p></blockquote>
+<p>这是 GoF 23 种模式的最后一个。解释器模式是为一门<strong>语言</strong>中的每一条语法规则写一个类，再用这些类组成的树来计算结果。听起来像在写编译器，但它要解决的问题很日常：<strong>让规则变成数据</strong>，由使用者自己填写，而不是每次都找程序员改代码。</p>
+<h2 id="眼前的任务">眼前的任务<a class="anchor" href="#眼前的任务" aria-label="本节链接">#</a></h2>
+<p>一所大学的学生活动平台，每个活动都有报名资格。比如天文观测营：</p>
+<div class="code" data-lang="输出"><pre><code>年级 &gt;= 2 and (学院 == "物理" or 社团 == "天文社")</code></pre></div>
+<p>活动由各学院的老师在后台发布，资格规则也由老师自己填写。每个活动的规则都不一样，不可能每次都让程序员改代码。</p>
+<h2 id="不用模式的写法">不用模式的写法<a class="anchor" href="#不用模式的写法" aria-label="本节链接">#</a></h2>
+<p>规则看起来就是一个 Python 表达式，学生信息是一个字典。最省事的写法是：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">eligible</span>(rule: <span class="b">str</span>, student: <span class="b">dict</span>) -&gt; <span class="b">bool</span>:
+    <span class="k">return</span> <span class="b">bool</span>(eval(rule, {}, student))  <span class="c"># 危险：rule 里的任何 Python 代码都会被执行</span></code></pre></div>
+<p>它确实能工作，三位学生里，周晴（物理学院、二年级）和高远（三年级、天文社）有资格。</p>
+<p><strong>这是一个严重的安全漏洞。</strong> <code>eval</code> 会执行字符串中的<strong>任何</strong> Python 代码。老师（或者盗用了老师账号的人）可以填写：</p>
+<div class="code" data-lang="输出"><pre><code>__import__("os").getpid() &gt; 0</code></pre></div>
+<p><code>eval</code> 会照做：导入 <code>os</code> 模块，调用其中的函数，返回 <code>True</code>（测试 <code>test_eval_runs_arbitrary_code</code>）。示例只调用了一个无害的函数，但同样的方式可以读取服务器上的文件、删除数据、执行系统命令。</p>
+<p>常见的“补救”是把 <code>eval</code> 的第二个参数设成 <code>{"__builtins__": {}}</code>，以为这样就禁掉了危险的函数。<strong>这不安全。</strong> 通过对象的属性链（比如 <code>().__class__.__bases__</code>）一步步找到危险的函数，是众所周知的绕过手法。Python 官方文档也明确表示，不应该用 <code>eval</code> 处理不可信的输入。</p>
+<p><strong>规则：不可信的输入，永远不要交给 <code>eval</code> 或 <code>exec</code>。</strong> 这里的“不可信”包括一切不是你自己写死在代码里的字符串：用户输入、数据库里的配置、文件内容、网络请求。</p>
+<h2 id="困难在哪里">困难在哪里<a class="anchor" href="#困难在哪里" aria-label="本节链接">#</a></h2>
+<p>我们真正需要的，远比“任意 Python 代码”少：</p>
+<ul><li>字段名（年级、学院、社团）；</li><li>数字和字符串；</li><li>六种比较：<code>==</code>、<code>!=</code>、<code>&gt;=</code>、<code>&lt;=</code>、<code>&gt;</code>、<code>&lt;</code>；</li><li><code>and</code>、<code>or</code>、<code>not</code> 和括号。</li></ul>
+<p>没有函数调用，没有属性访问，没有导入。如果有一门<strong>只包含这些东西</strong>的小语言，那么规则里根本<strong>写不出</strong>危险的操作，这比“执行任意代码，再设法禁止其中危险的部分”安全得多。</p>
+<h2 id="解释器-为语法的每条规则写一个类">解释器：为语法的每条规则写一个类<a class="anchor" href="#解释器-为语法的每条规则写一个类" aria-label="本节链接">#</a></h2>
+<p>GoF 对解释器的描述是：<strong>给定一个语言，定义它的文法的一种表示，并定义一个解释器，这个解释器使用该表示来解释语言中的句子。</strong></p>
+<p>先写出这门语言的语法（文法）。从上到下，优先级从低到高：</p>
+<div class="code" data-lang="输出"><pre><code>expr := and ("or" and)*
+and  := not ("and" not)*
+not  := "not" not | cmp
+cmp  := atom (比较符 atom)?
+atom := 数字 | "字符串" | 字段名 | "(" expr ")"</code></pre></div>
+<p><code>and</code> 写在 <code>or</code> 的下一层，所以 <code>and</code> 比 <code>or</code> 结合得更紧，<code>a or b and c</code> 的意思是 <code>a or (b and c)</code>，和 Python 一样（测试 <code>test_precedence_and_binds_tighter_than_or</code>）。</p>
+<p>然后，<strong>每种语法成分是一个类</strong>，都有一个 <code>evaluate</code> 方法。字段从学生信息里取值，找不到就报错：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Field</span>:
+    name: <span class="b">str</span>
+
+    <span class="k">def</span> <span class="f">evaluate</span>(<span class="b">self</span>, ctx: <span class="b">dict</span>[<span class="b">str</span>, Value]) -&gt; Value:
+        <span class="k">if</span> <span class="b">self</span>.name <span class="k">not</span> <span class="k">in</span> ctx:
+            <span class="k">raise</span> RuleError(<span class="s">f"没有这个字段：{self.name}"</span>)
+        <span class="k">return</span> ctx[<span class="b">self</span>.name]</code></pre></div>
+<p>比较先算出两边的值，再比较。字符串和数字比大小没有意义，直接报错，而不是让 Python 抛出一个让老师看不懂的 <code>TypeError</code>：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">Compare</span>:
+    op: <span class="b">str</span>
+    left: Expr
+    right: Expr
+
+    <span class="k">def</span> <span class="f">evaluate</span>(<span class="b">self</span>, ctx: <span class="b">dict</span>[<span class="b">str</span>, Value]) -&gt; <span class="b">bool</span>:
+        a, b = <span class="b">self</span>.left.evaluate(ctx), <span class="b">self</span>.right.evaluate(ctx)
+        <span class="k">if</span> <span class="b">self</span>.op <span class="k">not</span> <span class="k">in</span> (<span class="s">"=="</span>, <span class="s">"!="</span>) <span class="k">and</span> <span class="b">type</span>(a) <span class="k">is</span> <span class="k">not</span> <span class="b">type</span>(b):
+            <span class="k">raise</span> RuleError(<span class="s">f"不能比较 {a!r} 和 {b!r} 的大小"</span>)
+        <span class="k">return</span> OPS[<span class="b">self</span>.op](a, b)</code></pre></div>
+<p><code>And</code> 让两边分别求值再组合：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@dataclass</span>(frozen=<span class="k">True</span>)
+<span class="k">class</span> <span class="f">And</span>:
+    left: Expr
+    right: Expr
+
+    <span class="k">def</span> <span class="f">evaluate</span>(<span class="b">self</span>, ctx: <span class="b">dict</span>[<span class="b">str</span>, Value]) -&gt; <span class="b">bool</span>:
+        <span class="k">return</span> <span class="b">bool</span>(<span class="b">self</span>.left.evaluate(ctx)) <span class="k">and</span> <span class="b">bool</span>(<span class="b">self</span>.right.evaluate(ctx))</code></pre></div>
+<p><code>Or</code>、<code>Not</code>、<code>Literal</code> 也都只有几行。一条规则就是由这些对象组成的一棵树。天文观测营的规则，解析后是这样的：</p>
+<div class="code" data-lang="输出"><pre><code>And(
+  Compare('&gt;=', Field('年级'), Literal(2)),
+  Or(
+    Compare('==', Field('学院'), Literal('物理')),
+    Compare('==', Field('社团'), Literal('天文社')),
+  ),
+)</code></pre></div>
+<p>在树的根节点调用 <code>evaluate(学生信息)</code>，它会递归地让每个子节点求值，最后得出 <code>True</code> 或 <code>False</code>。结果和 <code>eval</code> 版本完全一样：周晴和高远（测试 <code>test_same_answers</code>）。</p>
+<h3 id="解析-从文字到树">解析：从文字到树<a class="anchor" href="#解析-从文字到树" aria-label="本节链接">#</a></h3>
+<p>GoF 的解释器模式只讲“怎样用对象树表示和计算一个句子”，<strong>不讲怎样把文字变成树</strong>，那是解析器的工作。本例的解析器分两步：</p>
+<ol><li><strong>切分记号</strong>：用一个正则表达式把规则切成数字、字符串、比较符、括号、关键字和字段名。任何不属于这几类的字符都会被拒绝。</li><li><strong>递归下降</strong>：语法里的每一行对应解析器的一个方法，<code>expr</code> 调用 <code>and_</code>，<code>and_</code> 调用 <code>not_</code>，依此类推。</li></ol>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">expr</span>(<span class="b">self</span>) -&gt; Expr:
+        node = <span class="b">self</span>.and_()
+        <span class="k">while</span> <span class="b">self</span>.peek() == (<span class="s">"kw"</span>, <span class="s">"or"</span>):
+            <span class="b">self</span>.i += <span class="n">1</span>
+            node = Or(node, <span class="b">self</span>.and_())
+        <span class="k">return</span> node</code></pre></div>
+<p><code>__import__("os").getpid() &gt; 0</code> 这样的规则在切分记号时就被拒绝了，因为语言里没有 <code>.</code> 这个符号；即使去掉点号，<code>__import__("os")</code> 也会因为“字段名后面跟着括号”不符合语法而被拒绝。即使有人设法让 <code>__import__</code> 作为一个字段名通过了解析，<code>Field.evaluate</code> 做的也只是在学生信息字典里查找这个名字，<strong>这门语言里根本没有“调用”这个动作</strong>（测试 <code>test_hostile_rules_are_rejected</code>）。</p>
+<p>错误信息也是给老师看的：“这里应该是 )，实际是 结尾”“没有这个字段：专业”“不能比较 2 和 '二' 的大小”（测试 <code>test_friendly_errors</code>）。</p>
+<h3 id="角色对照">角色对照<a class="anchor" href="#角色对照" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>GoF 角色</th><th>本例</th><th>职责</th></tr></thead><tbody><tr><td>抽象表达式（AbstractExpression）</td><td><code>Expr</code> 协议</td><td>声明 <code>evaluate</code></td></tr><tr><td>终结符表达式（TerminalExpression）</td><td><code>Literal</code>、<code>Field</code></td><td>语法中不能再分解的部分</td></tr><tr><td>非终结符表达式（NonterminalExpression）</td><td><code>Compare</code>、<code>And</code>、<code>Or</code>、<code>Not</code></td><td>由其他表达式组成，递归求值</td></tr><tr><td>上下文（Context）</td><td>学生信息字典</td><td>求值时需要的外部数据</td></tr><tr><td>客户（Client）</td><td><code>compile_rule</code> 及调用方</td><td>构造（解析出）表达式树并求值</td></tr></tbody></table></div>
+<h2 id="代价与边界">代价与边界<a class="anchor" href="#代价与边界" aria-label="本节链接">#</a></h2>
+<ul><li><strong>你在设计一门语言。</strong> 语法、优先级、错误信息、类型规则，全都要自己定义、自己测试。老师会问：“能不能写 <code>年级 在 [2, 3] 中</code>？”“能不能不区分大小写？”每一个“能不能”都是一次语言设计。</li><li><strong>语法一复杂，类和解析器都会膨胀。</strong> GoF 原书也指出，解释器模式适合<strong>简单的</strong>文法。如果规则语言需要变量、函数、循环，就应该使用专门的解析工具，或者换一种方案。</li><li><strong>性能一般。</strong> 每次求值都要遍历整棵树。对报名资格这样的规则，完全够用；对每秒要计算几百万次的规则，可能需要别的做法。</li><li><strong>安全来自语言本身的“小”。</strong> 解释器之所以安全，是因为语言里没有危险的操作。每给语言加一个功能，都要重新想一想它会不会被滥用，比如“允许调用几个函数”就要限定是哪几个、参数是什么。</li></ul>
+<p><strong>什么时候不该用</strong>：规则的种类是固定的几种，只是参数不同。比如资格永远是“年级不低于 N，并且属于这几个学院之一”，那就做一个表单：一个年级下拉框，一组学院复选框。表单比任何语言都更容易使用，也更不容易出错。只有当规则的<strong>结构</strong>本身需要由使用者自由组合时，才需要一门语言。</p>
+<h2 id="python-角度-借用-ast-解析-但不要用-eval-执行">Python 角度：借用 <code>ast</code> 解析，但不要用 <code>eval</code> 执行<a class="anchor" href="#python-角度-借用-ast-解析-但不要用-eval-执行" aria-label="本节链接">#</a></h2>
+<p>本例的规则语法恰好是 Python 表达式的一个子集。于是还有一种做法：用标准库的 <code>ast</code> 模块把规则解析成 Python 的语法树，然后<strong>检查</strong>树里只有允许的节点，最后<strong>自己</strong>遍历这棵树求值：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">check</span>(rule: <span class="b">str</span>) -&gt; ast.Expression:
+    tree = ast.parse(rule, mode=<span class="s">"eval"</span>)
+    allowed = (ast.Expression, ast.BoolOp, ast.And, ast.Or, ast.UnaryOp, ast.Not,
+               ast.Compare, ast.Name, ast.Load, ast.Constant, *COMPARE)
+    <span class="k">for</span> node <span class="k">in</span> ast.walk(tree):
+        <span class="k">if</span> <span class="k">not</span> <span class="b">isinstance</span>(node, allowed):
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"规则里不允许出现：{type(node).__name__}"</span>)
+        <span class="k">if</span> <span class="b">isinstance</span>(node, ast.Constant) <span class="k">and</span> <span class="k">not</span> <span class="b">isinstance</span>(node.value, (<span class="b">int</span>, <span class="b">str</span>)):
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"不支持的常量：{node.value!r}"</span>)
+    <span class="k">return</span> tree</code></pre></div>
+<p><code>ast.parse</code> 只做解析，不执行任何东西。白名单里没有函数调用（<code>Call</code>）、属性访问（<code>Attribute</code>）、下标、推导式，<code>__import__(...)</code>、<code>().__class__</code> 等都会在检查时被拒绝（测试 <code>test_hostile_rules_are_rejected</code>）。求值用一个 <code>match</code> 语句，按节点类型分别处理（<a href="26-visitor.html">第 26 章</a>讲过的写法）：</p>
+<div class="code" data-lang="Python"><pre><code>        <span class="k">case</span> ast.Compare(left, [op], [right]):
+            <span class="k">return</span> COMPARE[<span class="b">type</span>(op)](evaluate(left, ctx), evaluate(right, ctx))</code></pre></div>
+<p>这种做法省去了自己写解析器，规则的写法和 Python 完全一致。代价是：</p>
+<ul><li>语法由 Python 决定，你只能<strong>收窄</strong>它，不能<strong>改变</strong>它。想支持中文的“且”“或”，或者自定义的运算符，就做不到。</li><li>白名单必须严格。漏掉一种危险节点，就是一个漏洞。<strong>只列出允许的，不要列出禁止的</strong>，本例的 <code>allowed</code> 就是白名单。</li><li>Python 的一些语法细节会“漏”进你的语言。比如 <code>1 &lt; 年级 &lt; 3</code> 是合法的 Python 链式比较，本例的求值函数没有处理这种形式，会报错（测试 <code>test_chained_comparison_is_not_supported</code>）。每一种 Python 允许的写法，你都要决定支持还是拒绝。</li></ul>
+<p>两种做法如何选：</p>
+<ul><li><strong>规则语法和 Python 表达式很接近，使用者是技术人员</strong>：<code>ast</code> 加白名单，代码最少。</li><li><strong>规则面向非技术人员，需要中文关键字、更友好的错误信息，或者和 Python 不同的语法</strong>：自己定义语言，用本章的解释器类加一个小解析器。</li></ul>
+<p>无论哪一种，<strong>都不要调用 <code>eval</code></strong>。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>当规则需要由非程序员编写，而且规则的结构需要自由组合时，可以设计一门小语言：为语法的每条规则写一个类，句子解析成由这些类组成的树，再递归求值。这就是解释器模式。</li><li>解释器模式只描述怎样表示和计算句子；把文字变成树，需要另外写解析器。</li><li>不可信的输入绝不能交给 <code>eval</code>/<code>exec</code>，限制 <code>__builtins__</code> 也不能使其安全。安全应该来自语言本身没有危险的操作。</li><li>在 Python 里，如果规则语法是 Python 表达式的子集，可以用 <code>ast.parse</code> 解析，再用严格的白名单检查和自己写的求值函数代替 <code>eval</code>。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>老师们提出了两个新需求：</p>
+<ul><li>支持“属于”：<code>学院 in ("物理", "天文")</code>；</li><li>支持中文关键字：<code>年级 &gt;= 2 且 学院 == "物理"</code>。</li></ul>
+<ol><li>在自己定义语言的写法里，这两个需求分别要修改哪些部分：记号切分、语法、表达式类？</li><li>在 <code>ast</code> 白名单的写法里，哪一个需求容易支持，哪一个做不到？</li><li>支持 <code>in</code> 之后，要不要允许 <code>学院 in 社团</code>（右边是一个字段，而不是一组字面值）？这会带来什么问题？</li></ol>
+<p><strong>思路提示</strong>：<code>in</code> 需要在记号里加上逗号、关键字 <code>in</code>，在语法里加一种“字面值列表”，再加一个 <code>In</code> 表达式类。中文关键字只需要在切分记号时把“且”“或”“非”映射成 <code>and</code>、<code>or</code>、<code>not</code>，语法和表达式类都不用改，这体现了“切分记号”和“语法”分开的好处。<code>ast</code> 的写法可以通过在白名单里加入 <code>ast.In</code> 和 <code>ast.Tuple</code> 来支持 <code>in</code>，但中文关键字根本无法通过 Python 的解析。第 3 问：右边是字段时，<code>in</code> 的含义变成了“子字符串”或“列表成员”，取决于字段的类型，语义变得模糊，错误也更难解释。规则语言的每一项能力都要想清楚它的含义和边界，<strong>能力越少，越容易保证正确和安全</strong>。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch27_rules_v1.py" target="_blank" rel="noopener"><code>examples/ch27_rules_v1.py</code></a>：用 <code>eval</code> 计算规则（危险，仅作反例）</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch27_interpreter.py" target="_blank" rel="noopener"><code>examples/ch27_interpreter.py</code></a>：表达式类、记号切分与递归下降解析器</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch27_pythonic.py" target="_blank" rel="noopener"><code>examples/ch27_pythonic.py</code></a>：<code>ast</code> 解析、白名单检查与自定义求值</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch27_interpreter.py" target="_blank" rel="noopener"><code>tests/test_ch27_interpreter.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-04/26-visitor.html"><small>上一篇</small>26 访问者 Visitor</a><a class="next" href="../part-05/28-functions-as-design-tools.html"><small>下一篇</small>28 函数就是一种设计工具</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-04/27-interpreter.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#眼前的任务">眼前的任务</a></li><li><a href="#不用模式的写法">不用模式的写法</a></li><li><a href="#困难在哪里">困难在哪里</a></li><li><a href="#解释器-为语法的每条规则写一个类">解释器：为语法的每条规则写一个类</a></li><li><a href="#代价与边界">代价与边界</a></li><li><a href="#python-角度-借用-ast-解析-但不要用-eval-执行">Python 角度：借用 ast 解析，但不要用 eval 执行</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

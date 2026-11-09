@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 34 章 回顾：能解释自己为什么这样写 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：同一个需求有两种都能工作的设计时，怎样判断它们的复杂度和收益？如果未来的需求不同，结论会不会改变？ 全书的最后一章，不再引入新的模式。我们把第 33 章的导入工具用另一种合理的设计再写一遍，让两种设计通过同一组测试，然后比较它们">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html" aria-current="page"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第六部分 · 把选择放回真实项目</p>
+<h1>第 34 章　回顾：能解释自己为什么这样写</h1>
+<blockquote><p>本章要回答：同一个需求有两种都能工作的设计时，怎样判断它们的复杂度和收益？如果未来的需求不同，结论会不会改变？</p></blockquote>
+<p>全书的最后一章，不再引入新的模式。我们把<a href="33-selective-refactoring.html">第 33 章</a>的导入工具用另一种合理的设计再写一遍，让两种设计通过同一组测试，然后比较它们。目标不是选出“正确答案”，而是练习本书一直在练的那件事：<strong>说清楚为什么这样写。</strong></p>
+<h2 id="两种设计">两种设计<a class="anchor" href="#两种设计" aria-label="本节链接">#</a></h2>
+<p><strong>设计 A</strong>（<a href="33-selective-refactoring.html">第 33 章</a>）：函数和数据。</p>
+<ul><li>每种格式一个读取函数，登记在 <code>READERS</code> 字典里；</li><li>校验规则是函数列表 <code>RULES</code>；</li><li>输出是实现了 <code>write</code> 的对象列表；</li><li>一个 <code>import_file</code> 函数把它们串起来。</li></ul>
+<p><strong>设计 B</strong>（本章）：用<a href="../part-04/21-template-method.html">第 21 章</a>的模板方法。父类 <code>Importer</code> 固定“读取 → 校验 → 输出”的流程，每种格式一个子类，只提供“读取”这一步：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Importer</span>(ABC):
+    <span class="k">def</span> <span class="f">run</span>(<span class="b">self</span>, path: Path, sinks: <span class="b">list</span>[Sink]) -&gt; Result:
+        <span class="s">"""模板方法：流程固定。"""</span>
+        rows = <span class="b">self</span>.rows(path.read_text(encoding=<span class="s">"utf-8-sig"</span>))
+        result = validate(rows, [*RULES, *<span class="b">self</span>.extra_rules()])
+        <span class="k">for</span> sink <span class="k">in</span> sinks:
+            sink.write(result)
+        <span class="k">return</span> result
+
+<span class="d">    @abstractmethod</span>
+    <span class="k">def</span> <span class="f">rows</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">list</span>[<span class="b">tuple</span>[<span class="b">str</span>, RawRow]]:
+        <span class="s">"""每种格式必须提供：把文件内容变成统一的行。"""</span>
+
+    <span class="k">def</span> <span class="f">extra_rules</span>(<span class="b">self</span>) -&gt; <span class="b">list</span>:
+        <span class="s">"""钩子：某种格式特有的校验规则，默认没有。"""</span>
+        <span class="k">return</span> []</code></pre></div>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">CsvImporter</span>(Importer):
+    <span class="k">def</span> <span class="f">rows</span>(<span class="b">self</span>, text: <span class="b">str</span>) -&gt; <span class="b">list</span>[<span class="b">tuple</span>[<span class="b">str</span>, RawRow]]:
+        <span class="k">return</span> read_csv_rows(text)</code></pre></div>
+<p>两种设计对两个示例文件给出完全相同的结果，对不支持的文件类型抛出同样的错误（测试 <code>test_same_results_for_every_sample</code> 和 <code>test_same_errors_for_unsupported_files</code>）。<strong>从外部看，它们没有区别。</strong> 区别在于它们怎样应对变化，以及读代码的人要理解什么。</p>
+<h2 id="先比较现在">先比较现在<a class="anchor" href="#先比较现在" aria-label="本节链接">#</a></h2>
+<div class="table"><table><thead><tr><th></th><th>设计 A：函数和数据</th><th>设计 B：模板方法</th></tr></thead><tbody><tr><td>要理解的概念</td><td>字典、函数列表、一个 <code>Protocol</code></td><td>抽象基类、继承、钩子，外加 A 的全部</td></tr><tr><td>流程在哪里</td><td><code>import_file</code> 里几行</td><td><code>Importer.run</code>，子类不可见</td></tr><tr><td>新增一种格式</td><td>写一个函数，登记进字典</td><td>写一个子类，登记进字典</td></tr><tr><td>某种格式特有的规则</td><td>调用时传入额外的规则</td><td>子类覆盖 <code>extra_rules</code> 钩子</td></tr><tr><td>测试一个读取函数</td><td>直接调用函数</td><td>创建子类实例，或者直接测它调用的函数</td></tr></tbody></table></div>
+<p>对<strong>现在</strong>的需求（两种格式，规则对所有格式都一样），两种设计的代价相差不大，设计 A 少一层继承，略简单一些。设计 B 的子类其实只是把一个函数包了一层，<code>CsvImporter.rows</code> 就是 <code>read_csv_rows</code>。按<a href="../part-05/31-simple-versus-pattern-code.html">第 31 章</a>的说法，这时设计 B 多出来的结构还没有换来对应的收益。</p>
+<h2 id="再比较未来">再比较未来<a class="anchor" href="#再比较未来" aria-label="本节链接">#</a></h2>
+<p>真正的区别在于未来。下面设想几种可能的变化，看看两种设计各自怎样应对。</p>
+<h3 id="情况一-某家供应商有特殊规则">情况一：某家供应商有特殊规则<a class="anchor" href="#情况一-某家供应商有特殊规则" aria-label="本节链接">#</a></h3>
+<p>云岭茶业要求商品名里必须写明克重（比如“200g”），这条规则只针对他们。</p>
+<p>设计 B 的应对很自然：写一个子类，覆盖钩子：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">YunlingImporter</span>(JsonImporter):
+    <span class="k">def</span> <span class="f">extra_rules</span>(<span class="b">self</span>) -&gt; <span class="b">list</span>:
+        <span class="k">return</span> [has_weight]</code></pre></div>
+<p>设计 A 也能做到：调用 <code>validate(rows, [*RULES, has_weight])</code>。两者的结果完全相同（测试 <code>test_supplier_specific_rule_in_both_designs</code>）。区别在于“这条规则属于云岭茶业”这个知识<strong>放在哪里</strong>：设计 B 把它放进了一个有名字的类里；设计 A 要在调用的地方（或者另一个“供应商 → 额外规则”的字典里）记住它。</p>
+<p>如果这样的特殊要求只有一两家，两种都可以。如果每家供应商都有自己的一套读取细节、额外规则、甚至不同的报告格式，设计 B 的“每家供应商一个子类，所有特殊之处集中在里面”会越来越有优势。这正是模板方法擅长的情况：<strong>流程相同，好几个步骤都因对象而异。</strong></p>
+<h3 id="情况二-规则由运营人员配置">情况二：规则由运营人员配置<a class="anchor" href="#情况二-规则由运营人员配置" aria-label="本节链接">#</a></h3>
+<p>店主希望运营同事可以在后台勾选“这周启用哪些校验规则”，不用找程序员。</p>
+<p>设计 A 的规则本来就是一个列表，从配置里读出规则的名字，查表得到函数，组成列表，交给 <code>validate</code>，几乎不用改结构。设计 B 的规则一部分在全局的 <code>RULES</code> 里，一部分在子类的钩子里，“哪些规则生效”分散在类层次中，要支持配置，就得把钩子也改成从配置读取，类层次反而成了障碍。</p>
+<p>这时<strong>设计 A 明显更合适</strong>。如果配置进一步复杂到“规则之间可以用且、或组合”，那就到了<a href="../part-04/27-interpreter.html">第 27 章</a>的规则语言。</p>
+<h3 id="情况三-文件变得很大">情况三：文件变得很大<a class="anchor" href="#情况三-文件变得很大" aria-label="本节链接">#</a></h3>
+<p>某家大供应商的价目表有两百万行。</p>
+<p>两种设计都把整个文件读进内存，都把所有行放进一个列表。两者都要改：读取函数改成生成器（<a href="../part-04/23-iterator.html">第 23 章</a>），<code>validate</code> 边读边处理，输出也要支持分批写入。<strong>这个变化和设计 A、B 的选择无关</strong>，它影响的是另一个维度：数据是一次性处理，还是流式处理。</p>
+<p>这一点值得注意：不是所有的变化都能被“选对设计”预先吸收。有些变化会穿过任何一种设计，要求你重新思考数据的流动方式。</p>
+<h3 id="情况四-什么都没有变">情况四：什么都没有变<a class="anchor" href="#情况四-什么都没有变" aria-label="本节链接">#</a></h3>
+<p>半年过去了，还是这两家供应商，还是这几条规则。</p>
+<p>那么设计 A 的简单就是纯粹的收益，设计 B 的类层次就是纯粹的成本：每个新加入的同事都要先理解 <code>Importer</code> 的模板方法和钩子，才能看懂导入的流程。</p>
+<h2 id="怎样做出判断">怎样做出判断<a class="anchor" href="#怎样做出判断" aria-label="本节链接">#</a></h2>
+<p>把上面的分析归纳一下，判断依赖于几个具体的问题：</p>
+<ol><li><strong>变化最可能来自哪个方向？</strong> 更多格式、每种格式各有特殊之处，有利于设计 B；规则需要灵活组合、可以配置，有利于设计 A；数据量变大，两者都要改。</li><li><strong>有证据吗？</strong> 店主说“下个月还要接三家供应商，每家要求都不一样”，这是证据；“将来可能会有”，不是。</li><li><strong>读代码的人是谁？</strong> 团队熟悉面向对象的继承体系，还是更习惯函数和数据？代码最终是给人读的。</li><li><strong>撤回的代价多大？</strong> 设计 A 要改成设计 B，只需要把已有的函数包进子类；反过来，把类层次拆回函数，也不困难。两者之间的转换成本都不高，所以<strong>现在选更简单的那个，等证据出现再调整</strong>，风险很小。</li></ol>
+<p>对本书的这个小工具，按目前的需求和证据，<strong>设计 A 是更合适的选择</strong>。如果店主带来了情况一的证据，迁移到设计 B 是一次小而安全的重构，而第 32、33、34 章的测试会保证它没有改坏任何东西。</p>
+<h2 id="全书回顾">全书回顾<a class="anchor" href="#全书回顾" aria-label="本节链接">#</a></h2>
+<p>回头看这个导入工具的三个版本，几乎每一种做法都在前面的章节里出现过：</p>
+<ul><li>第一版用 <code>Decimal</code> 处理金额、用 <code>utf-8-sig</code> 处理 BOM：<a href="../part-01/01-data-and-processing.html">第 01 章</a>“先想清楚数据”；</li><li>读取函数是边界上的转换：<a href="../part-03/10-adapter.html">第 10 章</a>的适配器思想；</li><li><code>READERS</code> 字典：<a href="../part-02/05-factory-method.html">第 05 章</a>的简单工厂，用<a href="../part-05/28-functions-as-design-tools.html">第 28 章</a>的字典分派来写；</li><li>规则函数列表：<a href="../part-04/17-strategy.html">第 17 章</a>的策略；规则必须互相独立，<a href="../part-05/31-simple-versus-pattern-code.html">第 31 章</a>说明了原因；</li><li>输出的 <code>Sink</code> 协议：<a href="../part-05/29-types-and-interfaces.html">第 29 章</a>的 <code>Protocol</code>；</li><li>数据库连接的 <code>closing</code>：<a href="../part-05/30-decorators-context-managers-generators.html">第 30 章</a>的上下文管理器；</li><li>设计 B：<a href="../part-04/21-template-method.html">第 21 章</a>的模板方法。</li></ul>
+<p>而 23 种 GoF 模式中的大多数，在这个工具里都没有出现。这不是缺陷。本书从第一章起就在说：<strong>模式是对具体困难的回应。</strong> 没有遇到那种困难，就不需要那个模式。能指出“这里用了策略，因为规则互相独立而且在增加”，和能指出“这里没有用抽象工厂，因为没有需要成套切换的家族”，是同一种能力。</p>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>两种都能通过测试的设计，区别在于它们怎样应对变化，以及读代码的人要理解什么。</li><li>比较设计时，逐一设想可能的变化：哪种设计能吸收它，哪种会被它拖累，哪些变化与设计的选择无关。</li><li>判断依赖于变化的方向、有没有证据、团队的习惯，以及撤回的代价。当两种设计之间的迁移成本很低时，先选更简单的，等证据出现再调整。</li><li>能解释“为什么用”和“为什么没用”，比记住模式的名字更重要。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>回到你自己正在写或者维护的一段代码，选一处你觉得“设计得不太好”或者“用了某个模式”的地方：</p>
+<ol><li>用一句话写出它要应对的变化：什么在变，什么不变？</li><li>这个变化有证据吗？过去半年，它实际变过几次？</li><li>写出另一种可行的设计（更简单的，或者更有结构的），按本章的方法设想三种未来的变化，比较两种设计各自的代价。</li><li>你的结论是什么？如果要改，需要哪些测试先保护住现在的行为？</li></ol>
+<p><strong>思路提示</strong>：这道题没有标准答案，它是对全书方法的一次练习。很多时候，你会发现“设计得不太好”的代码，其实是在没有证据的情况下预先做了抽象，或者在变化已经反复出现之后，还停留在一长串复制粘贴里。前一种情况，常见的改进是删掉用不到的扩展点；后一种情况，常见的改进是找出真正在变的部分，把它放到一个可以替换的位置。无论哪种，<strong>先写测试，再动手</strong>。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch33_importer.py" target="_blank" rel="noopener"><code>examples/ch33_importer.py</code></a>：设计 A</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch34_class_based.py" target="_blank" rel="noopener"><code>examples/ch34_class_based.py</code></a>：设计 B</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch34_two_designs.py" target="_blank" rel="noopener"><code>tests/test_ch34_two_designs.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-06/33-selective-refactoring.html"><small>上一篇</small>33 需求改变：有选择地重构</a><a class="next" href="../glossary.html"><small>下一篇</small>术语表</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-06/34-retrospective.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#两种设计">两种设计</a></li><li><a href="#先比较现在">先比较现在</a></li><li><a href="#再比较未来">再比较未来</a></li><li><a href="#怎样做出判断">怎样做出判断</a></li><li><a href="#全书回顾">全书回顾</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>

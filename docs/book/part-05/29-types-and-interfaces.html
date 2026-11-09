@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第 29 章 类型与接口的轻量表达 · Python 设计模式：从问题到方案</title>
+<meta name="description" content="本章要回答：类型标注、Protocol、ABC、dataclass、NewType、TypedDict 各自能保证什么，不能保证什么？怎样用它们表达设计，而不是为了类型而写类型？ 前面几乎每一章都用到了 Protocol 描述接口、用 da">
+<meta name="theme-color" content="#16212e">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/book.css">
+<script>try{var t=localStorage.getItem("dp-theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-root="../">
+<a class="skip" href="#content">跳到正文</a>
+<header class="bar">
+  <button class="menu" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="打开目录">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <a class="brand" href="../index.html">Python 设计模式<span>：从问题到方案</span></a>
+  <a class="guide" href="../../index.html">导读</a>
+  <button class="theme" type="button" aria-label="切换深浅色">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="search">
+      <input type="search" id="q" placeholder="搜索全书" autocomplete="off" aria-label="搜索全书">
+      <div class="hits" id="hits" hidden></div>
+    </div>
+    <nav aria-label="全书目录"><ul class="toc-top"><li><a href="../index.html"><span>目录与说明</span></a></li><li><a href="../preface.html"><span>前言</span></a></li></ul><details class="toc-part"><summary><span class="pn">第一部分</span>为什么需要设计</summary><ul><li><a href="../part-01/01-data-and-processing.html"><span class="no">01</span><span>从数据与处理理解程序</span></a></li><li><a href="../part-01/02-when-simple-code-resists-change.html"><span class="no">02</span><span>当简单代码开始难以改变</span></a></li><li><a href="../part-01/03-python-building-blocks.html"><span class="no">03</span><span>Python 组织程序的基本工具</span></a></li><li><a href="../part-01/04-choosing-a-pattern.html"><span class="no">04</span><span>从问题选择模式</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第二部分</span>创建对象（GoF 创建型）</summary><ul><li><a href="../part-02/05-factory-method.html"><span class="no">05</span><span>工厂方法 Factory Method</span></a></li><li><a href="../part-02/06-abstract-factory.html"><span class="no">06</span><span>抽象工厂 Abstract Factory</span></a></li><li><a href="../part-02/07-builder.html"><span class="no">07</span><span>建造者 Builder</span></a></li><li><a href="../part-02/08-prototype.html"><span class="no">08</span><span>原型 Prototype</span></a></li><li><a href="../part-02/09-singleton.html"><span class="no">09</span><span>单例 Singleton</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第三部分</span>组合对象（GoF 结构型）</summary><ul><li><a href="../part-03/10-adapter.html"><span class="no">10</span><span>适配器 Adapter</span></a></li><li><a href="../part-03/11-bridge.html"><span class="no">11</span><span>桥接 Bridge</span></a></li><li><a href="../part-03/12-composite.html"><span class="no">12</span><span>组合 Composite</span></a></li><li><a href="../part-03/13-decorator.html"><span class="no">13</span><span>装饰器 Decorator</span></a></li><li><a href="../part-03/14-facade.html"><span class="no">14</span><span>外观 Facade</span></a></li><li><a href="../part-03/15-flyweight.html"><span class="no">15</span><span>享元 Flyweight</span></a></li><li><a href="../part-03/16-proxy.html"><span class="no">16</span><span>代理 Proxy</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第四部分</span>协调处理（GoF 行为型）</summary><ul><li><a href="../part-04/17-strategy.html"><span class="no">17</span><span>策略 Strategy</span></a></li><li><a href="../part-04/18-observer.html"><span class="no">18</span><span>观察者 Observer</span></a></li><li><a href="../part-04/19-command.html"><span class="no">19</span><span>命令 Command</span></a></li><li><a href="../part-04/20-state.html"><span class="no">20</span><span>状态 State</span></a></li><li><a href="../part-04/21-template-method.html"><span class="no">21</span><span>模板方法 Template Method</span></a></li><li><a href="../part-04/22-chain-of-responsibility.html"><span class="no">22</span><span>责任链 Chain of Responsibility</span></a></li><li><a href="../part-04/23-iterator.html"><span class="no">23</span><span>迭代器 Iterator</span></a></li><li><a href="../part-04/24-mediator.html"><span class="no">24</span><span>中介者 Mediator</span></a></li><li><a href="../part-04/25-memento.html"><span class="no">25</span><span>备忘录 Memento</span></a></li><li><a href="../part-04/26-visitor.html"><span class="no">26</span><span>访问者 Visitor</span></a></li><li><a href="../part-04/27-interpreter.html"><span class="no">27</span><span>解释器 Interpreter</span></a></li></ul></details><details class="toc-part" open><summary><span class="pn">第五部分</span>回到 Python</summary><ul><li><a href="../part-05/28-functions-as-design-tools.html"><span class="no">28</span><span>函数就是一种设计工具</span></a></li><li><a href="../part-05/29-types-and-interfaces.html" aria-current="page"><span class="no">29</span><span>类型与接口的轻量表达</span></a></li><li><a href="../part-05/30-decorators-context-managers-generators.html"><span class="no">30</span><span>Python 装饰器、上下文管理器和生成器</span></a></li><li><a href="../part-05/31-simple-versus-pattern-code.html"><span class="no">31</span><span>简单代码与模式代码的取舍</span></a></li></ul></details><details class="toc-part"><summary><span class="pn">第六部分</span>把选择放回真实项目</summary><ul><li><a href="../part-06/32-first-version.html"><span class="no">32</span><span>第一次实现：不使用模式</span></a></li><li><a href="../part-06/33-selective-refactoring.html"><span class="no">33</span><span>需求改变：有选择地重构</span></a></li><li><a href="../part-06/34-retrospective.html"><span class="no">34</span><span>回顾：能解释自己为什么这样写</span></a></li></ul></details><ul class="toc-top"><li><a href="../glossary.html"><span>术语表</span></a></li></ul></nav>
+  </aside>
+  <div class="scrim" hidden></div>
+  <main id="content">
+    <article class="prose">
+<p class="kicker">第五部分 · 回到 Python</p>
+<h1>第 29 章　类型与接口的轻量表达</h1>
+<blockquote><p>本章要回答：类型标注、<code>Protocol</code>、<code>ABC</code>、<code>dataclass</code>、<code>NewType</code>、<code>TypedDict</code> 各自能保证什么，不能保证什么？怎样用它们表达设计，而不是为了类型而写类型？</p></blockquote>
+<p>前面几乎每一章都用到了 <code>Protocol</code> 描述接口、用 <code>dataclass</code> 表示数据、用 <code>ABC</code> 强制子类实现方法。<a href="../part-01/03-python-building-blocks.html">第 03 章</a>初步比较过它们。这一章把它们放在一起，回答一个具体的问题：<strong>写了这些，到底有什么东西被检查了？由谁检查，在什么时候检查？</strong></p>
+<h2 id="一个最重要的事实">一个最重要的事实<a class="anchor" href="#一个最重要的事实" aria-label="本节链接">#</a></h2>
+<p>先看一个函数：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">total_fee</span>(visits: <span class="b">int</span>, price: <span class="b">int</span>) -&gt; <span class="b">int</span>:
+    <span class="k">return</span> visits * price</code></pre></div>
+<p>标注说两个参数都是整数。如果传入一个字符串 <code>"3"</code> 呢？</p>
+<div class="code" data-lang="输出"><pre><code>&gt;&gt;&gt; total_fee("3", 2)
+'33'</code></pre></div>
+<p><strong>没有报错</strong>，而是返回了字符串 <code>"33"</code>（测试 <code>test_wrong_type_runs_and_gives_a_wrong_answer</code>）。Python 在运行时<strong>不检查</strong>类型标注。标注对解释器来说只是附加在函数上的一些信息。字符串乘以整数在 Python 里恰好是合法操作（重复字符串），于是错误的输入变成了错误的结果，而不是一个异常。</p>
+<p>那么标注有什么用？它们服务于两类读者：</p>
+<ul><li><strong>人</strong>：读代码的人一眼就知道参数应该是什么；</li><li><strong>类型检查器</strong>：比如 mypy、pyright。它们在<strong>运行之前</strong>读代码，发现 <code>total_fee("3", 2)</code> 这样的调用并报告错误。</li></ul>
+<p>所以理解这一章的关键是区分<strong>两个时间点</strong>：类型检查器在运行前做的静态检查，和程序运行时真正发生的检查。下面每一种工具，都要问清楚它在哪个时间点起作用。</p>
+<h2 id="场景-宠物医院预约">场景：宠物医院预约<a class="anchor" href="#场景-宠物医院预约" aria-label="本节链接">#</a></h2>
+<p>一家宠物医院做了一个预约小程序。宠物、主人各有编号，预约时要记录主人、宠物和时间段，预约后给主人发提醒短信。</p>
+<h2 id="newtype-只给类型检查器看的区分"><code>NewType</code>：只给类型检查器看的区分<a class="anchor" href="#newtype-只给类型检查器看的区分" aria-label="本节链接">#</a></h2>
+<p>预约函数的两个编号都是整数，很容易传反：</p>
+<div class="code" data-lang="Python"><pre><code>PetId = NewType(<span class="s">"PetId"</span>, <span class="b">int</span>)
+OwnerId = NewType(<span class="s">"OwnerId"</span>, <span class="b">int</span>)
+
+
+<span class="k">def</span> <span class="f">book</span>(owner: OwnerId, pet: PetId, slot: <span class="b">str</span>) -&gt; <span class="b">str</span>:
+    <span class="k">return</span> <span class="s">f"主人 {owner} 为宠物 {pet} 预约了 {slot}"</span></code></pre></div>
+<p><code>NewType</code> 为整数创建了两个“名义上不同”的类型。如果写成 <code>book(PetId(7), OwnerId(3), ...)</code>，参数顺序反了，类型检查器会报告：期望 <code>OwnerId</code>，得到 <code>PetId</code>。</p>
+<p>但在<strong>运行时</strong>，<code>PetId(7)</code> 就是整数 <code>7</code>，没有任何包装，传反了照样执行，结果是“主人 7 为宠物 3 预约了周六上午”（测试 <code>test_newtype_is_the_plain_value_at_runtime</code>）。<code>NewType</code> 的全部价值在静态检查，它几乎没有运行时开销，也没有运行时保护。</p>
+<h2 id="dataclass-结构-不是校验"><code>dataclass</code>：结构，不是校验<a class="anchor" href="#dataclass-结构-不是校验" aria-label="本节链接">#</a></h2>
+<p>宠物的信息用数据类表示，种类用 <code>Literal</code> 限定为猫或狗：</p>
+<div class="code" data-lang="Python"><pre><code>Species = Literal[<span class="s">"猫"</span>, <span class="s">"狗"</span>]
+
+
+<span class="d">@dataclass</span>
+<span class="k">class</span> <span class="f">Pet</span>:
+    name: <span class="b">str</span>
+    species: Species
+    weight_kg: <span class="b">float</span></code></pre></div>
+<p><code>Pet("团子", "兔", "4")</code>：种类不在允许范围里，体重是字符串。数据类会<strong>照样创建</strong>这个对象（测试 <code>test_fields_are_not_validated</code>）。<code>dataclass</code> 根据标注生成 <code>__init__</code>、<code>__repr__</code>、<code>__eq__</code>，但不检查传入的值。<code>Literal</code> 同样只对类型检查器有效。</p>
+<p>如果数据来自外部（表单、文件、网络），<strong>校验必须自己写</strong>。数据类提供了一个合适的位置：<code>__post_init__</code>，它在 <code>__init__</code> 执行完之后被调用：</p>
+<div class="code" data-lang="Python"><pre><code>    <span class="k">def</span> <span class="f">__post_init__</span>(<span class="b">self</span>) -&gt; <span class="k">None</span>:
+        <span class="k">if</span> <span class="b">self</span>.species <span class="k">not</span> <span class="k">in</span> (<span class="s">"猫"</span>, <span class="s">"狗"</span>):
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"本院只接诊猫和狗，不接诊：{self.species}"</span>)
+        <span class="k">if</span> <span class="k">not</span> <span class="b">isinstance</span>(<span class="b">self</span>.weight_kg, (<span class="b">int</span>, <span class="b">float</span>)) <span class="k">or</span> <span class="k">not</span> <span class="n">0</span> &lt; <span class="b">self</span>.weight_kg &lt; <span class="n">100</span>:
+            <span class="k">raise</span> <span class="b">ValueError</span>(<span class="s">f"体重不合理：{self.weight_kg!r}"</span>)</code></pre></div>
+<p>现在兔子、字符串体重、0 公斤都会在创建时被拒绝（测试 <code>test_post_init_validates</code>）。<a href="../part-02/07-builder.html">第 07 章</a>的 <code>SearchFilter</code>、<a href="../part-04/25-memento.html">第 25 章</a>的 <code>from_json</code> 都是同样的思路：<strong>在数据进入程序的边界上校验一次，之后程序内部就可以信任这些对象。</strong></p>
+<h2 id="protocol-结构化的接口"><code>Protocol</code>：结构化的接口<a class="anchor" href="#protocol-结构化的接口" aria-label="本节链接">#</a></h2>
+<p>发提醒的部分，用 <code>Protocol</code> 描述“能发通知的东西”：</p>
+<div class="code" data-lang="Python"><pre><code><span class="d">@runtime_checkable</span>
+<span class="k">class</span> <span class="f">Notifier</span>(Protocol):
+    <span class="k">def</span> <span class="f">notify</span>(<span class="b">self</span>, owner: OwnerId, text: <span class="b">str</span>) -&gt; <span class="k">None</span>: ...</code></pre></div>
+<p>任何有 <code>notify(owner, text)</code> 方法的类，不需要继承 <code>Notifier</code>，类型检查器就认为它符合这个接口。这叫<strong>结构化类型</strong>（也常被称为“静态的鸭子类型”）。短信、微信、测试用的假对象，都可以各自实现，互不相干。</p>
+<p>加上 <code>@runtime_checkable</code> 之后，还可以在运行时用 <code>isinstance</code> 检查。但<a href="../part-01/03-python-building-blocks.html">第 03 章</a>提醒过：这个检查<strong>只看有没有这个名字的方法，不看参数和返回值</strong>。一个 <code>notify(self)</code> 什么参数都不接受的类，<code>isinstance(..., Notifier)</code> 照样是 <code>True</code>（测试 <code>test_runtime_checkable_only_checks_the_name</code>）。真正的签名检查，仍然要靠类型检查器。</p>
+<h2 id="abc-运行时强制实现"><code>ABC</code>：运行时强制实现<a class="anchor" href="#abc-运行时强制实现" aria-label="本节链接">#</a></h2>
+<p>抽象基类在运行时提供了一个真实的保证：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">Reminder</span>(ABC):
+<span class="d">    @abstractmethod</span>
+    <span class="k">def</span> <span class="f">remind</span>(<span class="b">self</span>, pet: PetId) -&gt; <span class="b">str</span>: ...</code></pre></div>
+<p>继承 <code>Reminder</code> 却没有实现 <code>remind</code> 的类，在<strong>创建实例时</strong>就会抛出 <code>TypeError</code>（测试 <code>test_abc_checks_at_instantiation</code>）。前面很多章都用到了这个保证：<a href="../part-02/06-abstract-factory.html">第 06 章</a>防止“半个家族”，<a href="../part-02/07-builder.html">第 07 章</a>防止建造者漏掉一个步骤，<a href="../part-04/26-visitor.html">第 26 章</a>防止访问者漏掉一种元素。</p>
+<p>它的检查也只到“方法存在”为止，不检查方法的参数是否正确。另外，<code>ABC</code> 提供了一个 <code>register</code> 方法，可以把任意类登记为“虚拟子类”，这样 <code>isinstance</code> 会返回 <code>True</code>，<strong>但不做任何检查</strong>，即使那个类根本没有 <code>remind</code> 方法（测试 <code>test_register_skips_the_check</code>）。这是为了兼容无法修改的已有类型而设计的，用的时候要清楚自己放弃了什么。</p>
+<h2 id="typeddict-给字典的结构写说明"><code>TypedDict</code>：给字典的结构写说明<a class="anchor" href="#typeddict-给字典的结构写说明" aria-label="本节链接">#</a></h2>
+<p>预约数据经常以 JSON 的形式进出。用 <code>TypedDict</code> 可以说明这个字典应该有哪些键、每个键是什么类型：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">VisitJson</span>(TypedDict):
+    pet: <span class="b">int</span>
+    slot: <span class="b">str</span></code></pre></div>
+<p>类型检查器会检查对这个字典的读写是否符合声明。在运行时，<code>VisitJson(pet=7, slot="周六上午")</code> 创建的就是一个<strong>普通的 <code>dict</code></strong>，<code>VisitJson(pet="七", slot=3)</code> 也一样能创建（测试 <code>test_typed_dict_is_a_plain_dict</code>）。它适合描述“JSON 长什么样”，但从外部读进来的 JSON 是否真的长这样，仍然要另外校验。</p>
+<h2 id="汇总-谁在什么时候检查什么">汇总：谁在什么时候检查什么<a class="anchor" href="#汇总-谁在什么时候检查什么" aria-label="本节链接">#</a></h2>
+<div class="table"><table><thead><tr><th>工具</th><th>类型检查器（运行前）</th><th>运行时</th></tr></thead><tbody><tr><td>参数和返回值标注</td><td>检查调用是否匹配</td><td><strong>不检查</strong></td></tr><tr><td><code>NewType</code></td><td>区分名义上不同的类型</td><td>就是原来的值，<strong>不检查</strong></td></tr><tr><td><code>Literal</code></td><td>检查取值是否在列举范围内</td><td><strong>不检查</strong></td></tr><tr><td><code>dataclass</code> 字段标注</td><td>检查构造参数</td><td><strong>不检查</strong>；需要校验就写 <code>__post_init__</code></td></tr><tr><td><code>Protocol</code></td><td>检查方法名和签名</td><td>默认不能用于 <code>isinstance</code>；加 <code>@runtime_checkable</code> 后只检查方法名</td></tr><tr><td><code>ABC</code> + <code>@abstractmethod</code></td><td>检查</td><td>实例化时检查抽象方法是否都已实现，不检查签名</td></tr><tr><td><code>TypedDict</code></td><td>检查键和值的类型</td><td>就是普通的 <code>dict</code>，<strong>不检查</strong></td></tr></tbody></table></div>
+<p>表里的“不检查”不是缺点，而是 Python 的设计选择：类型标注是可选的、渐进的，不会拖慢程序运行，也不会让没有标注的旧代码无法运行。但它意味着：<strong>运行时需要保证的事情，必须用运行时的手段去保证</strong>，比如 <code>__post_init__</code>、显式的校验函数、抽象基类。</p>
+<h2 id="不为类型而类型">不为类型而类型<a class="anchor" href="#不为类型而类型" aria-label="本节链接">#</a></h2>
+<p>类型标注是表达设计的工具，不是目的。几条经验：</p>
+<ul><li><strong>在边界上写得清楚，在内部写得简洁。</strong> 模块对外的函数、跨团队使用的接口，标注要准确完整；一个三行的内部辅助函数，标注可以少一些。</li><li><strong>标注要描述你真正需要的，不要更多。</strong> 一个函数只是遍历参数，就标 <code>Iterable[Record]</code>，而不是 <code>list[Record]</code>，这样调用方传生成器也可以。反过来，不要为了“通用”写出 <code>Callable[[Mapping[str, Sequence[tuple[int, ...]]]], ...]</code> 这种谁也读不懂的类型；如果类型复杂到需要这样写，往往说明数据应该有一个名字，写成一个 <code>dataclass</code>。</li><li><strong><code>Protocol</code> 和 <code>ABC</code> 选哪个？</strong> 需要运行时强制（漏写就立即报错），或者希望别人通过继承来扩展：<code>ABC</code>。只想说明“需要什么方法”，不想要求继承，尤其是要接纳别人写的、无法修改的类：<code>Protocol</code>。</li><li><strong>不要用运行时类型检查代替设计。</strong> 函数开头写一串 <code>if not isinstance(x, int): raise TypeError</code> 通常不是好主意。只在数据进入程序的地方校验，内部依靠类型检查器和测试。</li></ul>
+<h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
+<ul><li>Python 的类型标注在运行时不被检查。它们写给人和类型检查器看，类型检查器在运行前发现不匹配的调用。</li><li><code>NewType</code>、<code>Literal</code>、<code>TypedDict</code>、<code>dataclass</code> 的字段标注，都只在静态检查中起作用；<code>Protocol</code> 加上 <code>@runtime_checkable</code> 也只在运行时检查方法名；<code>ABC</code> 在实例化时检查抽象方法是否实现。</li><li>运行时必须成立的约束，要用运行时的手段保证：在数据进入程序的边界上校验，比如 <code>dataclass</code> 的 <code>__post_init__</code>。</li><li>类型用来表达设计：边界清晰、内部简洁；描述真正需要的东西；复杂的类型往往说明数据需要一个名字。</li></ul>
+<h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
+<p>宠物医院的预约接口收到这样一份 JSON：</p>
+<div class="code" data-lang="输出"><pre><code>{"owner": 3, "pet": 7, "slot": "周六上午", "species": "猫", "weight_kg": 4.2}</code></pre></div>
+<ol><li>你会用哪些工具来表示和校验它？<code>TypedDict</code>、<code>dataclass</code>，还是两者都用？各自负责什么？</li><li>校验应该在哪里进行？如果预约处理函数的参数类型是 <code>CheckedPet</code>，它内部还需要检查种类和体重吗？</li><li>如果团队里没人运行类型检查器，<code>NewType</code> 还有价值吗？</li></ol>
+<p><strong>思路提示</strong>：一种清晰的分工是：<code>TypedDict</code> 描述“原始 JSON 应该长什么样”，供解析代码和类型检查器使用；一个解析函数读取 JSON，逐项检查，然后构造 <code>OwnerId</code>、<code>PetId</code> 和 <code>CheckedPet</code>。之后的业务代码只接受这些已经校验过的对象，不需要再次检查，这就是“边界上校验一次”。第 3 问：没有类型检查器时，<code>NewType</code> 至少还是一种文档，函数签名 <code>book(owner: OwnerId, pet: PetId)</code> 比 <code>book(owner: int, pet: int)</code> 更不容易被传反。但它不会阻止任何错误。如果参数传反的代价很高，就要用运行时的手段，比如关键字参数（<code>book(*, owner, pet)</code>），强迫调用方写出名字。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch29_types.py" target="_blank" rel="noopener"><code>examples/ch29_types.py</code></a>：本章所有示例</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch29_types.py" target="_blank" rel="noopener"><code>tests/test_ch29_types.py</code></a>。</p>
+    </article>
+<nav class="pager"><a class="prev" href="../part-05/28-functions-as-design-tools.html"><small>上一篇</small>28 函数就是一种设计工具</a><a class="next" href="../part-05/30-decorators-context-managers-generators.html"><small>下一篇</small>30 Python 装饰器、上下文管理器和生成器</a></nav>
+    <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-05/29-types-and-interfaces.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
+  </main>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#一个最重要的事实">一个最重要的事实</a></li><li><a href="#场景-宠物医院预约">场景：宠物医院预约</a></li><li><a href="#newtype-只给类型检查器看的区分">NewType：只给类型检查器看的区分</a></li><li><a href="#dataclass-结构-不是校验">dataclass：结构，不是校验</a></li><li><a href="#protocol-结构化的接口">Protocol：结构化的接口</a></li><li><a href="#abc-运行时强制实现">ABC：运行时强制实现</a></li><li><a href="#typeddict-给字典的结构写说明">TypedDict：给字典的结构写说明</a></li><li><a href="#汇总-谁在什么时候检查什么">汇总：谁在什么时候检查什么</a></li><li><a href="#不为类型而类型">不为类型而类型</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+</div>
+<script src="../assets/book.js"></script>
+</body>
+</html>
