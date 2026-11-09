@@ -218,7 +218,7 @@ member_day_express = partial(express_fee, free_over=5900)
 - **策略只有一个操作**：用函数。需要配置时用 `partial` 或闭包。登记在字典里。
 - **策略有几个必须一起变化的操作，或者有自己的配置数据**：用类（`Protocol` 描述接口，`dataclass` 保存配置）。
 
-第 28 章会更全面地讨论“函数作为设计工具”，包括什么时候闭包比类更合适。
+[第 28 章](../part-05/28-functions-as-design-tools.md)会更全面地讨论“函数作为设计工具”，包括什么时候闭包比类更合适。
 
 ## 小结
 

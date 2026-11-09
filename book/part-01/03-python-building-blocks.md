@@ -45,7 +45,7 @@ basic_steps = [strip_spaces, partial(truncate, limit=12)]
 
 `truncate` 需要两个参数，但列表里的每一步只接收文本。`functools.partial(truncate, limit=12)` 把 `limit` 预先填好，得到一个只需要文本的新函数。`apply_all(comment, basic_steps)` 的结果是 `"这家店的 咖啡 太难喝…"`。
 
-这个小技巧值得记住：**很多看起来需要“一个类加一个配置字段”的场合，一个 `partial` 或一个闭包就够了。** 第 28 章会专门讨论函数作为设计工具的用法。
+这个小技巧值得记住：**很多看起来需要“一个类加一个配置字段”的场合，一个 `partial` 或一个闭包就够了。** [第 28 章](../part-05/28-functions-as-design-tools.md)会专门讨论函数作为设计工具的用法。
 
 ## 类：数据、处理和状态要放在一起
 
