@@ -46,7 +46,8 @@ python tools/check_links.py
 | 24 | 中介者 | 机票预订表单联动（护照栏、查询按钮） | 完成 | `ch24_form_v1.py`、`ch24_mediator.py`、`ch24_pythonic.py` | 通过 |
 | 25 | 备忘录 | 农场小游戏存档 | 完成 | `ch25_farm_v1.py`、`ch25_memento.py`、`ch25_pythonic.py` | 通过 |
 | 26 | 访问者 | 文章内容块（字数、无障碍检查） | 完成 | `ch26_article_v1.py`、`ch26_visitor.py`、`ch26_pythonic.py` | 通过 |
-| 27–34 | | | 未开始 | | |
+| 27 | 解释器 | 活动报名资格规则（拒绝 eval） | 完成 | `ch27_rules_v1.py`、`ch27_interpreter.py`、`ch27_pythonic.py` | 通过 |
+| 28–34 | | | 未开始 | | |
 
 已预留的例子：第 17 章策略用运费计算（AGENT_TASK 的示例）；第六部分（32–34）用数据导入工具。其余章节选用新的领域，不与上表重复。
 
