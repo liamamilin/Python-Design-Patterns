@@ -62,12 +62,17 @@ RawRow = dict[str, str]  # 统一的中间形态：sku、name、price、stock �
 
 ```python
 def read_json_rows(text: str) -> list[tuple[str, RawRow]]:
-    data = json.loads(text, parse_float=Decimal)  # 价格按十进制读入，不经过 float
+    try:
+        data = json.loads(text, parse_float=Decimal)  # 价格按十进制读入，不经过 float
+    except json.JSONDecodeError as e:
+        raise FormatError(f"不是合法的 JSON：第 {e.lineno} 行第 {e.colno} 列") from None
     items = data.get("items") if isinstance(data, dict) else None
     if not isinstance(items, list):
         raise FormatError("缺少 items 列表")
     rows = []
     for n, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            raise FormatError(f"第 {n} 条不是一个对象")
         rows.append((f"第 {n} 条", {
             "sku": str(item.get("code", "")),
             "name": str(item.get("title", "")),
@@ -77,7 +82,7 @@ def read_json_rows(text: str) -> list[tuple[str, RawRow]]:
     return rows
 ```
 
-`parse_float=Decimal` 让 `json.loads` 把小数直接解析成 `Decimal`，于是 `0.29` 不会变成 28 分（测试 `test_json_prices_never_pass_through_float`）。字段名的对应（`code` → `sku`、`title` → `name`），以及“第几条”的说法，都只在这个函数里。
+文件本身不是合法的 JSON，或者 `items` 里混进了不是对象的东西，都属于“整个文件无法处理”，转换成 `FormatError`，`main` 会给出一句提示并返回退出码 2，而不是打印一大段异常信息（测试 `test_malformed_json_is_a_format_error`）。`parse_float=Decimal` 让 `json.loads` 把小数直接解析成 `Decimal`，于是 `0.29` 不会变成 28 分（测试 `test_json_prices_never_pass_through_float`）。字段名的对应（`code` → `sku`、`title` → `name`），以及“第几条”的说法，都只在这个函数里。
 
 这正是[第 10 章](../part-03/10-adapter.md)“Python 角度”里说的：核心逻辑只认一种数据，外部的各种格式在**边界**上转换。这里的读取函数就是适配器，只不过它们是函数，适配的是数据。
 

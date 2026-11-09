@@ -17,7 +17,7 @@ class ParsePriceTest(unittest.TestCase):
         self.assertEqual(imp.parse_price("38"), 3800)
 
     def test_invalid(self):
-        for text in ("-3", "0", "abc", "", "210.125", "NaN", "Infinity", "1e3x"):
+        for text in ("-3", "0", "abc", "", "210.125", "NaN", "Infinity", "1e3x", "1e30", "1000000"):
             with self.subTest(text=text):
                 with self.assertRaises(ValueError):
                     imp.parse_price(text)
@@ -44,6 +44,11 @@ class ReadCsvTest(unittest.TestCase):
         result = imp.read_csv("sku,name,price\nA,茶,1\n")
         self.assertEqual(result.problems, [imp.Problem(1, "缺少列：stock")])
         self.assertEqual(result.products, [])
+
+    def test_short_row_is_reported_not_crashing(self):
+        result = imp.read_csv("sku,name,price,stock\nTE-1008,茶,38\nTE-1009,茶,38,5\n")
+        self.assertEqual(result.problems, [imp.Problem(2, "库存必须是非负整数：''")])
+        self.assertEqual([p.sku for p in result.products], ["TE-1009"])
 
     def test_report(self):
         rep = imp.report(self.result)

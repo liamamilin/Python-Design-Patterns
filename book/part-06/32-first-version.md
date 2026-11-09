@@ -61,6 +61,8 @@ def parse_price(text: str) -> int:
         raise ValueError(f"价格不是有限的数字：{text!r}")
     if value <= 0:
         raise ValueError(f"价格必须大于 0：{text}")
+    if value >= 1_000_000:
+        raise ValueError(f"价格超出合理范围：{text}")
     if value != value.quantize(Decimal("0.01")):
         raise ValueError(f"价格最多两位小数：{text}")
     return int(value * 100)
@@ -68,7 +70,7 @@ def parse_price(text: str) -> int:
 
 如果写成 `int(float(text) * 100)`，价格 `0.29` 会变成 28 分，因为 `0.29 * 100` 在二进制浮点数里是 `28.999999999999996`，`int` 会直接截断（测试 `test_no_float_rounding_error`）。标准库的 `decimal.Decimal` 按十进制精确表示，适合金额。
 
-几个边界情况也在这里一并处理：`Decimal` 能解析 `"NaN"` 和 `"Infinity"`，必须拒绝；`210.125` 这种三位小数，与其悄悄四舍五入，不如让店主确认。所有问题都转换成 `ValueError` 和一句店主看得懂的中文。
+几个边界情况也在这里一并处理：`Decimal` 能解析 `"NaN"` 和 `"Infinity"`，必须拒绝；`1e30` 这样的科学计数法也能被解析，它是一个有限的正数，但在检查小数位时，`quantize` 会因为位数超出 `Decimal` 的默认精度而抛出 `InvalidOperation`，而它不是 `ValueError`，会让整个导入中断。所以先用一条业务规则（单价低于一百万元）把不合理的数值挡在前面；`210.125` 这种三位小数，与其悄悄四舍五入，不如让店主确认。所有问题都转换成 `ValueError` 和一句店主看得懂的中文。
 
 ### Excel 的 BOM
 
@@ -86,7 +88,8 @@ Excel 在保存 UTF-8 格式的 CSV 时，常常会在文件开头写入三个�
 
 ```python
     seen: set[str] = set()
-    for line, row in enumerate(reader, start=2):  # 第 1 行是表头
+    for line, raw in enumerate(reader, start=2):  # 第 1 行是表头
+        row = {k: raw[k] or "" for k in REQUIRED}  # 列数不足的行，缺的字段是 None
         try:
             sku, name = row["sku"].strip(), row["name"].strip()
             if not sku or not name:
@@ -101,7 +104,7 @@ Excel 在保存 UTF-8 格式的 CSV 时，常常会在文件开头写入三个�
         result.products.append(product)
 ```
 
-行号从 2 开始，因为第 1 行是表头，这样报告里的行号和 Excel 里看到的一致。缺少必要的列是另一种错误：整个文件都无法处理，只报告一次，行号是 1（测试 `test_missing_column`）。
+行号从 2 开始，因为第 1 行是表头，这样报告里的行号和 Excel 里看到的一致。循环的第一行处理另一个现实中的问题：某一行少了最后几列（比如 `TE-1008,茶,38`，连逗号都没有），`csv.DictReader` 会把缺少的字段填成 `None` 而不是空字符串，后面的 `.strip()` 就会抛出 `AttributeError`，同样让导入中断。统一换成空字符串之后，它会像其他错误一样被报告出来（测试 `test_short_row_is_reported_not_crashing`）。缺少必要的列是另一种错误：整个文件都无法处理，只报告一次，行号是 1（测试 `test_missing_column`）。
 
 ### 退出码
 

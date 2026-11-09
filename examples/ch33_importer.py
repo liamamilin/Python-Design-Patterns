@@ -50,12 +50,17 @@ def read_csv_rows(text: str) -> list[tuple[str, RawRow]]:
 
 
 def read_json_rows(text: str) -> list[tuple[str, RawRow]]:
-    data = json.loads(text, parse_float=Decimal)  # 价格按十进制读入，不经过 float
+    try:
+        data = json.loads(text, parse_float=Decimal)  # 价格按十进制读入，不经过 float
+    except json.JSONDecodeError as e:
+        raise FormatError(f"不是合法的 JSON：第 {e.lineno} 行第 {e.colno} 列") from None
     items = data.get("items") if isinstance(data, dict) else None
     if not isinstance(items, list):
         raise FormatError("缺少 items 列表")
     rows = []
     for n, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            raise FormatError(f"第 {n} 条不是一个对象")
         rows.append((f"第 {n} 条", {
             "sku": str(item.get("code", "")),
             "name": str(item.get("title", "")),

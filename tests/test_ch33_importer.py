@@ -32,6 +32,23 @@ class JsonTest(unittest.TestCase):
         rows = imp.read_json_rows('{"items": [{"code": "YN-0001", "title": "茶", "price": 0.29, "qty": 1}]}')
         self.assertEqual(imp.validate(rows).products[0].price_cents, 29)
 
+    def test_short_rows_same_as_first_version(self):
+        text = "sku,name,price,stock\nTE-1008,茶,38\nTE-1009,茶,38,5\n"
+        old = v1.read_csv(text)
+        new = imp.validate(imp.read_csv_rows(text))
+        self.assertEqual(new.products, old.products)
+        self.assertEqual([p.message for p in new.problems], [p.message for p in old.problems])
+
+    def test_malformed_json_is_a_format_error(self):
+        for text in ('{"items": [', '{"items": [1, 2]}'):
+            with self.subTest(text=text):
+                with self.assertRaises(imp.FormatError):
+                    imp.read_json_rows(text)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "broken.json"
+            path.write_text('{"items": [', encoding="utf-8")
+            self.assertEqual(imp.main([str(path)], io.StringIO()), 2)
+
     def test_bad_json_shape(self):
         with self.assertRaises(imp.FormatError):
             imp.read_json_rows('{"goods": []}')

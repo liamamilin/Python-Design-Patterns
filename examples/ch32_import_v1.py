@@ -46,6 +46,8 @@ def parse_price(text: str) -> int:
         raise ValueError(f"价格不是有限的数字：{text!r}")
     if value <= 0:
         raise ValueError(f"价格必须大于 0：{text}")
+    if value >= 1_000_000:
+        raise ValueError(f"价格超出合理范围：{text}")
     if value != value.quantize(Decimal("0.01")):
         raise ValueError(f"价格最多两位小数：{text}")
     return int(value * 100)
@@ -65,7 +67,8 @@ def read_csv(text: str) -> Result:
         result.problems.append(Problem(1, f"缺少列：{', '.join(missing)}"))
         return result
     seen: set[str] = set()
-    for line, row in enumerate(reader, start=2):  # 第 1 行是表头
+    for line, raw in enumerate(reader, start=2):  # 第 1 行是表头
+        row = {k: raw[k] or "" for k in REQUIRED}  # 列数不足的行，缺的字段是 None
         try:
             sku, name = row["sku"].strip(), row["name"].strip()
             if not sku or not name:
