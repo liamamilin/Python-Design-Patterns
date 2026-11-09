@@ -32,7 +32,8 @@ python tools/check_links.py
 | 10 | 适配器 | 考勤报表接入云考勤机 | 完成 | `ch10_attendance.py`、`ch10_cloud_sdk.py`、`ch10_report_v1.py`、`ch10_adapter.py`、`ch10_pythonic.py` | 通过 |
 | 11 | 桥接 | 降雨量图表（图表种类 × 画布） | 完成 | `ch11_charts_v1.py`、`ch11_bridge.py`、`ch11_pythonic.py` | 通过 |
 | 12 | 组合 | 装修预算（房间、项目、打包折扣） | 完成 | `ch12_budget_v1.py`、`ch12_composite.py`、`ch12_pythonic.py` | 通过 |
-| 13–34 | | | 未开始 | | |
+| 13 | 装饰器 | 客服聊天记录导出（打码、截断） | 完成 | `ch13_export_v1.py`、`ch13_decorator.py`、`ch13_pythonic.py` | 通过 |
+| 14–34 | | | 未开始 | | |
 
 已预留的例子：第 17 章策略用运费计算（AGENT_TASK 的示例）；第六部分（32–34）用数据导入工具。其余章节选用新的领域，不与上表重复。
 
