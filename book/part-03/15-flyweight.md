@@ -200,7 +200,7 @@ def taps_per_station(lines: list[str]) -> Counter[str]:
     return counts
 ```
 
-边读边统计，内存里只有 5 个计数器。如果数据来自文件，逐行读取（`for line in file`），整个文件甚至不需要一次读进内存。第 23 章讨论迭代器时还会回到这一点。
+边读边统计，内存里只有 5 个计数器。如果数据来自文件，逐行读取（`for line in file`），整个文件甚至不需要一次读进内存。[第 23 章](../part-04/23-iterator.md)讨论迭代器时还会回到这一点。
 
 当确实需要保留大量对象时，Python 提供了几种比完整享元更轻的工具：
 
