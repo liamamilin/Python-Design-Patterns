@@ -12,7 +12,7 @@ math_scores = [72, 48, 91, 65]
 
 
 def median(values: list[int]) -> float:
-    values.sort()  # 就地排序：调用者手里的列表也被改了
+    values.sort()  # 就地排序：调用方手里的列表也被改了
     middle = len(values) // 2
     if len(values) % 2 == 1:
         return float(values[middle])

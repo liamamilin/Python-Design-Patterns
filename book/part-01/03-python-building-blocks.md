@@ -162,9 +162,9 @@ def run_steps(text: str, steps: list[TextStep]) -> str:
 
 协议里方法体写的 `...` 是 Python 的合法语法，表示“这里只声明形状，不提供实现”。
 
-现在普通函数、`Censor` 对象、`Lowercase` 对象都符合 `TextStep`，它们谁也不需要继承 `TextStep`。类型检查工具（如 mypy）会在你传入一个不符合的对象时报错；加上 `@runtime_checkable` 后，`isinstance` 也能在运行时做粗略检查。
+现在普通函数、`Censor` 对象、`Lowercase` 对象都符合 `TextStep`，它们谁也不需要继承 `TextStep`。类型检查器（如 mypy）会在你传入一个不符合的对象时报错；加上 `@runtime_checkable` 后，`isinstance` 也能在运行时做粗略检查。
 
-要注意“粗略”二字。运行时检查**只看有没有这个方法，不看参数和返回值**：`isinstance(print, TextStep)` 也是 `True`，因为 `print` 也能被调用。协议主要服务于读代码的人和类型检查工具，不是运行时的安全网。[第 29 章](../part-05/29-types-and-interfaces.md)会更详细地讨论 `Protocol`、`ABC` 和类型标注的作用与局限。
+要注意“粗略”二字。运行时检查**只看有没有这个方法，不看参数和返回值**：`isinstance(print, TextStep)` 也是 `True`，因为 `print` 也能被调用。协议主要服务于读代码的人和类型检查器，不是运行时的安全网。[第 29 章](../part-05/29-types-and-interfaces.md)会更详细地讨论 `Protocol`、`ABC` 和类型标注的作用与局限。
 
 ## 怎么选
 

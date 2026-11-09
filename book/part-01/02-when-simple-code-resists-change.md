@@ -95,7 +95,7 @@ def parent_notice(subject: str, name: str, score: int) -> str:
 
 ```python
 def median(values: list[int]) -> float:
-    values.sort()  # 就地排序：调用者手里的列表也被改了
+    values.sort()  # 就地排序：调用方手里的列表也被改了
     middle = len(values) // 2
     if len(values) % 2 == 1:
         return float(values[middle])
@@ -114,7 +114,7 @@ def median(values: list[int]) -> float:
 |---|---|---|
 | 判断重复 | `class_report` 和 `parent_notice` 各有一串 `if subject == ...` | 每加一科，要改两处 |
 | 复制粘贴了会变的规则 | `parent_notice` 里的及格判断 | 变化三只改了一处，结论相反 |
-| 意外影响 | `median` 里的 `values.sort()` | 调用者的列表被改，名单错位 |
+| 意外影响 | `median` 里的 `values.sort()` | 调用方的列表被改，名单错位 |
 | 脆弱的数据表示 | 姓名和分数分成两个列表 | 只要一方顺序变了，对应关系就断 |
 
 注意这张表里没有“耦合太高”这种词。每一行都能指到具体的代码，也都能写成一个会失败的测试（见 [`tests/test_ch02_report.py`](../../tests/test_ch02_report.py) 中的 `BeforeRefactorBugsTest`）。**能写出失败测试的困难，才是值得动手解决的困难。**
@@ -133,7 +133,7 @@ def passed(subject: str, score: int) -> bool:
 
 
 def median(values: list[int]) -> float:
-    ordered = sorted(values)  # 返回新列表，不碰调用者的数据
+    ordered = sorted(values)  # 返回新列表，不碰调用方的数据
     middle = len(ordered) // 2
     if len(ordered) % 2 == 1:
         return float(ordered[middle])
@@ -143,7 +143,7 @@ def median(values: list[int]) -> float:
 三处改动各自对应一个困难：
 
 1. **把规则放到一个地方。** 各科及格线变成一个字典 `PASS_MARKS`，判断变成一个函数 `passed`。成绩单和家长通知都调用它。以后再加“生物 58 分”，只改字典里的一行。
-2. **不修改别人的数据。** `sorted(values)` 返回一个新列表，调用者的列表保持原样。
+2. **不修改别人的数据。** `sorted(values)` 返回一个新列表，调用方的列表保持原样。
 3. **换一种更稳的数据表示。** 姓名和分数放进同一个字典，例如 `{"小林": 72, "小周": 48, ...}`，对应关系由数据结构本身保证，不再依赖“第几个”。
 
 改完之后，两个功能变成这样：
@@ -187,7 +187,7 @@ def parent_notice(subject: str, name: str, score: int) -> str:
 
 班主任又提了一个需求：成绩单要按分数从高到低排列。
 
-1. 在修好的版本里，你会怎样实现？会不会再次碰到“修改了调用者数据”的问题？
+1. 在修好的版本里，你会怎样实现？会不会再次碰到“修改了调用方数据”的问题？
 2. 现在有人提议：“为了将来支持各种排序方式，我们先写一个 `SortStrategy` 抽象类，再写 `ByScoreDesc`、`ByName` 两个子类。”你同意吗？
 
 **思路提示**：`sorted(scores.items(), key=lambda item: item[1], reverse=True)` 一行就能完成，而且返回新列表。目前只有一种排序需求，`key` 参数本身就是“可替换的排序规则”。为了“将来可能有”的需求提前建一套类，不划算。如果以后排序方式真的变多，而且要由用户在界面上选择，再把几个 `key` 函数放进一个字典也不迟。
