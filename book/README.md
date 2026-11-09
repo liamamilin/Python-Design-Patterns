@@ -64,7 +64,7 @@ python -m examples.ch05_factory_method
 - [23 迭代器 Iterator](part-04/23-iterator.md)
 - [24 中介者 Mediator](part-04/24-mediator.md)
 - [25 备忘录 Memento](part-04/25-memento.md)
-- 26 访问者 Visitor（写作中）
+- [26 访问者 Visitor](part-04/26-visitor.md)
 - 27 解释器 Interpreter（写作中）
 
 ### 第五部分 · 回到 Python
