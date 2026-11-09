@@ -44,7 +44,8 @@ python tools/check_links.py
 | 22 | 责任链 | 智能音箱指令（儿童锁） | 完成 | `ch22_speaker_v1.py`、`ch22_chain.py`、`ch22_pythonic.py` | 通过 |
 | 23 | 迭代器 | 分页的云相册（按需翻页） | 完成 | `ch23_photos_v1.py`、`ch23_iterator.py`、`ch23_pythonic.py` | 通过 |
 | 24 | 中介者 | 机票预订表单联动（护照栏、查询按钮） | 完成 | `ch24_form_v1.py`、`ch24_mediator.py`、`ch24_pythonic.py` | 通过 |
-| 25–34 | | | 未开始 | | |
+| 25 | 备忘录 | 农场小游戏存档 | 完成 | `ch25_farm_v1.py`、`ch25_memento.py`、`ch25_pythonic.py` | 通过 |
+| 26–34 | | | 未开始 | | |
 
 已预留的例子：第 17 章策略用运费计算（AGENT_TASK 的示例）；第六部分（32–34）用数据导入工具。其余章节选用新的领域，不与上表重复。
 
