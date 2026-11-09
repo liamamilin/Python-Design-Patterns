@@ -60,7 +60,7 @@ python -m examples.ch05_factory_method
 - [19 命令 Command](part-04/19-command.md)
 - [20 状态 State](part-04/20-state.md)
 - [21 模板方法 Template Method](part-04/21-template-method.md)
-- 22 责任链 Chain of Responsibility（写作中）
+- [22 责任链 Chain of Responsibility](part-04/22-chain-of-responsibility.md)
 - 23 迭代器 Iterator（写作中）
 - 24 中介者 Mediator（写作中）
 - 25 备忘录 Memento（写作中）
