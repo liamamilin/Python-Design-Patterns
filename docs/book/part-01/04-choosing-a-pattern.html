@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>第 04 章 从问题选择模式 · Python 设计模式：从问题到方案</title>
-<meta name="description" content="本章要回答：范式、设计模式、架构和惯用写法有什么不同？怎样根据变化和代价，而不是根据名称，来选择方案？ 前三章一直在说“先看清问题”。这一章把方法收拢起来：设计模式到底是什么，它和其他常被混在一起的概念有什么区别，以及面对一个具体变化时，怎">
+<meta name="description" content="本章要回答：范式、设计模式、架构和惯用写法有什么不同？本书讲的内容在整个编程领域里处于什么位置？怎样根据变化和代价，而不是根据名称，来选择方案？ 前三章一直在说“先看清问题”。这一章把方法收拢起来：设计模式到底是什么，它和其他常被混在一起的">
 <meta name="theme-color" content="#16212e">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/book.css">
@@ -35,13 +35,19 @@
     <article class="prose">
 <p class="kicker">第一部分 · 为什么需要设计</p>
 <h1>第 04 章　从问题选择模式</h1>
-<blockquote><p>本章要回答：范式、设计模式、架构和惯用写法有什么不同？怎样根据变化和代价，而不是根据名称，来选择方案？</p></blockquote>
-<p>前三章一直在说“先看清问题”。这一章把方法收拢起来：设计模式到底是什么，它和其他常被混在一起的概念有什么区别，以及面对一个具体变化时，怎样在“直接写法、经典模式、Python 的简化写法”之间做选择。</p>
-<h2 id="先分清几个层次">先分清几个层次<a class="anchor" href="#先分清几个层次" aria-label="本节链接">#</a></h2>
-<p>“设计模式”这个词经常被用得很宽：有人把面向对象叫作模式，有人把微服务叫作模式，也有人把 Python 的装饰器语法叫作模式。为了后面讨论不走样，本书把它们分成五个层次：</p>
-<div class="table"><table><thead><tr><th>层次</th><th>典型例子</th><th>是什么</th></tr></thead><tbody><tr><td data-label="层次">基本表达</td><td data-label="典型例子">数字、变量、判断、循环、函数、类</td><td data-label="是什么">编程语言允许我们写什么</td></tr><tr><td data-label="层次">编程范式</td><td data-label="典型例子">命令式、过程式、面向对象、函数式</td><td data-label="是什么">程序采用什么组织与表达方式</td></tr><tr><td data-label="层次">设计模式</td><td data-label="典型例子">GoF 工厂方法、策略、代理等</td><td data-label="是什么">针对反复出现的设计困难的方案</td></tr><tr><td data-label="层次">Python 惯用法</td><td data-label="典型例子">直接传函数、迭代协议、装饰器语法</td><td data-label="是什么">Python 语言特性支持的简洁写法</td></tr><tr><td data-label="层次">更大范围的设计</td><td data-label="典型例子">分层、消息队列、分布式部署等</td><td data-label="是什么">系统级组织问题，本书只在必要处提及</td></tr></tbody></table></div>
-<p>几个容易混淆的地方：</p>
+<blockquote><p>本章要回答：范式、设计模式、架构和惯用写法有什么不同？本书讲的内容在整个编程领域里处于什么位置？怎样根据变化和代价，而不是根据名称，来选择方案？</p></blockquote>
+<p>前三章一直在说“先看清问题”。这一章把方法收拢起来：设计模式到底是什么，它和其他常被混在一起的概念有什么区别，全书的内容在一张地图上处于什么位置，以及面对一个具体变化时，怎样在“直接写法、经典模式、Python 的简化写法”之间做选择。</p>
+<h2 id="先分清几个概念">先分清几个概念<a class="anchor" href="#先分清几个概念" aria-label="本节链接">#</a></h2>
+<p>“设计模式”这个词经常被用得很宽：有人把面向对象叫作模式，有人把微服务叫作模式，也有人把 Python 的装饰器语法叫作模式。为了后面讨论不走样，本书区分语言的基本表达（变量、判断、函数、类）、编程范式、设计模式、Python 惯用法和架构。几个容易混淆的地方：</p>
 <ul><li><strong>面向对象是范式，不是模式。</strong> 它是一种组织程序的整体方式；设计模式是在这种方式里，针对某个具体困难的一种做法。</li><li><strong>Python 的 <code>@decorator</code> 是语法，不是 GoF 装饰器模式。</strong> 两者有相似的思想（在不改动原有代码的情况下叠加行为），但用了 <code>@</code> 不代表采用了 GoF 装饰器，GoF 装饰器也不必用 <code>@</code> 来写。<a href="../part-03/13-decorator.html">第 13 章</a>和<a href="../part-05/30-decorators-context-managers-generators.html">第 30 章</a>会详细区分。</li><li><strong>“工厂”在 Python 社区常泛指任何“返回对象的函数”。</strong> 这种简单工厂函数很常用，但它不是 GoF 23 种模式之一。GoF 的工厂方法有更具体的含义（<a href="../part-02/05-factory-method.html">第 05 章</a>）。</li><li><strong>架构关心的是整个系统怎样分块、怎样部署。</strong> 本书讲的设计模式发生在函数、类和对象之间，范围小得多。</li></ul>
+<h2 id="一张全书地图">一张全书地图<a class="anchor" href="#一张全书地图" aria-label="本节链接">#</a></h2>
+<p>这些概念处在不同的位置上。按<strong>问题发生的尺度</strong>，写程序时遇到的困难大致落在三层：</p>
+<div class="table"><table><thead><tr><th>层</th><th>关心的问题</th><th>典型概念</th><th>在本书中</th></tr></thead><tbody><tr><td data-label="层">第一层：一段代码怎样运行</td><td data-label="关心的问题">这里有几个对象？哪些名字指着它？谁在修改它？</td><td data-label="典型概念">对象、引用、可变与不可变、特殊方法</td><td data-label="在本书中">地基，见<a href="03-python-building-blocks.html">第 03 章</a>“名字、对象与引用”</td></tr><tr><td data-label="层">第二层：一个程序内部怎样组织</td><td data-label="关心的问题">数据怎样表示？处理放在哪里？需求变化时，改动落在哪里？</td><td data-label="典型概念">函数、类、组合、继承、设计模式、Python 惯用法</td><td data-label="在本书中">本书的主体</td></tr><tr><td data-label="层">第三层：程序怎样和外部世界相处</td><td data-label="关心的问题">数据存在哪里？几件事同时发生怎么办？和别的系统的边界在哪里？</td><td data-label="典型概念">进程、持久化、网络、并发、架构</td><td data-label="在本书中">只在边界处提到</td></tr></tbody></table></div>
+<p>第二层又分成四个区域，每个区域有自己反复出现的问题：</p>
+<div class="table"><table><thead><tr><th>区域</th><th>反复出现的问题</th><th>本书</th></tr></thead><tbody><tr><td data-label="区域">数据表示与处理</td><td data-label="反复出现的问题">用什么结构表示现实中的东西？计算在哪里发生？</td><td data-label="本书">第一部分、第五部分</td></tr><tr><td data-label="区域">创建</td><td data-label="反复出现的问题">对象从哪里来？谁决定创建哪一种？</td><td data-label="本书">第二部分，GoF 创建型（05–09）</td></tr><tr><td data-label="区域">组合</td><td data-label="反复出现的问题">对象怎样拼成更大的结构？接口对不上怎么办？</td><td data-label="本书">第三部分，GoF 结构型（10–16）</td></tr><tr><td data-label="区域">协作</td><td data-label="反复出现的问题">谁调用谁，谁通知谁？职责怎样分配？</td><td data-label="本书">第四部分，GoF 行为型（17–27）</td></tr></tbody></table></div>
+<p>GoF 的三类模式大致对应后三个区域（边界并不绝对：享元归在结构型，关心的却主要是数据怎样共享）。<strong>状态与变化</strong>不单独占一块，而是贯穿所有区域；本章后面“不同的变化，指向不同的方案”那张表，就是从观察到的变化出发，查它落在哪里。</p>
+<p>这张地图的用处，是让新学到的东西有地方放。比如“依赖注入”回答的是“对象从哪里来”，属于创建区域；“回调函数列表”回答的是“谁通知谁”，属于协作区域。先定位，再看细节。</p>
+<p>第三层本书不讲，但有几处停在它的边上：<a href="01-data-and-processing.html">第 01 章</a>的副作用，<a href="../part-02/09-singleton.html">第 09 章</a>里单例在多个进程中失效，第六部分的导入工具读写文件和数据库。第二层的一些思想到了第三层会以更大的形态出现，比如适配器接近“端口与适配器”架构，观察者接近发布/订阅的消息系统。但一旦跨过进程和网络，就要面对延迟、失败、消息的顺序和重复，本书的模式不能直接搬过去。</p>
 <h2 id="gof-是什么">GoF 是什么<a class="anchor" href="#gof-是什么" aria-label="本节链接">#</a></h2>
 <p>本书说的 23 种设计模式，来自 1994 年出版的《设计模式：可复用面向对象软件的基础》（<em>Design Patterns: Elements of Reusable Object-Oriented Software</em>）。四位作者 Erich Gamma、Richard Helm、Ralph Johnson、John Vlissides 常被称为“四人帮”（Gang of Four），所以这套模式也叫 GoF 模式。</p>
 <p>这本书的贡献是给一批反复出现的设计做法起了名字，并说明了每种做法的意图、适用情境、参与者和后果。有了共同的名字，开发者之间讨论设计就方便了。</p>
@@ -129,7 +135,7 @@
 <ol><li><strong>变化是什么？</strong> 用一句话说出“什么在变、什么不变”。</li><li><strong>有证据吗？</strong> 这个变化已经发生，或者有明确的计划；还是只是“将来可能”？</li><li><strong>最简单的写法够不够？</strong> 加一个分支、提取一个函数、把规则写成数据，能不能解决？</li><li><strong>如果不够，困难具体在哪？</strong> 能指到具体代码，最好能写出一个会失败的测试。</li><li><strong>候选方案把变化放到了哪里？</strong> 新增一种情况时，要改几处？谁来改？</li><li><strong>代价是什么？</strong> 多了几个类、几层间接调用？读代码的人要多理解什么？测试要多写什么？</li><li><strong>将来如果需求没有来，这个抽象能不能轻松撤回？</strong></li></ol>
 <p>最后一条常被忽略。设计是可以撤回的：如果当初为“将来会有很多规则”准备的抽象，两年后发现只用到了两种，把它改回 <code>if</code> 也是一次好的重构。</p>
 <h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
-<ul><li>范式、设计模式、Python 惯用法、架构是不同层次的东西，不要混为一谈。</li><li>GoF 23 种模式分为创建型、结构型、行为型三类；它们诞生于 C++ 和 Smalltalk 的语境，在 Python 里很多可以写得更轻。</li><li>选择方案时，先说清变化，再找证据，然后比较“直接写法、Python 简化写法、经典模式”三者的代价。</li><li>引入模式往往不会让“选择”消失，只是把它挪到一个更合适的位置；要看清它挪到了哪里。</li><li>设计可以撤回。为没有发生的需求准备的抽象，也是一种负担。</li></ul>
+<ul><li>范式、设计模式、Python 惯用法、架构是不同层次的东西，不要混为一谈。</li><li>按问题的尺度可以分成三层：代码怎样运行、程序内部怎样组织、程序怎样和外部世界相处。本书立足第二层，它又分为数据表示与处理、创建、组合、协作四个区域。</li><li>GoF 23 种模式分为创建型、结构型、行为型三类；它们诞生于 C++ 和 Smalltalk 的语境，在 Python 里很多可以写得更轻。</li><li>选择方案时，先说清变化，再找证据，然后比较“直接写法、Python 简化写法、经典模式”三者的代价。</li><li>引入模式往往不会让“选择”消失，只是把它挪到一个更合适的位置；要看清它挪到了哪里。</li><li>设计可以撤回。为没有发生的需求准备的抽象，也是一种负担。</li></ul>
 <h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
 <p>停车场又来了一个需求：会员可以按月付费，月卡车辆每次停车都免费，但要记录停车次数，月底生成报告。</p>
 <ol><li>这个变化属于上面哪一类？它影响的是“收费规则”，还是别的东西？</li><li>用“字典里放函数”能不能实现？用“每种规则一个类”呢？哪一种更自然？</li><li>有人建议把“月卡”也做成一种车型，放进 <code>RATES</code>。你觉得这个建模合适吗？</li></ol>
@@ -139,7 +145,7 @@
 <nav class="pager"><a class="prev" href="../part-01/03-python-building-blocks.html"><small>上一篇</small>03 Python 组织程序的基本工具</a><a class="next" href="../part-02/05-factory-method.html"><small>下一篇</small>05 工厂方法 Factory Method</a></nav>
     <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-01/04-choosing-a-pattern.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
   </main>
-  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#先分清几个层次">先分清几个层次</a></li><li><a href="#gof-是什么">GoF 是什么</a></li><li><a href="#用变化来选择-而不是用名称">用变化来选择，而不是用名称</a></li><li><a href="#不同的变化-指向不同的方案">不同的变化，指向不同的方案</a></li><li><a href="#一份选择清单">一份选择清单</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#先分清几个概念">先分清几个概念</a></li><li><a href="#一张全书地图">一张全书地图</a></li><li><a href="#gof-是什么">GoF 是什么</a></li><li><a href="#用变化来选择-而不是用名称">用变化来选择，而不是用名称</a></li><li><a href="#不同的变化-指向不同的方案">不同的变化，指向不同的方案</a></li><li><a href="#一份选择清单">一份选择清单</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
 </div>
 <script src="../assets/book.js"></script>
 </body>

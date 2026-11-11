@@ -15,6 +15,10 @@
 | 抽象基类 | abstract base class (ABC) | 用 `abc` 模块声明的基类，带 `@abstractmethod` 的方法没实现时，子类无法实例化。 | [第 03 章](part-01/03-python-building-blocks.md) |
 | 协议 | protocol (`typing.Protocol`) | 只规定需要哪些方法、不要求继承的接口描述，即结构化类型。 | [第 03 章](part-01/03-python-building-blocks.md) |
 | 可调用对象 | callable | 能用 `()` 调用的对象：函数、类、实现了 `__call__` 的实例。 | [第 03 章](part-01/03-python-building-blocks.md) |
+| 引用／别名 | reference / alias | 名字只是指向对象的标签。赋值、传参、存进属性都只是多一个名字指向同一个对象，不会复制它；几个名字指向同一个对象，就互为别名。 | [第 03 章](part-01/03-python-building-blocks.md) |
+| 可变／不可变对象 | mutable / immutable object | 可变对象（列表、字典、集合、普通实例）可以被原地修改，所有指向它的名字都会看到变化；不可变对象（数字、字符串、元组、冻结的数据类）不能修改，可以放心共享。 | [第 03 章](part-01/03-python-building-blocks.md) |
+| 身份／相等 | identity / equality | `is` 判断两个名字是否指向同一个对象，`==` 判断两个对象的内容是否相等。 | [第 03 章](part-01/03-python-building-blocks.md) |
+| 全书地图 | — | 本书按问题尺度划分的三层：代码怎样运行、程序内部怎样组织、程序与外部世界。本书立足第二层。 | [第 04 章](part-01/04-choosing-a-pattern.md) |
 | 简单工厂 | simple factory | 根据参数决定创建哪种对象的普通函数。很常用，但不是 GoF 23 种模式之一。 | [第 05 章](part-02/05-factory-method.md) |
 | 浅拷贝 | shallow copy | 只复制最外层对象，内部引用的对象与原件共享。 | [第 08 章](part-02/08-prototype.md) |
 | 深拷贝 | deep copy | 顺着引用把整个对象图都复制一份。 | [第 08 章](part-02/08-prototype.md) |

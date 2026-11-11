@@ -81,7 +81,7 @@
 <p>只改了小陈，小王的计划和模板也一起变成了 4 组。</p>
 <h2 id="困难在哪里-浅拷贝">困难在哪里：浅拷贝<a class="anchor" href="#困难在哪里-浅拷贝" aria-label="本节链接">#</a></h2>
 <p><code>replace</code> 确实创建了一个新的 <code>Plan</code> 对象，标题也确实换了。但它只复制了<strong>最外面一层</strong>：新 <code>Plan</code> 的 <code>days</code> 字段，指向的还是模板的<strong>同一个字典</strong>，字典里还是<strong>同一批列表和 <code>Exercise</code> 对象</strong>。</p>
-<p>这叫<strong>浅拷贝</strong>（shallow copy）：新建一个外壳，里面的东西照原样引用。标准库的 <code>copy.copy</code> 也是浅拷贝，换成它不会有任何改善。测试 <code>test_copy_copy_has_the_same_problem</code> 展示了另一种表现：给小陈去掉深蹲，模板里的深蹲也没了。</p>
+<p>这叫<strong>浅拷贝</strong>（shallow copy）：新建一个外壳，里面的东西照原样引用。<a href="../part-01/03-python-building-blocks.html">第 03 章</a>“名字、对象与引用”一节说过，赋值和传参都不复制对象；浅拷贝只是把复制做到了第一层，再往里仍然是共享。标准库的 <code>copy.copy</code> 也是浅拷贝，换成它不会有任何改善。测试 <code>test_copy_copy_has_the_same_problem</code> 展示了另一种表现：给小陈去掉深蹲，模板里的深蹲也没了。</p>
 <p>这类错误特别难发现，因为它<strong>不会立刻出现</strong>。生成计划的那一刻一切正常，直到某个学员的计划被修改，才悄悄波及其他人。而且不报错，只是数据不对。</p>
 <p>与之相对的是<strong>深拷贝</strong>（deep copy）：<code>copy.deepcopy</code> 会顺着对象的引用一路复制下去，字典、列表、每个 <code>Exercise</code> 都复制一份新的。</p>
 <p>但“全部复制”也不总是对的。下面会看到，有些东西复制时恰恰<strong>应该</strong>共享。</p>
