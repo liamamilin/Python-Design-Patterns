@@ -205,7 +205,7 @@ def build_branch() -> tuple[Kiosk, PhoneBooking]:
 default_machine = TicketMachine()
 ```
 
-Python 第一次导入一个模块时执行它，然后把模块对象缓存在 `sys.modules` 里，之后再导入，拿到的都是缓存的那一个（测试 `test_module_level_object_is_imported_once`）。所以模块级的 `default_machine`，在一个进程里天然只有一个。这是 Python 里最常见的“单例”，标准库里也随处可见，比如 `random` 模块的那些函数，背后用的就是模块里创建好的一个随机数生成器对象。
+Python 第一次导入一个模块时执行它，然后把模块对象缓存在 `sys.modules` 里，之后再导入，拿到的都是缓存的那一个（测试 `test_module_level_object_is_imported_once`）。所以模块级的 `default_machine`，在一个进程里天然只有一个（“模块也是对象”，见[第 03 章](../part-01/03-python-building-blocks.md)“名字、对象与引用”一节）。这是 Python 里最常见的“单例”，标准库里也随处可见，比如 `random` 模块的那些函数，背后用的就是模块里创建好的一个随机数生成器对象。
 
 它的局限和单例一样：仍然是全局状态，测试时仍然可能互相影响，范围仍然只在一个进程内。另外有一个容易踩到的坑：如果同一个文件既被当作脚本直接运行（模块名是 `__main__`），又被别的模块用包名导入，Python 会把它当作**两个不同的模块**，各执行一次，`default_machine` 也就有了两个。
 

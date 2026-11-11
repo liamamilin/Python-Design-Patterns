@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>第 03 章 Python 组织程序的基本工具 · Python 设计模式：从问题到方案</title>
-<meta name="description" content="本章要回答：函数、类、组合、继承、抽象基类、协议分别解决什么问题？什么时候函数已经足够？ 后面讲到的每一个设计模式，在 Python 里最终都要用这几样工具实现。如果不清楚每样工具擅长什么，就容易出现两种极端：要么什么都写成类，一个简单计算">
+<meta name="description" content="本章要回答：函数、类、组合、继承、抽象基类、协议分别解决什么问题？什么时候函数已经足够？在它们下面，Python 的名字、对象和引用是怎样工作的？ 后面讲到的每一个设计模式，在 Python 里最终都要用这几样工具实现。如果不清楚每样工具擅">
 <meta name="theme-color" content="#16212e">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/book.css">
@@ -35,7 +35,7 @@
     <article class="prose">
 <p class="kicker">第一部分 · 为什么需要设计</p>
 <h1>第 03 章　Python 组织程序的基本工具</h1>
-<blockquote><p>本章要回答：函数、类、组合、继承、抽象基类、协议分别解决什么问题？什么时候函数已经足够？</p></blockquote>
+<blockquote><p>本章要回答：函数、类、组合、继承、抽象基类、协议分别解决什么问题？什么时候函数已经足够？在它们下面，Python 的名字、对象和引用是怎样工作的？</p></blockquote>
 <p>后面讲到的每一个设计模式，在 Python 里最终都要用这几样工具实现。如果不清楚每样工具擅长什么，就容易出现两种极端：要么什么都写成类，一个简单计算也要套三层；要么只会写函数，状态和规则散落各处。</p>
 <p>这一章用同一个小任务，依次试一遍这些工具。任务是：一个点评网站要在发布用户评论前做清洗。</p>
 <div class="code" data-lang="Python"><pre><code>comment = <span class="s">"  这家店的  咖啡 太难喝了，简直是垃圾！！  "</span></code></pre></div>
@@ -142,18 +142,91 @@ for_english = Pipeline(strip_spaces, Censor([<span class="s">"垃圾"</span>]), 
 <h2 id="怎么选">怎么选<a class="anchor" href="#怎么选" aria-label="本节链接">#</a></h2>
 <div class="table"><table><thead><tr><th>你遇到的情况</th><th>先考虑</th></tr></thead><tbody><tr><td data-label="你遇到的情况">给定输入就能算出结果，不需要记住任何东西</td><td data-label="先考虑">函数</td></tr><tr><td data-label="你遇到的情况">只是想预先设好几个参数</td><td data-label="先考虑"><code>functools.partial</code> 或闭包</td></tr><tr><td data-label="你遇到的情况">要在多次调用之间记住东西，或几个函数总在操作同一份数据</td><td data-label="先考虑">类</td></tr><tr><td data-label="你遇到的情况">几个可以独立替换、自由搭配的部件</td><td data-label="先考虑">组合</td></tr><tr><td data-label="你遇到的情况">确实是“一种更具体的同类东西”，共享大量行为</td><td data-label="先考虑">继承</td></tr><tr><td data-label="你遇到的情况">必须保证实现者提供某些方法，而且实现者都是你写的类</td><td data-label="先考虑">抽象基类</td></tr><tr><td data-label="你遇到的情况">只关心“能这样用”，希望普通函数也能参与</td><td data-label="先考虑">协议</td></tr></tbody></table></div>
 <p>这张表是起点，不是规则。真实代码常常混用：<code>Pipeline</code> 是一个类，里面装的是函数和对象；<code>Censor</code> 是一个类，却通过 <code>__call__</code> 伪装成函数。</p>
+<h2 id="地基-名字-对象与引用">地基：名字、对象与引用<a class="anchor" href="#地基-名字-对象与引用" aria-label="本节链接">#</a></h2>
+<p>前面几节讲的都是“用什么工具组织代码”，上面的表也已经给出了选择的起点。最后来看一个更底层的问题，它藏在本章每一段代码里：<code>Censor</code> 记住的那份词表，到底是谁的？</p>
+<p>这个问题不属于任何一种“工具”，而是所有工具共同的地基。后面的许多模式，原型、单例、享元、观察者、备忘录，都直接建立在它上面。这里不会把 Python 的对象模型讲全，只讲后面真正要用到的几件事。</p>
+<h3 id="赋值和传参都不复制对象">赋值和传参都不复制对象<a class="anchor" href="#赋值和传参都不复制对象" aria-label="本节链接">#</a></h3>
+<p>论坛和商城各有一个屏蔽器，开始时用同一份词表。后来论坛想多屏蔽一个词：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">shared_word_list</span>() -&gt; <span class="b">tuple</span>[Censor, Censor]:
+    words = [<span class="s">"垃圾"</span>]
+    forum = Censor(words)
+    shop = Censor(words)
+    forum.words.append(<span class="s">"难喝"</span>)  <span class="c"># 只想给论坛多屏蔽一个词</span>
+    <span class="k">return</span> forum, shop</code></pre></div>
+<p>结果商城也开始屏蔽“难喝”了：<code>shop("咖啡难喝")</code> 得到 <code>"咖啡**"</code>，<code>forum.words is shop.words</code> 是 <code>True</code>。</p>
+<p>原因在 <code>Censor.__init__</code> 里那一行 <code>self.words = words</code>。在 Python 里，<strong>名字只是贴在对象上的标签</strong>。赋值、传参、存进属性，都只是多贴一张标签，不会复制对象。从头到尾只有一个列表，<code>words</code>、<code>forum.words</code>、<code>shop.words</code> 是贴在它上面的三张标签。<code>append</code> 修改的是这个列表本身，所以从哪张标签看过去，都看到了变化。</p>
+<p>这不一定是错误。如果本意就是“两个频道共用一份词表，改一处全都生效”，这正是想要的行为。问题在于，<strong>共享应该是一个有意的决定，而不是赋值时顺手带来的副作用。</strong></p>
+<h3 id="在边界上复制-或者保存不可变的数据">在边界上复制，或者保存不可变的数据<a class="anchor" href="#在边界上复制-或者保存不可变的数据" aria-label="本节链接">#</a></h3>
+<p>如果每个屏蔽器应该有自己的词表，就在接收数据的地方复制一份。更彻底的做法是保存成不可变的元组。这里用一个子类，只改“怎样保存词表”这一处，屏蔽逻辑原样继承：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">class</span> <span class="f">OwnWordsCensor</span>(Censor):
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="b">self</span>, words: <span class="b">list</span>[<span class="b">str</span>]) -&gt; <span class="k">None</span>:
+        <span class="b">super</span>().__init__(words)
+        <span class="b">self</span>.words = <span class="b">tuple</span>(words)  <span class="c"># 自己的副本，而且不能被原地修改</span></code></pre></div>
+<p>现在要给论坛加词，就不能再 <code>append</code> 了，元组没有这个方法。只能造一个新元组，让论坛的标签贴过去：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">separate_word_lists</span>() -&gt; <span class="b">tuple</span>[OwnWordsCensor, OwnWordsCensor]:
+    words = [<span class="s">"垃圾"</span>]
+    forum = OwnWordsCensor(words)
+    shop = OwnWordsCensor(words)
+    forum.words = (*forum.words, <span class="s">"难喝"</span>)  <span class="c"># 让 forum.words 指向一个新元组</span>
+    <span class="k">return</span> forum, shop</code></pre></div>
+<p>论坛的词表是 <code>("垃圾", "难喝")</code>，商城的仍然是 <code>("垃圾",)</code>。</p>
+<p>这里有两种完全不同的“改变”：</p>
+<ul><li><strong>修改对象</strong>：<code>list.append</code>、给字典加键、改属性。对象还是那个对象，所有指向它的名字都会看到变化。</li><li><strong>让名字指向别的对象</strong>：<code>forum.words = ...</code>。原来的对象没有动，只有这一个名字换了目标。</li></ul>
+<p>不可变对象（数字、字符串、元组、<code>frozen=True</code> 的数据类）只允许第二种改变，所以可以放心地共享。可变对象（列表、字典、集合、普通类的实例）被几处同时引用时，就要想清楚是谁在改、谁会受影响。</p>
+<p>回头看本章的 <code>Pipeline</code>，它写的是 <code>self.steps = list(steps)</code>，在接收时就复制了一份。调用方之后再修改自己的步骤列表，管道不受影响。</p>
+<h3 id="身份与相等">身份与相等<a class="anchor" href="#身份与相等" aria-label="本节链接">#</a></h3>
+<p>既然“是不是同一个对象”这么重要，Python 就提供了两种不同的比较：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">equal_but_not_same</span>() -&gt; <span class="b">tuple</span>[<span class="b">bool</span>, <span class="b">bool</span>]:
+    a = [<span class="s">"垃圾"</span>, <span class="s">"难喝"</span>]
+    b = [<span class="s">"垃圾"</span>, <span class="s">"难喝"</span>]
+    <span class="k">return</span> a == b, a <span class="k">is</span> b</code></pre></div>
+<p>结果是 <code>(True, False)</code>。<code>==</code> 问的是<strong>内容一样吗</strong>，<code>is</code> 问的是<strong>是同一个对象吗</strong>。这两个列表内容相同，却是两个独立的对象，改其中一个，另一个不受影响。</p>
+<p>判断“共享了没有”要用 <code>is</code>。判断“值对不对”要用 <code>==</code>。不要用 <code>is</code> 比较数字和字符串的值：小整数、短字符串有时恰好是同一个对象，那是 CPython 的实现细节，不是语言的保证。</p>
+<h3 id="两个名字-一个对象">两个名字，一个对象<a class="anchor" href="#两个名字-一个对象" aria-label="本节链接">#</a></h3>
+<p>同一件事反过来，就成了一种有用的能力：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">counting_through_a_pipeline</span>() -&gt; <span class="b">int</span>:
+    censor = Censor([<span class="s">"垃圾"</span>])
+    clean = Pipeline(strip_spaces, censor)
+    clean(<span class="s">"垃圾服务"</span>)
+    clean(<span class="s">"又是垃圾"</span>)
+    <span class="k">return</span> censor.replaced  <span class="c"># 管道里的那个，就是手里的这个</span></code></pre></div>
+<p>返回 <code>2</code>。我们把 <code>censor</code> 交给了管道，自己手里还留着一张标签。管道每次调用它，累加的都是同一个对象的计数，我们随时都能读到。<strong>把一个对象交给别人，就等于和别人共享了它的状态。</strong> 观察者模式里“目标持有订阅者”，中介者里“各方都持有同一个中介”，靠的都是这一点。</p>
+<h3 id="一个常见的坑-可变的默认参数">一个常见的坑：可变的默认参数<a class="anchor" href="#一个常见的坑-可变的默认参数" aria-label="本节链接">#</a></h3>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">remember_bad</span>(comment: <span class="b">str</span>, history: <span class="b">list</span>[<span class="b">str</span>] = []) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    history.append(comment)  <span class="c"># 每次调用都往同一个列表里加</span>
+    <span class="k">return</span> history</code></pre></div>
+<p><code>remember_bad("第一条")</code> 和 <code>remember_bad("第二条")</code> 返回的是同一个列表，里面有两条评论。默认值 <code>[]</code> 只在<strong>定义函数时</strong>求值一次，之后每次不传参数的调用，用的都是这一个列表。标准写法是用 <code>None</code> 当默认值，在函数里面再创建新列表：</p>
+<div class="code" data-lang="Python"><pre><code><span class="k">def</span> <span class="f">remember</span>(comment: <span class="b">str</span>, history: <span class="b">list</span>[<span class="b">str</span>] | <span class="k">None</span> = <span class="k">None</span>) -&gt; <span class="b">list</span>[<span class="b">str</span>]:
+    history = [] <span class="k">if</span> history <span class="k">is</span> <span class="k">None</span> <span class="k">else</span> history
+    history.append(comment)
+    <span class="k">return</span> history</code></pre></div>
+<h3 id="函数-类-模块都是对象">函数、类、模块都是对象<a class="anchor" href="#函数-类-模块都是对象" aria-label="本节链接">#</a></h3>
+<p>前面说过“函数也是数据”。其实类也一样：类本身是一个对象，可以放进字典；调用它，就得到一个新的实例。</p>
+<div class="code" data-lang="Python"><pre><code>STEP_TYPES = {<span class="s">"lower"</span>: Lowercase, <span class="s">"censor"</span>: Censor}
+
+
+<span class="k">def</span> <span class="f">make_step</span>(kind: <span class="b">str</span>, *args):
+    <span class="k">return</span> STEP_TYPES[kind](*args)</code></pre></div>
+<p><code>make_step("lower")("ABC")</code> 得到 <code>"abc"</code>。这已经是<a href="../part-02/05-factory-method.html">第 05 章</a>“简单工厂”的雏形：根据一个名字决定创建哪种对象。</p>
+<p>模块也是对象。Python 第一次 <code>import</code> 一个模块时执行它，之后再导入，拿到的都是同一个模块对象。<a href="../part-02/09-singleton.html">第 09 章</a>会用到这一点。</p>
+<p>还有一点值得先记下：<code>censor(text)</code>、<code>len(x)</code>、<code>for item in x</code> 这类写法，Python 是通过对象的特殊方法（<code>__call__</code>、<code>__len__</code>、<code>__iter__</code>）来执行的，而且是到对象的<strong>类型</strong>上去找。<code>Censor</code> 能像函数一样调用，就是因为它的类定义了 <code>__call__</code>。<a href="../part-03/16-proxy.html">第 16 章</a>和<a href="../part-04/23-iterator.html">第 23 章</a>会再遇到这条规则。</p>
+<h3 id="这块地基在后面哪里用到">这块地基在后面哪里用到<a class="anchor" href="#这块地基在后面哪里用到" aria-label="本节链接">#</a></h3>
+<div class="table"><table><thead><tr><th>本节的概念</th><th>后面在哪里变得要紧</th></tr></thead><tbody><tr><td data-label="本节的概念">赋值不复制，可变对象被共享</td><td data-label="后面在哪里变得要紧"><a href="../part-02/08-prototype.html">第 08 章</a>原型：浅拷贝让几份计划改到一起</td></tr><tr><td data-label="本节的概念">身份与相等，模块只导入一次</td><td data-label="后面在哪里变得要紧"><a href="../part-02/09-singleton.html">第 09 章</a>单例：“同一个对象”到底指什么</td></tr><tr><td data-label="本节的概念">不可变对象可以放心共享</td><td data-label="后面在哪里变得要紧"><a href="../part-03/15-flyweight.html">第 15 章</a>享元：共享的部分必须不可变</td></tr><tr><td data-label="本节的概念">两个名字，一个对象</td><td data-label="后面在哪里变得要紧"><a href="../part-04/18-observer.html">第 18 章</a>观察者、<a href="../part-04/24-mediator.html">第 24 章</a>中介者：靠共享引用协作</td></tr><tr><td data-label="本节的概念">修改对象与换一个对象</td><td data-label="后面在哪里变得要紧"><a href="../part-04/25-memento.html">第 25 章</a>备忘录：快照里混进可变对象，就不再是快照</td></tr><tr><td data-label="本节的概念">特殊方法在类型上查找</td><td data-label="后面在哪里变得要紧"><a href="../part-03/16-proxy.html">第 16 章</a>代理、<a href="../part-04/23-iterator.html">第 23 章</a>迭代器</td></tr></tbody></table></div>
+<p>读这些章节时如果觉得某个现象“说不通”，不妨回到这一节，问一句：<strong>这里有几个对象？有几个名字指着它？谁在修改它？</strong></p>
 <h2 id="小结">小结<a class="anchor" href="#小结" aria-label="本节链接">#</a></h2>
-<ul><li>先写函数。函数是 Python 里最轻、最容易测试的组织单位，而且函数本身就是可以传递的数据。</li><li>需要记住状态、或者数据和处理总是成对出现时，再写类。</li><li>变化来自可以自由搭配的部件时，用组合；只有真正的“同类细分”才用继承。</li><li>抽象基类在创建对象时就检查缺失的方法，但要求显式继承；协议只看“有没有这个方法”，普通函数也能符合，运行时检查只是粗略的。</li><li>许多设计模式，就是这几样工具在特定问题下的固定搭配。</li></ul>
+<ul><li>先写函数。函数是 Python 里最轻、最容易测试的组织单位，而且函数本身就是可以传递的数据。</li><li>需要记住状态、或者数据和处理总是成对出现时，再写类。</li><li>变化来自可以自由搭配的部件时，用组合；只有真正的“同类细分”才用继承。</li><li>抽象基类在创建对象时就检查缺失的方法，但要求显式继承；协议只看“有没有这个方法”，普通函数也能符合，运行时检查只是粗略的。</li><li>许多设计模式，就是这几样工具在特定问题下的固定搭配。</li><li>名字只是指向对象的标签，赋值和传参都不复制对象。可变对象被几处引用时，一处修改处处可见；共享应该是有意的决定。需要独立时，在边界上复制，或者保存不可变的数据。<code>is</code> 判断是否同一个对象，<code>==</code> 判断内容是否相等。</li></ul>
 <h2 id="练习">练习<a class="anchor" href="#练习" aria-label="本节链接">#</a></h2>
 <p>评论清洗又来了一个需求：把评论里的手机号码打码，例如 <code>13812345678</code> 变成 <code>138****5678</code>。</p>
 <ol><li>你会把它写成函数、带 <code>__call__</code> 的类，还是 <code>Step</code> 的子类？</li><li>如果运营同事也想知道“一共打码了多少个号码”，你的选择会变吗？</li><li>它需要和 <code>Censor</code> 共享一个父类吗？</li></ol>
 <p><strong>思路提示</strong>：只是打码，一个用 <code>re.sub</code> 的函数就够了，可以直接放进 <code>Pipeline</code>。要统计次数，就需要状态，写成和 <code>Censor</code> 类似的类。两者都只需要满足“接收文本、返回文本”这个协议，不需要共同的父类：它们共享的是<strong>用法</strong>，不是<strong>实现</strong>。</p>
-<p>完整代码：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch03_tools.py" target="_blank" rel="noopener"><code>examples/ch03_tools.py</code></a>，测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch03_tools.py" target="_blank" rel="noopener"><code>tests/test_ch03_tools.py</code></a>。</p>
+<p>完整代码：</p>
+<ul><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch03_tools.py" target="_blank" rel="noopener"><code>examples/ch03_tools.py</code></a>：函数、类、继承、组合、抽象基类、协议</li><li><a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/examples/ch03_objects.py" target="_blank" rel="noopener"><code>examples/ch03_objects.py</code></a>：名字、对象与引用</li></ul>
+<p>测试：<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch03_tools.py" target="_blank" rel="noopener"><code>tests/test_ch03_tools.py</code></a>、<a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/tests/test_ch03_objects.py" target="_blank" rel="noopener"><code>tests/test_ch03_objects.py</code></a>。</p>
     </article>
 <nav class="pager"><a class="prev" href="../part-01/02-when-simple-code-resists-change.html"><small>上一篇</small>02 当简单代码开始难以改变</a><a class="next" href="../part-01/04-choosing-a-pattern.html"><small>下一篇</small>04 从问题选择模式</a></nav>
     <footer class="foot">《Python 设计模式：从问题到方案》 · 代码只用 Python 标准库，可在 <a href="https://github.com/liamamilin/Python-Design-Patterns" target="_blank" rel="noopener">GitHub 仓库</a>中运行全部示例和测试 · <a href="https://github.com/liamamilin/Python-Design-Patterns/blob/main/book/part-01/03-python-building-blocks.md" target="_blank" rel="noopener">查看本页源文件</a></footer>
   </main>
-  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#函数-只看输入-只给输出">函数：只看输入，只给输出</a></li><li><a href="#函数也是数据">函数也是数据</a></li><li><a href="#类-数据-处理和状态要放在一起">类：数据、处理和状态要放在一起</a></li><li><a href="#继承-在父类基础上改写一部分">继承：在父类基础上改写一部分</a></li><li><a href="#组合-把部件装在一起">组合：把部件装在一起</a></li><li><a href="#抽象基类-要求实现者必须提供某些方法">抽象基类：要求实现者必须提供某些方法</a></li><li><a href="#协议-只关心-能不能这样用">协议：只关心“能不能这样用”</a></li><li><a href="#怎么选">怎么选</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
+  <nav class="pagetoc" aria-label="本页内容"><p>本页内容</p><ul><li><a href="#函数-只看输入-只给输出">函数：只看输入，只给输出</a></li><li><a href="#函数也是数据">函数也是数据</a></li><li><a href="#类-数据-处理和状态要放在一起">类：数据、处理和状态要放在一起</a></li><li><a href="#继承-在父类基础上改写一部分">继承：在父类基础上改写一部分</a></li><li><a href="#组合-把部件装在一起">组合：把部件装在一起</a></li><li><a href="#抽象基类-要求实现者必须提供某些方法">抽象基类：要求实现者必须提供某些方法</a></li><li><a href="#协议-只关心-能不能这样用">协议：只关心“能不能这样用”</a></li><li><a href="#怎么选">怎么选</a></li><li><a href="#地基-名字-对象与引用">地基：名字、对象与引用</a></li><li><a href="#小结">小结</a></li><li><a href="#练习">练习</a></li></ul></nav>
 </div>
 <script src="../assets/book.js"></script>
 </body>
