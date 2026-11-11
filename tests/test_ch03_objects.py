@@ -4,9 +4,6 @@ from examples.ch03_objects import (
     OwnWordsCensor,
     counting_through_a_pipeline,
     equal_but_not_same,
-    make_step,
-    remember,
-    remember_bad,
     separate_word_lists,
     shared_word_list,
 )
@@ -48,27 +45,6 @@ class IdentityTest(unittest.TestCase):
 
     def test_state_seen_through_another_name(self):
         self.assertEqual(counting_through_a_pipeline(), 2)
-
-
-class DefaultArgumentTest(unittest.TestCase):
-    def test_mutable_default_is_shared_between_calls(self):
-        first = remember_bad("第一条")
-        second = remember_bad("第二条")
-        self.assertIs(first, second)
-        self.assertEqual(second[-2:], ["第一条", "第二条"])
-
-    def test_none_default_gives_a_fresh_list(self):
-        self.assertEqual(remember("第一条"), ["第一条"])
-        self.assertEqual(remember("第二条"), ["第二条"])
-
-
-class ClassesAreObjectsTest(unittest.TestCase):
-    def test_class_in_a_dict_makes_new_objects(self):
-        self.assertEqual(make_step("lower")("ABC"), "abc")
-        a = make_step("censor", ["垃圾"])
-        b = make_step("censor", ["垃圾"])
-        self.assertIsInstance(a, Censor)
-        self.assertIsNot(a, b)
 
 
 if __name__ == "__main__":

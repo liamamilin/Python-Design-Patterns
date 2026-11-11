@@ -7,7 +7,7 @@
 """
 from __future__ import annotations
 
-from examples.ch03_tools import Censor, Lowercase, Pipeline, strip_spaces
+from examples.ch03_tools import Censor, Pipeline, strip_spaces
 
 
 # 1. 赋值和传参不复制对象：两个屏蔽器拿到的是同一份词表
@@ -50,26 +50,6 @@ def counting_through_a_pipeline() -> int:
     return censor.replaced  # 管道里的那个，就是手里的这个
 
 
-# 5. 默认参数只在定义函数时求值一次
-def remember_bad(comment: str, history: list[str] = []) -> list[str]:
-    history.append(comment)  # 每次调用都往同一个列表里加
-    return history
-
-
-def remember(comment: str, history: list[str] | None = None) -> list[str]:
-    history = [] if history is None else history
-    history.append(comment)
-    return history
-
-
-# 6. 类也是对象：可以放进字典，调用它就得到一个新对象
-STEP_TYPES = {"lower": Lowercase, "censor": Censor}
-
-
-def make_step(kind: str, *args):
-    return STEP_TYPES[kind](*args)
-
-
 if __name__ == "__main__":
     forum, shop = shared_word_list()
     print("商城也屏蔽了“难喝”：", shop("咖啡难喝"), forum.words is shop.words)
@@ -77,6 +57,3 @@ if __name__ == "__main__":
     print("各自的词表：", forum.words, shop.words)
     print("相等、同一个：", equal_but_not_same())
     print("管道里屏蔽了：", counting_through_a_pipeline())
-    print(remember_bad("第一条"), remember_bad("第二条"))
-    print(remember("第一条"), remember("第二条"))
-    print(make_step("lower")("ABC"))

@@ -326,17 +326,15 @@ footer { padding: 40px 0 56px; border-top: 1px solid var(--line); color: var(--i
     </ol>
     <p class="arrow-note prose">「数据与处理」是思考的起点，不是说所有程序问题都能还原成两个标签。阅读时还要留意时间、状态、副作用、外部系统、错误处理、性能、并发，以及团队之间的协作。</p>
 
-    <h3 class="sub-h">先分清五个层次</h3>
-    <p class="lead prose">“设计模式”常被和别的东西混为一谈。本书只把第三层叫作设计模式，其他几层会在需要时单独讲。</p>
+    <h3 class="sub-h">一张全书地图</h3>
+    <p class="lead prose">按问题发生的尺度，写程序时遇到的困难大致落在三层。本书立足第二层。</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>层次</th><th>典型例子</th><th>是什么</th></tr></thead>
+        <thead><tr><th>层</th><th>关心的问题</th><th>在本书中</th></tr></thead>
         <tbody>
-          <tr><td>基本表达</td><td>数字、变量、判断、循环、函数、类</td><td>编程语言允许我们写什么</td></tr>
-          <tr><td>编程范式</td><td>命令式、过程式、面向对象、函数式</td><td>程序采用什么组织与表达方式</td></tr>
-          <tr class="hl"><td><strong>设计模式</strong></td><td>GoF 工厂方法、策略、代理等</td><td>针对反复出现的设计困难的方案</td></tr>
-          <tr><td>Python 惯用法</td><td>直接传函数、迭代协议、装饰器语法</td><td>Python 语言特性支持的简洁写法</td></tr>
-          <tr><td>更大范围的设计</td><td>分层、消息队列、分布式部署等</td><td>系统级组织问题，本书只在必要处提及</td></tr>
+          <tr><td>第一层：代码怎样运行</td><td>有几个对象？哪些名字指着它？谁在修改它？</td><td>地基，见第 03 章</td></tr>
+          <tr class="hl"><td><strong>第二层：程序内部怎样组织</strong></td><td>数据表示与处理、创建、组合、协作；变化落在哪里？</td><td>本书的主体</td></tr>
+          <tr><td>第三层：程序与外部世界</td><td>进程、存储、网络、并发、架构</td><td>只在边界处提到</td></tr>
         </tbody>
       </table>
     </div>
